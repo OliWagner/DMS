@@ -12,14 +12,28 @@ namespace WpfApp
     class DbConnector
     {
         SqlConnection _con;
-  
+        string _conString;
+ 
         public DbConnector(String conString) {
-            _con = new SqlConnection();
-            _con.ConnectionString = conString;
-            _con.Open();
+            _conString = conString;
         }
-      
-        //public bool CreateNewTable(string Tabellenname, Dictionary<string, object> Tabellenfelder) {
+
+        public bool Connect() {
+            try
+            {
+                _con = new SqlConnection();
+                _con.ConnectionString = _conString;
+                _con.Open();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //FehlerMessage = ex.InnerException.Message;
+                return false;
+            }
+        }
+        
+        
         public bool CreateNewTable(string Tabellenname, Dictionary<string, string> Werte)
         {
             SqlCommand command = _con.CreateCommand();
