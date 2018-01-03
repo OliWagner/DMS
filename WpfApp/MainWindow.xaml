@@ -1,0 +1,26 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="845" Width="1035" Background="White">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="400"/>
+            <RowDefinition Height="410*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="200"  />
+            <ColumnDefinition Width="625*"  />
+        </Grid.ColumnDefinitions>
+        <!-- <local:EingabeTabelle x:Name="eingabeTabelle" Grid.Column="0" Grid.Row="0"/>-->
+        <Button x:Name="btnNeueTabelle" Click="BtnNeueTabelle_Click" Width="150" Height="30" Content="Neue Tabelle anlegen" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
+        <Button x:Name="btnCsvEinlesenMain" Click="BtnCsvEinlesenMain_Click" Width="150" Height="30" Content="Tabelle aus CSV einlesen" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
+        <local:UebersichtTabellen x:Name="uebersichtTabellen" Grid.Column="1" Grid.Row="0" />
+        <local:PflegeTabellendaten Margin="0,10,0,0" x:Name="pflegeTabellendaten" Grid.Column="2" Grid.Row="0" />
+        <local:Tabellendaten x:Name="tabDaten" Grid.Row="1" Grid.ColumnSpan="3" />
+    </Grid> 
+</Window>
