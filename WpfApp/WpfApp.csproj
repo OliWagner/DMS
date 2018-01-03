@@ -56,30 +56,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CsvDialog.xaml.cs">
+    <Compile Include="Dialogs\CsvDialog.xaml.cs">
       <DependentUpon>CsvDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PflegeTabellendaten.xaml.cs">
+    <Compile Include="UserControls\PflegeTabellendaten.xaml.cs">
       <DependentUpon>PflegeTabellendaten.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabellendaten.xaml.cs">
+    <Compile Include="UserControls\Tabellendaten.xaml.cs">
       <DependentUpon>Tabellendaten.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UebersichtTabellen.xaml.cs">
+    <Compile Include="UserControls\UebersichtTabellen.xaml.cs">
       <DependentUpon>UebersichtTabellen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Upload.xaml.cs">
+    <Compile Include="Windows\Upload.xaml.cs">
       <DependentUpon>Upload.xaml</DependentUpon>
     </Compile>
-    <Page Include="CsvDialog.xaml">
+    <Page Include="Dialogs\CsvDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EingabeTabelle.xaml">
+    <Page Include="Windows\EingabeTabelle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EingabeTabellenfelder.xaml">
+    <Page Include="UserControls\EingabeTabellenfelder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -92,21 +92,21 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DbConnector.cs" />
-    <Compile Include="EingabeTabelle.xaml.cs">
+    <Compile Include="Windows\EingabeTabelle.xaml.cs">
       <DependentUpon>EingabeTabelle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EingabeTabellenfelder.xaml.cs">
+    <Compile Include="UserControls\EingabeTabellenfelder.xaml.cs">
       <DependentUpon>EingabeTabellenfelder.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PflegeTabellendaten.xaml">
+    <Page Include="UserControls\PflegeTabellendaten.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tabellendaten.xaml">
+    <Page Include="UserControls\Tabellendaten.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,11 +114,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UebersichtTabellen.xaml">
+    <Page Include="UserControls\UebersichtTabellen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Upload.xaml">
+    <Page Include="Windows\Upload.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
