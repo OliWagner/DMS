@@ -59,7 +59,6 @@
     <Compile Include="CsvDialog.xaml.cs">
       <DependentUpon>CsvDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers.cs" />
     <Compile Include="PflegeTabellendaten.xaml.cs">
       <DependentUpon>PflegeTabellendaten.xaml</DependentUpon>
     </Compile>
