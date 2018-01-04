@@ -25,6 +25,10 @@ namespace WpfApp
         public EingabeTabellenfelder()
         {
             InitializeComponent();
+            List<Tuple<string, string, string>> check = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
+            if (check.Count() == 0) {
+                cbiLookup.IsEnabled = false;
+            }
         }
 
         private void txtBezeichnung_TextChanged(object sender, TextChangedEventArgs e)

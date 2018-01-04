@@ -43,6 +43,11 @@
                     <sys:String>txtmn</sys:String>
                 </ComboBoxItem.Tag>
             </ComboBoxItem>
+            <ComboBoxItem x:Name="cbiLookup" Content="Nachschlagefeld">
+                <ComboBoxItem.Tag>
+                    <sys:String>look</sys:String>
+                </ComboBoxItem.Tag>
+            </ComboBoxItem>
 
         </ComboBox>
         <TextBox x:Name="txtBezeichnung" TextChanged="txtBezeichnung_TextChanged" HorizontalAlignment="Left" Height="20" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" />
