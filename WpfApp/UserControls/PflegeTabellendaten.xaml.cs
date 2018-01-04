@@ -244,12 +244,9 @@ namespace WpfApp
                     //TODO COmboBOx vorbelegen
                     Tuple<List<int>, List<object>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(csvFeldnamen.ElementAt(i).Split('_')[3], csvFeldnamen.ElementAt(i).Split('_')[4]);
                     if (!csvFeldwerte.ElementAt(i).ToString().Equals("")) {
-                        int position = tuple.Item1.IndexOf(Int32.Parse(csvFeldwerte.ElementAt(i).ToString()));
-                    
+                        int position = tuple.Item1.IndexOf(Int32.Parse(csvFeldwerte.ElementAt(i).ToString()));                  
                         tb.cboAuswahl.SelectedIndex = position;
                     }
-                    
-
 
                     tb.VerticalAlignment = VerticalAlignment.Top;
                     tb.HorizontalAlignment = HorizontalAlignment.Left;

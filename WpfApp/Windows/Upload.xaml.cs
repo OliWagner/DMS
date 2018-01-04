@@ -215,7 +215,7 @@ namespace WpfApp
         #region Handlers
         private void btnHinzu_Click(object sender, RoutedEventArgs e)
         {
-            EingabeTabellenfelder ds = new EingabeTabellenfelder();
+            EingabeTabellenfelder ds = new EingabeTabellenfelder("x");
             ds.Margin = new Thickness(5, 5, 0, 0);
             ds.txtBezeichnung.TextChanged += TxtBezeichnung_TextChanged;
             //ds.comBoxFeldtyp.SelectionChanged += ComBoxFeldtyp_SelectionChanged;
@@ -375,7 +375,7 @@ namespace WpfApp
                     int counter = 0;
                     foreach (var item in firstLine.Split(csvTrenner))
                     {
-                        EingabeTabellenfelder tabFeld = new EingabeTabellenfelder();
+                        EingabeTabellenfelder tabFeld = new EingabeTabellenfelder("x");
                         tabFeld.txtBezeichnung.Text = item.ToString();
                         tabFeld.Margin = new Thickness(5, 5, 0, 0);
                         alleTabellenfelder.Add(tabFeld);

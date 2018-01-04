@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace WpfApp
 {
@@ -20,14 +11,25 @@ namespace WpfApp
     /// </summary>
     public partial class EingabeTabellenfelder : UserControl
     {
-        public EingabeTabellenfelder()
+        public EingabeTabellenfelder(string check = "")
         {
             InitializeComponent();
             List<Tuple<string, string, string>> alleTabellenAusserSystem = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
-            if (alleTabellenAusserSystem.Count() == 0) {
-                cbiLookup.IsEnabled = false;
+
+            //Nachschlagefelder dürfen bei CSV einlesen nicht aktiv sein
+            if (check.Equals(""))
+            {
+                //wenn keine weiteren Tabellen vorhanden, das Feld deaktivieren
+                if (alleTabellenAusserSystem.Count() == 0)
+                {
+                    cbiLookup.IsEnabled = false;
+                }
             }
+            else {
+                comBoxFeldtyp.Items.Remove(cbiLookup);
+            }         
         }
+
 
         private void txtBezeichnung_TextChanged(object sender, TextChangedEventArgs e)
         {
