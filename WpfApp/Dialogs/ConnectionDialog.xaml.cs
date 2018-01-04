@@ -42,5 +42,11 @@ namespace WpfApp
         {
             this.DialogResult = true;
         }
+
+        private void btnAbbrechen_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+            //Wird in Mainindow behandelt, schließt die Applikation
+        }
     }
 }

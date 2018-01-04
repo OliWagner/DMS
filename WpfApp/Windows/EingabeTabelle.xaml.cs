@@ -160,11 +160,25 @@ namespace WpfApp
             string tabName = txtTabellenname.Text;
 
             //Tabelle merken für hoch bubblemdes event
-            foreach (var item in alleDatensaetze)
+            string ersatztext = "";
+            foreach (EingabeTabellenfelder item in alleDatensaetze)
             {
                 var strIn = item.comBoxFeldtyp.Text;
+                if (strIn.Equals("Nachschlagefeld")) {
+                    string tag = item.txtBezeichnung.Tag.ToString();
+                    ersatztext = "|x|" + item.txtBezeichnung.Text + "|" + (tag.Replace("_", "|"));
+                }
                 var strOut = ((ComboBoxItem)item.comBoxFeldtyp.SelectedItem).Tag.ToString();
-                werte.Add(item.txtBezeichnung.Text, strOut);
+                if (ersatztext.Equals(""))
+                {
+                    werte.Add(item.txtBezeichnung.Text, strOut);
+                }
+                else
+                {
+                    werte.Add(ersatztext, strOut);
+                    ersatztext = "";
+                }
+                
             }
             //In die Datenbank schreiben
             ((DbConnector)App.Current.Properties["Connector"]).CreateNewTable(tabName, werte);

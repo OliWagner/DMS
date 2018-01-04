@@ -37,6 +37,7 @@ namespace WpfApp
 
         private void Connect(string vorherigeEingabe = "") {
             ConnectionDialog connectionDialog = new ConnectionDialog();
+            connectionDialog.btnAbbrechen.Click += conDialogBtnAbbrechen_Click;
             if (!vorherigeEingabe.Equals("")) {
                 connectionDialog.txtDataSource.Text = vorherigeEingabe.Split(';')[0];
                 connectionDialog.txtInitialCatalog.Text = vorherigeEingabe.Split(';')[1];
@@ -52,7 +53,15 @@ namespace WpfApp
                     Connect(connectionDialog.txtDataSource.Text + ";" + connectionDialog.txtInitialCatalog.Text + ";" + connectionDialog.txtUserName.Text + ";" + connectionDialog.txtPassword.Text);
                 }
             }
+            else {
+                Connect();
+            }
 
+        }
+
+        private void conDialogBtnAbbrechen_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
         }
 
         private void InitializeVendorComponents() {

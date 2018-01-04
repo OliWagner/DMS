@@ -59,6 +59,9 @@
     <Compile Include="Dialogs\ConnectionDialog.xaml.cs">
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\LookupDialog.xaml.cs">
+      <DependentUpon>LookupDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\CsvDialog.xaml.cs">
       <DependentUpon>CsvDialog.xaml</DependentUpon>
     </Compile>
@@ -75,6 +78,10 @@
       <DependentUpon>Upload.xaml</DependentUpon>
     </Compile>
     <Page Include="Dialogs\ConnectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\LookupDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

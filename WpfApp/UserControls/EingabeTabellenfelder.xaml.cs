@@ -20,26 +20,32 @@ namespace WpfApp
     /// </summary>
     public partial class EingabeTabellenfelder : UserControl
     {
-        
-        
         public EingabeTabellenfelder()
         {
             InitializeComponent();
-            List<Tuple<string, string, string>> check = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
-            if (check.Count() == 0) {
+            List<Tuple<string, string, string>> alleTabellenAusserSystem = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
+            if (alleTabellenAusserSystem.Count() == 0) {
                 cbiLookup.IsEnabled = false;
             }
         }
 
         private void txtBezeichnung_TextChanged(object sender, TextChangedEventArgs e)
         {
+            ((TextBox)sender).Text = ((TextBox)sender).Text.Replace("_", "");
             //Hier nichts tun Event wird in Upload verarbeitet
             //Dient zur Änderung der Headerspalten im DataGrid
         }
 
         private void comBoxFeldtyp_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Hier nichts tun Event wird in Upload verarbeitet
+            ComboBoxItem item = (ComboBoxItem)((ComboBox)sender).SelectedItem;
+            if (item.Content.Equals("Nachschlagefeld")) {
+                LookupDialog dialog = new LookupDialog();
+                if (dialog.ShowDialog() == true) {
+                    txtBezeichnung.Tag = dialog.Tabelle + "_" + dialog.Feld;
+                    comBoxFeldtyp.IsEnabled = false;
+                }
+            }
         }
     }
 }

@@ -53,8 +53,8 @@ namespace WpfApp
                 foreach (var item in Werte)
                 {
                     sbFeldtypen.Append(item.Value.ToString() + ";");
-                    sbFeldnamen.Append(item.Key.ToString() + ";");
-                    sb.Append("[" + item.Key.ToString() + "] " + GetFieldTypes(item.Value.ToString()) + ",");
+                    sbFeldnamen.Append(item.Key.ToString().Replace("|", "_") + ";");
+                    sb.Append("[" + item.Key.ToString().Replace("|", "_") + "] " + GetFieldTypes(item.Value.ToString()) + ",");
                 }
                 sb.Append("CONSTRAINT [PK_" + Tabellenname + "] PRIMARY KEY CLUSTERED");
                 sb.Append("(");
@@ -119,6 +119,9 @@ namespace WpfApp
                     break;
                 case "boln":
                     returner = "[bit] NULL";
+                    break;
+                case "look":
+                    returner = "[int] NULL";
                     break;
             }
             return returner;
