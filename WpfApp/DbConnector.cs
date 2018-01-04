@@ -153,6 +153,27 @@ namespace WpfApp
             return liste;
         }
 
+        public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld)
+        {
+            List<int> lstInt = new List<int>();
+            List<object> lstObject = new List<object>();
+
+            DataTable dt = new DataTable();
+            string query = "select "+ _tabelle +"Id, "+ _feld + " from " + _tabelle;
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            foreach (DataRow row in dt.Rows)
+            {
+                lstInt.Add(row.Field<int>(0));
+                lstObject.Add(row.Field<object>(1));
+            }
+            return Tuple.Create(lstInt, lstObject);
+        }
+
         public DataTable ReadTableData(string tabellenname) {
             DataTable dt = new DataTable();
 
@@ -166,6 +187,8 @@ namespace WpfApp
 
             return dt;
         }
+
+        
 
         /// <summary>
         /// Fügt einer Tabelle einen neuen Eintrag hinzu
@@ -206,6 +229,18 @@ namespace WpfApp
                     }
                 }
                 else if (csvArray[counter].Substring(0, 3).Equals("int"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    if (entry.Value.ToString().Equals(""))
+                    {
+                        sbWerte.Append("NULL,");
+                    }
+                    else
+                    {
+                        sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
+                    }
+                }
+                else if (csvArray[counter].Substring(0, 3).Equals("loo"))
                 {
                     sbSpalten.Append(entry.Key + ",");
                     if (entry.Value.ToString().Equals(""))

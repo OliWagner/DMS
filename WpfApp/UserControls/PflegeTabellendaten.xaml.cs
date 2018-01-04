@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfApp.UserControls;
 
 namespace WpfApp
 {
@@ -97,7 +98,16 @@ namespace WpfApp
                     Grid.SetRow(tb, (i + 1));
                     grdMain.Children.Add(tb);
                 }
-                else
+                else if (csvFeldtypen[i].Substring(0, 3).Equals("loo"))
+                {
+                    LookupAuswahl tb = new LookupAuswahl();
+                    tb.Fill(csvFeldnamen.ElementAt(i));
+                    tb.VerticalAlignment = VerticalAlignment.Top;
+                    tb.HorizontalAlignment = HorizontalAlignment.Left;
+                    Grid.SetColumn(tb, 1);
+                    Grid.SetRow(tb, (i + 1));
+                    grdMain.Children.Add(tb);
+                } else
                 {
                     TextBox tb = new TextBox();
                     tb.Name = "Wert" + i;
@@ -226,9 +236,28 @@ namespace WpfApp
                     Grid.SetColumn(tb, 1);
                     Grid.SetRow(tb, (i + 1));
                     grdMain.Children.Add(tb);
+                }
+                else if (csvFeldtypen[i].Substring(0, 3).Equals("loo"))
+                {
+                    LookupAuswahl tb = new LookupAuswahl();
+                    tb.Fill(csvFeldnamen.ElementAt(i));
+                    //TODO COmboBOx vorbelegen
+                    Tuple<List<int>, List<object>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(csvFeldnamen.ElementAt(i).Split('_')[3], csvFeldnamen.ElementAt(i).Split('_')[4]);
+                    if (!csvFeldwerte.ElementAt(i).ToString().Equals("")) {
+                        int position = tuple.Item1.IndexOf(Int32.Parse(csvFeldwerte.ElementAt(i).ToString()));
+                    
+                        tb.cboAuswahl.SelectedIndex = position;
+                    }
+                    
 
 
-                } else { 
+                    tb.VerticalAlignment = VerticalAlignment.Top;
+                    tb.HorizontalAlignment = HorizontalAlignment.Left;
+                    Grid.SetColumn(tb, 1);
+                    Grid.SetRow(tb, (i + 1));
+                    grdMain.Children.Add(tb);
+                }
+                else { 
                     //Textbox erstellen
                     TextBox tb = new TextBox();
                     tb.Name = "Wert" + i;
@@ -441,6 +470,11 @@ namespace WpfApp
                     else if (item.GetType() == typeof(DatePicker))
                     {
                         var kvp = new KeyValuePair<string, object>(keepValueForDic, ((DatePicker)item).SelectedDate);
+                        _dic.Add(kvp.Key, kvp.Value);
+                    }
+                    else if (item.GetType() == typeof(LookupAuswahl))
+                    {
+                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem).Tag);
                         _dic.Add(kvp.Key, kvp.Value);
                     }
                 counter++;
