@@ -308,13 +308,12 @@ namespace WpfApp
                             int monat = Int32.Parse(csvFeldwerte.ElementAt(i).ToString().Substring(3, 2));
                             int jahr = Int32.Parse(csvFeldwerte.ElementAt(i).ToString().Substring(6, 4));
                             dp.SelectedDate = new DateTime(jahr,monat,tag);
+                            } 
                             dp.VerticalAlignment = VerticalAlignment.Top;
                             dp.HorizontalAlignment = HorizontalAlignment.Left;
                             Grid.SetColumn(dp, 1);
                             Grid.SetRow(dp, (i + 1));
-                            grdMain.Children.Add(dp);
-                        }               
-                                          
+                            grdMain.Children.Add(dp);                  
                     }
                     else
                     {

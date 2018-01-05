@@ -201,6 +201,7 @@ namespace WpfApp
         public DataTable ReadTableDataWerteErsetztFuerDarstellung(string tabellenname)
         {
             string[] _csvWerteFeldnamen = { };
+            string[] _csvWerteFeldnamenOriginal = { };
             string[] _csvWerteFeldTypen = { };
             
             //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
@@ -211,6 +212,7 @@ namespace WpfApp
                     string _namen = tabellenname + "Id;" + item.Item3;
                     string _typen = "int;" + item.Item2;
                     _csvWerteFeldnamen = _namen.Split(';');
+                    _csvWerteFeldnamenOriginal = _namen.Split(';');
                     _csvWerteFeldTypen = _typen.Split(';');
                 }
             }
@@ -223,16 +225,17 @@ namespace WpfApp
                 string txt = _csvWerteFeldnamen[i];
                 if (_csvWerteFeldnamen[i].Contains("_x_")){ txt = txt.Split('_')[2]; _csvWerteFeldnamen[i] = txt; }
                 DataColumn column = new DataColumn(txt);
-                column.DataType = typeof(string); 
-                //switch (_csvWerteFeldTypen[i].Substring(0, 3))
-                //{
-                //    case "int": column.DataType = typeof(int); break;
-                //    case "dat": column.DataType = typeof(DateTime); break;
-                //    case "dec": column.DataType = typeof(decimal); break;
-                //    case "boo": column.DataType = typeof(bool); break;
-                //    case "loo": column.DataType = typeof(int); break;
-                //    case "txt": column.DataType = typeof(string); break;
-                //}
+                //Für die Darstellung im DataGrid reicht der Typ String
+                //column.DataType = typeof(string); 
+                switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                {
+                    case "int": column.DataType = typeof(int); break;
+                    case "dat": column.DataType = typeof(DateTime); break;
+                    case "dec": column.DataType = typeof(decimal); break;
+                    case "boo": column.DataType = typeof(bool); break;
+                    case "loo": column.DataType = typeof(string); break;
+                    case "txt": column.DataType = typeof(string); break;
+                }
                 dtCopy.Columns.Add(column);
             }
 
@@ -254,14 +257,22 @@ namespace WpfApp
                     switch (_csvWerteFeldTypen[i].Substring(0, 3))
                     {
                         case "int":
-                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i).ToString(); break;
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i) != null ? row.Field<int?>(i) : 0; break;
                         case "dat":
-                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<DateTime?>(i).ToString(); break;
+                            if (row.Field<DateTime?>(i) != null)
+                            {
+                                rowCopy[_csvWerteFeldnamen[i]] = row.Field<DateTime?>(i);
+                            }
+                            else {
+                                rowCopy[_csvWerteFeldnamen[i]] = DBNull.Value;
+                            }
+                            break;
                         case "dec":
-                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<decimal?>(i).ToString(); break;
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<decimal?>(i) != null ? row.Field<decimal?>(i) : 0; break;
                         case "boo":
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i); break;
                         case "loo":
+                            //TODO Referentwert ersetzen
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i).ToString() + 1000; break;
                         case "txt":
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<string>(i); break;

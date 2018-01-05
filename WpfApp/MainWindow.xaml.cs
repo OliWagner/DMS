@@ -196,31 +196,32 @@ namespace WpfApp
             StringBuilder csvFeldwerte = new StringBuilder();
             //Mit Werten aus Pflegetabellendaten und den Werten aus SelectedItem das Grid in PflegeTabellendaten neu zeichnen
             int index = tabDaten.dgTabelle.SelectedIndex;
-            DataRowView row = (DataRowView)tabDaten.dgTabelleOriginal.Items[index];
-
-
-            //DataRowView row = (DataRowView)tabDaten.dgTabelle.SelectedItem;
-            if (row != null)
-            {
-                int counter = 0;
-                foreach (var item in row.Row.ItemArray)
+            
+            if (index > 0) {
+                DataRowView row = (DataRowView)tabDaten.dgTabelleOriginal.Items[index];
+                //DataRowView row = (DataRowView)tabDaten.dgTabelle.SelectedItem;
+                if (row != null)
                 {
-                    if (counter != 0)
+                    int counter = 0;
+                    foreach (var item in row.Row.ItemArray)
                     {
-                        csvFeldwerte.Append(item.ToString() + ";");
+                        if (counter != 0)
+                        {
+                            csvFeldwerte.Append(item.ToString() + ";");
+                        }
+                        else
+                        {
+                            //item ist die Id des Datensatzes
+                            pflegeTabellendaten._idAktuellerDatensatz = Int32.Parse(item.ToString());
+                        }
+                        counter++;
                     }
-                    else
-                    {
-                        //item ist die Id des Datensatzes
-                        pflegeTabellendaten._idAktuellerDatensatz = Int32.Parse(item.ToString());
-                    }
-                    counter++;
+                    string txtUebergabe = csvFeldwerte.ToString();
+                    txtUebergabe = txtUebergabe.Substring(0, txtUebergabe.Length - 1);
+                    // Grid mit den Werten neu zeichnen
+                    pflegeTabellendaten.zeichenGrid(pflegeTabellendaten._tabName, pflegeTabellendaten._csvTabFeldnamen, pflegeTabellendaten._csvTabFeldtypen, txtUebergabe);
                 }
-                string txtUebergabe = csvFeldwerte.ToString();
-                txtUebergabe = txtUebergabe.Substring(0, txtUebergabe.Length - 1);
-                // Grid mit den Werten neu zeichnen
-                pflegeTabellendaten.zeichenGrid(pflegeTabellendaten._tabName, pflegeTabellendaten._csvTabFeldnamen, pflegeTabellendaten._csvTabFeldtypen, txtUebergabe);
-            }
+            }   
         }
         #endregion
 
