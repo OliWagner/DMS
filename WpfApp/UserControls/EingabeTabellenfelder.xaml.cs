@@ -30,7 +30,6 @@ namespace WpfApp
             }         
         }
 
-
         private void txtBezeichnung_TextChanged(object sender, TextChangedEventArgs e)
         {
             ((TextBox)sender).Text = ((TextBox)sender).Text.Replace("_", "");

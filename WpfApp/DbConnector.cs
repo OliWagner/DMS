@@ -174,6 +174,11 @@ namespace WpfApp
             return Tuple.Create(lstInt, lstObject);
         }
 
+        /// <summary>
+        /// Liest die Originaldaten der Tabelle ein
+        /// </summary>
+        /// <param name="tabellenname">Einzulesende Tabelle</param>
+        /// <returns></returns>
         public DataTable ReadTableData(string tabellenname) {
             DataTable dt = new DataTable();
 
@@ -188,7 +193,88 @@ namespace WpfApp
             return dt;
         }
 
-        
+        /// <summary>
+        /// Liest die Daten der Tabelle ein und ersetzt Referenzen zu anderen Tabellen mit den entsprechenden Werten für die Darstellung in Datagrid. Die Spaltenheader werden auch korrigiert
+        /// </summary>
+        /// <param name="tabellenname">Die einzulesende Tabelle</param>
+        /// <returns>Tabellendaten mit referenzierten Nachschlagewerten</returns>
+        public DataTable ReadTableDataWerteErsetztFuerDarstellung(string tabellenname)
+        {
+            string[] _csvWerteFeldnamen = { };
+            string[] _csvWerteFeldTypen = { };
+            
+            //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
+            List <Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields();
+            foreach (var item in Werte)
+            {
+                if (item.Item1.Equals(tabellenname)) {
+                    string _namen = tabellenname + "Id;" + item.Item3;
+                    string _typen = "int;" + item.Item2;
+                    _csvWerteFeldnamen = _namen.Split(';');
+                    _csvWerteFeldTypen = _typen.Split(';');
+                }
+            }
+            //Originaldaten einlesen
+            DataTable dt = new DataTable();
+            DataTable dtCopy = new DataTable();
+            //Die Header und DataTypes für die Kopie festlegen;
+            for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
+            {
+                string txt = _csvWerteFeldnamen[i];
+                if (_csvWerteFeldnamen[i].Contains("_x_")){ txt = txt.Split('_')[2]; _csvWerteFeldnamen[i] = txt; }
+                DataColumn column = new DataColumn(txt);
+                column.DataType = typeof(string); 
+                //switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                //{
+                //    case "int": column.DataType = typeof(int); break;
+                //    case "dat": column.DataType = typeof(DateTime); break;
+                //    case "dec": column.DataType = typeof(decimal); break;
+                //    case "boo": column.DataType = typeof(bool); break;
+                //    case "loo": column.DataType = typeof(int); break;
+                //    case "txt": column.DataType = typeof(string); break;
+                //}
+                dtCopy.Columns.Add(column);
+            }
+
+            string query = "select * from " + tabellenname;
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            //Reihe für Reihe
+            int counter = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                DataRow rowCopy = dtCopy.NewRow();
+                //Spalte für Spalte
+                for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
+                {
+                    switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                    {
+                        case "int":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i).ToString(); break;
+                        case "dat":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<DateTime?>(i).ToString(); break;
+                        case "dec":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<decimal?>(i).ToString(); break;
+                        case "boo":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i); break;
+                        case "loo":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i).ToString() + 1000; break;
+                        case "txt":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<string>(i); break;
+                    }
+                }
+                dtCopy.Rows.Add(rowCopy);
+            }
+            return dtCopy;
+        }
+
+
+
+
 
         /// <summary>
         /// Fügt einer Tabelle einen neuen Eintrag hinzu

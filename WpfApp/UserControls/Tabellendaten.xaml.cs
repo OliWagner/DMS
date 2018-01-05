@@ -21,6 +21,8 @@ namespace WpfApp
     /// </summary>
     public partial class Tabellendaten : UserControl
     {
+        DataTable dtOriginal;
+        DataTable dt;
         //string[] arrTxt = new string[5];
         public Tabellendaten()
         {
@@ -36,13 +38,15 @@ namespace WpfApp
         }
 
         public void zeichneTabelle(string tabelle) {
-            DataTable dt = new DataTable();
 
-            dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
+            dtOriginal = new DataTable();
+            dt = new DataTable();
+            dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
+            dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
 
             //DataGrid füllen
             dgTabelle.ItemsSource = dt.DefaultView;
-
+            dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
         }
 
         private void dgTabelle_SelectionChanged(object sender, SelectionChangedEventArgs e)
