@@ -77,6 +77,7 @@
     <Compile Include="UserControls\UebersichtTabellen.xaml.cs">
       <DependentUpon>UebersichtTabellen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VigenereQuadrath.cs" />
     <Compile Include="Windows\Upload.xaml.cs">
       <DependentUpon>Upload.xaml</DependentUpon>
     </Compile>

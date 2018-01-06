@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Serialization;
 using System.Linq;
-
+using Vigenere;
 
 namespace WpfApp
 {
@@ -35,6 +35,7 @@ namespace WpfApp
         }
 
         public static ConnectionDirectory connectionDirectory = new ConnectionDirectory();
+        VigenereQuadrath q = new VigenereQuadrath("FIcken1465JHdg");
 
         private string _path
         {
@@ -45,7 +46,7 @@ namespace WpfApp
         {
             InitializeComponent();
 
-            //Verzeichnis der ANwendung ermitteln
+            //Verzeichnis der Anwendung ermitteln
             FileInfo fi = new FileInfo(Assembly.GetEntryAssembly().Location);
             _path = fi.DirectoryName +"\\Connections.xml";
             if (File.Exists(_path))
@@ -53,10 +54,10 @@ namespace WpfApp
                 ConnectionDirectory cd = DeSerialize(_path);
                 foreach (var item in cd.ConnectionsList)
                 {
-                    connectionDirectory.Add(new ConnectionDetails { InitialCatalog = item.InitialCatalog, DataSource = item.DataSource, Username = item.Username, Password = item.Password  });
+                    connectionDirectory.Add(new ConnectionDetails { InitialCatalog = q.EntschlüssleText(item.InitialCatalog).Replace(" ","\\"), DataSource = q.EntschlüssleText(item.DataSource), Username = q.EntschlüssleText(item.Username), Password = q.EntschlüssleText(item.Password)  });
                     //Der Combobox die Elemente hinzufügen
                     ComboBoxItem cboItem = new ComboBoxItem();
-                    cboItem.Content = item.InitialCatalog;
+                    cboItem.Content = q.EntschlüssleText(item.InitialCatalog);
                     cboConnections.Items.Add(cboItem);
                 }
             }
@@ -108,6 +109,15 @@ namespace WpfApp
         private void btnSpeichern_Click(object sender, RoutedEventArgs e)
         {
             connectionDirectory.Add(new ConnectionDetails { InitialCatalog = txtInitialCatalog.Text, DataSource = txtDataSource.Text, Username = txtUserName.Text, Password = txtPassword.Text });
+            //Die Daten verschlüsseln
+            foreach (ConnectionDetails item in connectionDirectory.ConnectionsList)
+            {
+                item.InitialCatalog = q.VerschlüssleText(item.InitialCatalog);
+                item.DataSource = q.VerschlüssleText(item.DataSource);
+                item.Username = q.VerschlüssleText(item.Username);
+                item.Password = q.VerschlüssleText(item.Password);
+            }
+            //XML wegschreiben
             Serialize(connectionDirectory, _path);
         }
 
@@ -145,18 +155,4 @@ namespace WpfApp
             ConnectionsList.Add(elem);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
