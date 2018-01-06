@@ -5,30 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="Werte festlegen" Height="270" Width="330">
+        Title="Werte festlegen" Height="320" Width="330">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="25"></RowDefinition>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Data Source:"></Label>
-        <TextBox x:Name="txtDataSource" Width="185" Grid.Row="0" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Label Grid.Row="1" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Initial Catalog:"></Label>
-        <TextBox x:Name="txtInitialCatalog" Width="185" Grid.Row="1" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Label Grid.Row="2" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="User Name:"></Label>
-        <TextBox x:Name="txtUserName" Width="185" Grid.Row="2" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Label Grid.Row="3" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Password:"></Label>
-        <TextBox x:Name="txtPassword" Width="185" Grid.Row="3" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        
-        
-        
-        
-        
-        
-        <Button x:Name="btnOk" FontSize="10" Content="Ok" Margin="40,5,165,5" Grid.Row="4" Click="btnOk_Click"/>
-        <Button x:Name="btnAbbrechen" FontSize="10" Content="Abbrechen" Margin="170,5,40,5" Grid.Row="4" Click="btnAbbrechen_Click"/>
+        <Label Grid.Row="0" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Datenbanken:"></Label>
+        <ComboBox x:Name="cboConnections" Width="185" Height="21" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="100,0,0,0" Grid.Row="0" SelectionChanged="cboConnections_SelectionChanged"/>
+        <Label Grid.Row="1" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Data Source:"></Label>
+        <TextBox x:Name="txtDataSource" Width="185" Grid.Row="1" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Grid.Row="2" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Initial Catalog:"></Label>
+        <TextBox x:Name="txtInitialCatalog" Width="185" Grid.Row="2" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Grid.Row="3" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="User Name:"></Label>
+        <TextBox x:Name="txtUserName" Width="185" Grid.Row="3" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Grid.Row="4" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Password:"></Label>
+        <TextBox x:Name="txtPassword" Width="185" Grid.Row="4" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Button x:Name="btnOk" Width="80" FontSize="10" Content="Verbinden" Margin="20,5,0,5" Grid.Row="5" Click="btnOk_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnAbbrechen" Width="80" FontSize="10" Content="Abbrechen" Margin="110,5,0,5" Grid.Row="5" Click="btnAbbrechen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnSpeichern" Width="80" FontSize="10" Content="Speichern" Margin="200,5,0,5" Grid.Row="5" Click="btnSpeichern_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
     </Grid>
 </Window>
