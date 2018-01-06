@@ -203,7 +203,8 @@ namespace WpfApp
             string[] _csvWerteFeldnamen = { };
             string[] _csvWerteFeldnamenOriginal = { };
             string[] _csvWerteFeldTypen = { };
-            
+            List<Tuple<List<int>, List<object>>> _nachschlageFelderWerte = new List<Tuple<List<int>, List<object>>>();
+
             //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
             List <Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields();
             foreach (var item in Werte)
@@ -223,10 +224,13 @@ namespace WpfApp
             for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
             {
                 string txt = _csvWerteFeldnamen[i];
-                if (_csvWerteFeldnamen[i].Contains("_x_")){ txt = txt.Split('_')[2]; _csvWerteFeldnamen[i] = txt; }
+                if (_csvWerteFeldnamen[i].Contains("_x_")){
+                    //Nachschlagefelder für die spätere Vearbeitung in dieser Methdode merken                    
+                    _nachschlageFelderWerte.Add(ReadComboboxItems(_csvWerteFeldnamen[i].Split('_')[3], _csvWerteFeldnamen[i].Split('_')[4]));
+                    txt = txt.Split('_')[2];
+                    _csvWerteFeldnamen[i] = txt;
+                }
                 DataColumn column = new DataColumn(txt);
-                //Für die Darstellung im DataGrid reicht der Typ String
-                //column.DataType = typeof(string); 
                 switch (_csvWerteFeldTypen[i].Substring(0, 3))
                 {
                     case "int": column.DataType = typeof(int); break;
@@ -252,6 +256,7 @@ namespace WpfApp
             {
                 DataRow rowCopy = dtCopy.NewRow();
                 //Spalte für Spalte
+                int _nachschlageZaehler = 0;
                 for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
                 {
                     switch (_csvWerteFeldTypen[i].Substring(0, 3))
@@ -273,7 +278,20 @@ namespace WpfApp
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i); break;
                         case "loo":
                             //TODO Referentwert ersetzen
-                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i).ToString() + 1000; break;
+                            //Ich brauche eine Liste der Felder und Ids
+                            Tuple<List<int>, List<object>> tuple = _nachschlageFelderWerte.ElementAt(_nachschlageZaehler);
+                            //Index ermitteln
+                            if (row.Field<int?>(i) != null)
+                            {
+                                int index = tuple.Item1.IndexOf(row.Field<int>(i));
+                                string wert = tuple.Item2.ElementAt(index).ToString();
+                                rowCopy[_csvWerteFeldnamen[i]] = wert;
+                            }
+                            else {
+                                rowCopy[_csvWerteFeldnamen[i]] = "";
+                            }
+                            _nachschlageZaehler++;
+                            break;
                         case "txt":
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<string>(i); break;
                     }
@@ -340,7 +358,7 @@ namespace WpfApp
                 else if (csvArray[counter].Substring(0, 3).Equals("loo"))
                 {
                     sbSpalten.Append(entry.Key + ",");
-                    if (entry.Value.ToString().Equals(""))
+                    if (entry.Value == null || entry.Value.ToString().Equals(""))
                     {
                         sbWerte.Append("NULL,");
                     }

@@ -195,9 +195,20 @@ namespace WpfApp
         {
             StringBuilder csvFeldwerte = new StringBuilder();
             //Mit Werten aus Pflegetabellendaten und den Werten aus SelectedItem das Grid in PflegeTabellendaten neu zeichnen
-            int index = tabDaten.dgTabelle.SelectedIndex;
-            
-            if (index > 0) {
+            DataRowView myrow = (DataRowView)(tabDaten.dgTabelle.SelectedItem);
+            int myNewIndex = 0;
+            int IdDesDatensatzes = Int32.Parse((myrow.Row.ItemArray[0].ToString()));
+            for (int i=0; i < tabDaten.dgTabelleOriginal.Items.Count; i++) {
+                DataGridRow aktRow = (DataGridRow)(tabDaten.dgTabelleOriginal.ItemContainerGenerator.ContainerFromIndex(i));
+                if ((int)((DataRowView)aktRow.Item).Row.ItemArray[0] == IdDesDatensatzes) {
+                    myNewIndex = i;
+                }
+            }
+
+
+            //int index = tabDaten.dgTabelle.SelectedIndex;
+            int index = myNewIndex;
+            if (index >= 0) {
                 DataRowView row = (DataRowView)tabDaten.dgTabelleOriginal.Items[index];
                 //DataRowView row = (DataRowView)tabDaten.dgTabelle.SelectedItem;
                 if (row != null)

@@ -470,8 +470,16 @@ namespace WpfApp
                     }
                     else if (item.GetType() == typeof(LookupAuswahl))
                     {
+                    if ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem != null)
+                    {
                         var kvp = new KeyValuePair<string, object>(keepValueForDic, ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem).Tag);
                         _dic.Add(kvp.Key, kvp.Value);
+                    }
+                    else {
+                        var kvp = new KeyValuePair<string, object>(keepValueForDic, null);
+                        _dic.Add(kvp.Key, kvp.Value);
+                    }
+                        
                     }
                 counter++;
                 }
