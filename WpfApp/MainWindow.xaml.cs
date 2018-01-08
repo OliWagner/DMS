@@ -80,6 +80,12 @@ namespace WpfApp
         # region Eventhandler
 
         #region Eigene 
+        private void btnNeueDb_Click(object sender, RoutedEventArgs e)
+        {            
+            Connect();
+            InitializeVendorComponents();
+        }
+
         private void BtnNeueTabelle_Click(object sender, RoutedEventArgs e)
                 {
                     if (!eingabeTabelleAktiv) {
@@ -254,5 +260,7 @@ namespace WpfApp
         #endregion
 
         #endregion
+
+        
     }
 }

@@ -29,7 +29,6 @@ namespace WpfApp
                                "Loeschen",
                                typeof(MyCommands)
                        );
-
     }
 
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace WpfApp
 {
@@ -30,8 +31,9 @@ namespace WpfApp
             foreach (var item in tupleList)
             {
                 strList.Add(item.Item1);
+                cboTabelle.Items.Add(new ComboBoxItem() { Content = item.Item1 });
             }
-            cboTabelle.ItemsSource = strList;
+            //cboTabelle.ItemsSource = strList;
         }
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
@@ -41,18 +43,34 @@ namespace WpfApp
 
         private void cboTabelle_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var _tabName = (cboTabelle.SelectedItem);
+            var _tabName = (((ComboBoxItem)cboTabelle.SelectedItem).Content);
             if (!_tabName.Equals("")) {
                 cboFeld.IsEnabled = true;
+                cboFeld.Items.Clear();
                 foreach (var item in tupleList)
                 {
                     if (item.Item1.Equals(_tabName)) {
-                        cboFeld.ItemsSource = item.Item3.Split(';');
+                        foreach (var elem in item.Item3.Split(';')) {
+                            ComboBoxItem cboItem = new ComboBoxItem();
+                            if (elem.Substring(0,3).Equals("_x_")) {
+                                //Nachschlagefelder können nicht als Nachschlagewert referenziert werden
+                                cboItem.Content = elem.Split('_')[2];
+                                cboItem.IsEnabled = false;
+                            } else {
+                                cboItem.Content = elem;
+                            }                           
+                            
+                            cboFeld.Items.Add(cboItem);
+                        }
                         return;
                     }
                 }
             }
             
+        }
+
+        private bool CheckCboIsEnabled() {
+            return false;
         }
     }
 }

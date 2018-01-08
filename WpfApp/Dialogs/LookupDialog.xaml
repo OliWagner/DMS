@@ -10,14 +10,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
-
             <RowDefinition Height="25"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Width="80" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Tabelle:"></Label>
         <ComboBox x:Name="cboTabelle" Grid.Row="0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="90,5,0,0" SelectionChanged="cboTabelle_SelectionChanged" />
-        
-
-
         <Label Grid.Row="1" Width="80" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Feld:"></Label>
         <ComboBox x:Name="cboFeld" Grid.Row="1" Width="150" IsEnabled="False" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="90,5,0,0" />
         <Button x:Name="btnOk" FontSize="10" Content="Ok" Margin="80,5,80,5" Grid.Row="2" Click="btnOk_Click"/>
