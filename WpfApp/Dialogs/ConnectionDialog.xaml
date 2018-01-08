@@ -6,7 +6,13 @@
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
         Title="Werte festlegen" Height="320" Width="330">
-    <Grid>
+    <Window.CommandBindings>
+        <CommandBinding Command="local:MyCommands.Verbinden" CanExecute="VerbindenCommand_CanExecute" Executed="VerbindenCommand_Executed" />
+        <CommandBinding Command="local:MyCommands.Neu" CanExecute="NeuCommand_CanExecute" Executed="NeuCommand_Executed" />
+        <CommandBinding Command="local:MyCommands.Loeschen" CanExecute="LoeschenCommand_CanExecute" Executed="LoeschenCommand_Executed" />
+    </Window.CommandBindings>
+
+    <Grid x:Name="MeMyself">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
@@ -25,8 +31,11 @@
         <TextBox x:Name="txtUserName" Width="185" Grid.Row="3" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
         <Label Grid.Row="4" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Password:"></Label>
         <TextBox x:Name="txtPassword" Width="185" Grid.Row="4" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Button x:Name="btnOk" Width="80" FontSize="10" Content="Verbinden" Margin="20,5,0,5" Grid.Row="5" Click="btnOk_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Button x:Name="btnAbbrechen" Width="80" FontSize="10" Content="Abbrechen" Margin="110,5,0,5" Grid.Row="5" Click="btnAbbrechen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Button x:Name="btnSpeichern" Width="80" FontSize="10" Content="Speichern" Margin="200,5,0,5" Grid.Row="5" Click="btnSpeichern_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBox x:Name="txtGuid" Visibility="Hidden" />
+        <Button x:Name="btnOk" CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Verbinden" Width="55" FontSize="10" Content="Verbinden" Margin="05,5,0,5" Grid.Row="5" Click="btnOk_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnAbbrechen" Width="55" FontSize="10" Content="Abbrechen" Margin="65,5,0,5" Grid.Row="5" Click="btnAbbrechen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnSpeichern"  CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Verbinden" Width="55" FontSize="10" Content="Speichern" Margin="125,5,0,5" Grid.Row="5" Click="btnSpeichern_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnNeu" CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Neu" Width="55" FontSize="10" Content="Neu" Margin="185,5,0,5" Grid.Row="5" Click="btnNeu_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnLoeschen" CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Loeschen" Width="55" FontSize="10" Content="Löschen" Margin="245,5,0,5" Grid.Row="5" Click="btnLoeschen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
     </Grid>
 </Window>
