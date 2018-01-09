@@ -7,9 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="200" Background="White">
     <UserControl.CommandBindings>
-        <CommandBinding Command="Delete" 
-                  CanExecute="Delete_CanExecute"
-                  Executed="Delete_Executed" />
+        <CommandBinding Command="Delete" CanExecute="Delete_CanExecute" Executed="Delete_Executed" />
+        <CommandBinding Command="local:MyCommands.Leeren" CanExecute="LeerenCommand_CanExecute" Executed="LeerenCommand_Executed" />
     </UserControl.CommandBindings>
     <Grid x:Name="grdMain" Background="White" MaxWidth="200" MaxHeight="400" MinHeight="400" VerticalAlignment="Top" Height="400">
         <Grid.RowDefinitions>
@@ -19,7 +18,7 @@
         <TreeView x:Name="tvMain" BorderBrush="White" Grid.Row="0" MaxHeight="370" MinHeight="370" Margin="0,0,0,0" Height="370" VerticalAlignment="Top" />
         <Grid Grid.Row="1" MinWidth="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0">
             <Button Command="ApplicationCommands.Delete" HorizontalAlignment="Left" Click="btnLoeschen_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnLoeschen" Content="Löschen" Margin="10,0,0,0" Width="75" VerticalAlignment="Top" />
-            <Button Command="ApplicationCommands.Delete" HorizontalAlignment="Left" Click="btnLeeren_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnLeeren" Content="Leeren" Width="75" Margin="110,0,0,0" VerticalAlignment="Top" />
+            <Button Command="local:MyCommands.Leeren" HorizontalAlignment="Left" Click="btnLeeren_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnLeeren" Content="Leeren" Width="75" Margin="110,0,0,0" VerticalAlignment="Top" />
         </Grid>
     </Grid>
 

@@ -29,6 +29,13 @@ namespace WpfApp
                                "Loeschen",
                                typeof(MyCommands)
                        );
+
+        public static readonly RoutedUICommand Leeren = new RoutedUICommand
+                       (
+                               "Leeren",
+                               "Leeren",
+                               typeof(MyCommands)
+                       );
     }
 
 }

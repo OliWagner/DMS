@@ -29,26 +29,6 @@ namespace WpfApp
             InitializeComponent();
         }
 
-        private void Delete_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //DO nothing
-        }
-
-        private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (tvMain.Items != null) { 
-                foreach (TreeViewItem item in tvMain.Items)
-                {
-                    if ((bool)item.IsSelected)
-                    {
-                        e.CanExecute = true;
-                        return;
-                    }
-                }
-            }
-            e.CanExecute = false;
-        }
-
         public void zeichneGrid() {
             tvMain.Items.Clear();
             tvMain.SelectedItemChanged += TvMain_SelectedItemChanged;
@@ -102,5 +82,65 @@ namespace WpfApp
             ((DbConnector)App.Current.Properties["Connector"]).DeleteAllTableData(tabName);
             zeichneGrid();
         }
+
+        #region Commands
+        private void LeerenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            
+            //Tabelle darf nicht gelöscht werden, wenn eine andere Tabelle ein Nachschlagefeld auf diese Tabelle referenziert
+            TreeViewItem tviTabelle = (TreeViewItem)tvMain.SelectedItem;
+
+            if (tviTabelle != null)
+            {
+                string txtTabelle = tviTabelle.Header.ToString();
+                foreach (Tuple<string, string, string> item in alleTabellennamen)
+                {
+                    foreach (var feldname in item.Item3.Split(';'))
+                    {
+                        if (feldname.Substring(0, 3).Equals("_x_"))
+                        {
+                            if (feldname.Split('_')[3].Equals(txtTabelle))
+                            {
+                                e.CanExecute = false;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                e.CanExecute = false;
+                return;
+            }
+            e.CanExecute = true;
+        }
+
+        private void LeerenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Do nothing
+        }
+
+
+        private void Delete_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //DO nothing
+        }
+
+        private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (tvMain.Items != null)
+            {
+                foreach (TreeViewItem item in tvMain.Items)
+                {
+                    if ((bool)item.IsSelected)
+                    {
+                        e.CanExecute = true;
+                        return;
+                    }
+                }
+            }
+            e.CanExecute = false;
+        }
+        #endregion
     }
 }
