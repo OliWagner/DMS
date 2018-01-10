@@ -84,7 +84,7 @@ namespace WpfApp
         }
 
         #region Commands
-        private void LeerenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             
             //Tabelle darf nicht gelöscht werden, wenn eine andere Tabelle ein Nachschlagefeld auf diese Tabelle referenziert
@@ -126,7 +126,7 @@ namespace WpfApp
             //DO nothing
         }
 
-        private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void LeerenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             if (tvMain.Items != null)
             {

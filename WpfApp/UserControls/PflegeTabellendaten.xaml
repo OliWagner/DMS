@@ -10,7 +10,7 @@
                   CanExecute="Copy_CanExecute"
                   Executed="Copy_Executed" />
     </UserControl.CommandBindings>
-    <Grid Margin="10,0,10,10" VerticalAlignment="Top">
+    <Grid x:Name="grdSurround" Margin="10,0,10,10" VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="385*" />
             <RowDefinition Height="30*" />

@@ -43,7 +43,6 @@ namespace WpfApp
 
             var csvFeldnamen = csvTabFeldnamen.Split(';');
             var csvFeldtypen = csvTabFeldtypen.Split(';');
-
             grdMain.Children.Clear();
             //Überschrift generieren
             TextBlock txtBlock1 = new TextBlock();
@@ -75,7 +74,8 @@ namespace WpfApp
                 grdMain.RowDefinitions.Add(gR);
 
                 TextBlock tbLabel = new TextBlock();
-                tbLabel.Text = csvFeldnamen.ElementAt(i) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
+                tbLabel.Text = (csvFeldnamen.ElementAt(i).Substring(0, 3).Equals("_x_") ? csvFeldnamen.ElementAt(i).Split('_')[2] : csvFeldnamen.ElementAt(i)) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
+                tbLabel.Tag = csvFeldnamen.ElementAt(i);
                 tbLabel.Width = 180;
                 tbLabel.Height = 30;
                 tbLabel.Margin = new Thickness(5, 0, 0, 0);
@@ -214,7 +214,8 @@ namespace WpfApp
                 grdMain.RowDefinitions.Add(gR);
 
                 TextBlock tbLabel = new TextBlock();
-                tbLabel.Text = csvFeldnamen.ElementAt(i) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
+                tbLabel.Text = (csvFeldnamen.ElementAt(i).Substring(0, 3).Equals("_x_") ? csvFeldnamen.ElementAt(i).Split('_')[2] : csvFeldnamen.ElementAt(i)) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
+                tbLabel.Tag = csvFeldnamen.ElementAt(i);
                 tbLabel.Width = 180;
                 tbLabel.Height = 30;
                 tbLabel.Margin = new Thickness(5, 0, 0, 0);
@@ -448,6 +449,7 @@ namespace WpfApp
                             //Wert muss gesplittet werden, davon [0] nehmen
                             keepValueForDic = ((TextBlock)item).Text.Split(' ')[0];
                             var str = ((TextBlock)item).Text.Split(' ')[1].Replace("(", "").Replace(")", "") + ";";
+                        if (str.Substring(0,3).Equals("loo")) { keepValueForDic = ((TextBlock)item).Tag.ToString(); }
                             _csv.Append(str);
                         }
                     }
