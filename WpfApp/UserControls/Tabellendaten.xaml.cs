@@ -43,10 +43,19 @@ namespace WpfApp
             dt = new DataTable();
             dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
             dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
-
             //DataGrid füllen
             dgTabelle.ItemsSource = dt.DefaultView;
             dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
+        }
+
+        private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            var test = e.PropertyType;
+
+            if (e.PropertyType == typeof(System.DateTime))
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy";
+            if (e.PropertyType == typeof(System.Decimal))
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "F2";
         }
 
         private void dgTabelle_SelectionChanged(object sender, SelectionChangedEventArgs e)

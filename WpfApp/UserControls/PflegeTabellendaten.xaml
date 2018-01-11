@@ -10,13 +10,13 @@
                   CanExecute="Copy_CanExecute"
                   Executed="Copy_Executed" />
     </UserControl.CommandBindings>
-    <Grid x:Name="grdSurround" Margin="10,0,10,10" VerticalAlignment="Top">
+    <Grid Margin="10,0,10,10" VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="385*" />
             <RowDefinition Height="30*" />
         </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" MinHeight="390" VerticalAlignment="Top">
-            <Grid Grid.Row="0" Margin="0,0,0,0" x:Name="grdMain" Background="Green" VerticalAlignment="Top" />
+            <Grid Grid.Row="0" Margin="0,0,0,0" x:Name="grdMain" VerticalAlignment="Top" />
         </ScrollViewer>
         <Grid Grid.Row="1" Margin="0,0,0,0" VerticalAlignment="Bottom">
             <Button x:Name="btnAbbruch"  Command="ApplicationCommands.Copy" CommandTarget="{Binding ElementName=grdMain}" Margin="0,5,0,0" HorizontalAlignment="Left" Content="Abbruch" Height="20" VerticalAlignment="Bottom" Width="60" Click="btnAbbruch_Click"/>

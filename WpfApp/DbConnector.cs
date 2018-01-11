@@ -236,7 +236,7 @@ namespace WpfApp
                     case "int": column.DataType = typeof(int); break;
                     case "dat": column.DataType = typeof(DateTime); break;
                     case "dec": column.DataType = typeof(decimal); break;
-                    case "boo": column.DataType = typeof(bool); break;
+                    case "bol": column.DataType = typeof(bool); break;
                     case "loo": column.DataType = typeof(string); break;
                     case "txt": column.DataType = typeof(string); break;
                 }
@@ -274,8 +274,9 @@ namespace WpfApp
                             break;
                         case "dec":
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<decimal?>(i) != null ? row.Field<decimal?>(i) : 0; break;
-                        case "boo":
-                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i); break;
+                        case "bol":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i);
+                            break;
                         case "loo":
                             //TODO Referentwert ersetzen
                             //Ich brauche eine Liste der Felder und Ids

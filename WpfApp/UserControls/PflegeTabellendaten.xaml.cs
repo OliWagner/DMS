@@ -44,13 +44,14 @@ namespace WpfApp
             var csvFeldnamen = csvTabFeldnamen.Split(';');
             var csvFeldtypen = csvTabFeldtypen.Split(';');
             grdMain.Children.Clear();
+            grdMain.RowDefinitions.Clear();
             //Überschrift generieren
             TextBlock txtBlock1 = new TextBlock();
             txtBlock1.FontSize = 14;
             txtBlock1.FontWeight = FontWeights.Bold;
             txtBlock1.Text = tabName;
             txtBlock1.Margin = new Thickness(5, 0, 0, 0);
-            txtBlock1.Foreground = new SolidColorBrush(Colors.White);
+            txtBlock1.Foreground = new SolidColorBrush(Colors.Black);
             txtBlock1.VerticalAlignment = VerticalAlignment.Top;
 
             RowDefinition gridRow = new RowDefinition();
@@ -79,7 +80,7 @@ namespace WpfApp
                 tbLabel.Width = 180;
                 tbLabel.Height = 30;
                 tbLabel.Margin = new Thickness(5, 0, 0, 0);
-                tbLabel.Foreground = new SolidColorBrush(Colors.White);
+                tbLabel.Foreground = new SolidColorBrush(Colors.Black);
                 tbLabel.VerticalAlignment = VerticalAlignment.Top;
                 tbLabel.HorizontalAlignment = HorizontalAlignment.Left;
                 Grid.SetColumn(tbLabel, 0);
@@ -183,13 +184,14 @@ namespace WpfApp
             var csvFeldwerte = csvTabFeldwerte.Split(';');
 
             grdMain.Children.Clear();
+            grdMain.RowDefinitions.Clear();
             //Überschrift generieren
             TextBlock txtBlock1 = new TextBlock();
             txtBlock1.FontSize = 14;
             txtBlock1.FontWeight = FontWeights.Bold;
             txtBlock1.Text = tabName;
             txtBlock1.Margin = new Thickness(5, 0, 0, 0);
-            txtBlock1.Foreground = new SolidColorBrush(Colors.White);
+            txtBlock1.Foreground = new SolidColorBrush(Colors.Black);
             txtBlock1.VerticalAlignment = VerticalAlignment.Top;
 
             RowDefinition gridRow = new RowDefinition();
@@ -219,7 +221,7 @@ namespace WpfApp
                 tbLabel.Width = 180;
                 tbLabel.Height = 30;
                 tbLabel.Margin = new Thickness(5, 0, 0, 0);
-                tbLabel.Foreground = new SolidColorBrush(Colors.White);
+                tbLabel.Foreground = new SolidColorBrush(Colors.Black);
                 tbLabel.VerticalAlignment = VerticalAlignment.Top;
                 tbLabel.HorizontalAlignment = HorizontalAlignment.Left;
                 Grid.SetColumn(tbLabel, 0);
@@ -332,8 +334,7 @@ namespace WpfApp
         
 
         private void Tb_TextChangedDec(object sender, TextChangedEventArgs e)
-        {
-           
+        {          
             Regex r = new Regex("^[0-9]+(?:[\\.\\,]\\d{0,5})?$");
             TextBox _sender = (TextBox)sender;
             if (_sender.Text.ToString().Length > 0) {
@@ -345,8 +346,6 @@ namespace WpfApp
                     ctrl.CaretIndex = _sender.Text.Length;
                 }
             }
-           
-
         }
         private void Tb_TextChangedInt(object sender, TextChangedEventArgs e)
         {
