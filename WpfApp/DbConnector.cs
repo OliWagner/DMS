@@ -584,7 +584,7 @@ namespace WpfApp
                 }
                 else if (arrayAbgleich[counter].Substring(0, 3).Equals("dat"))
                 {
-                    if (!item.Value.ToString().Equals("")) {
+                    if (item.Value != null && !item.Value.ToString().Equals("")) {
                         sbInner.Append(item.Key + "='" + DateTime.Parse(item.Value.ToString()) + "',");
                     } else {
                         sbInner.Append(item.Key + "=NULL,");

@@ -207,6 +207,7 @@ namespace WpfApp
                 int IdDesDatensatzes = Int32.Parse((myrow.Row.ItemArray[0].ToString()));
                 for (int i = 0; i < tabDaten.dgTabelleOriginal.Items.Count; i++)
                 {
+                    tabDaten.dgTabelleOriginal.ScrollIntoView((tabDaten.dgTabelleOriginal.Items[i]));
                     DataGridRow aktRow = (DataGridRow)(tabDaten.dgTabelleOriginal.ItemContainerGenerator.ContainerFromIndex(i));
                     if (aktRow != null && (int)((DataRowView)aktRow.Item).Row.ItemArray[0] == IdDesDatensatzes)
                     {
