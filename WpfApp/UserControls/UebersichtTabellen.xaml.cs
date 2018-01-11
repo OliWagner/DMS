@@ -86,6 +86,16 @@ namespace WpfApp
             zeichneGrid();
         }
 
+        private void btnAendern_Click(object sender, RoutedEventArgs e)
+        {
+            //DIalog öffnen, um Tabellenfelder zur Tabelle hinzuzufügen, oder zu löschen.
+            //Es können keine Bezeichnungen geändert werden
+            AendernTabelleDialog dialog = new AendernTabelleDialog();
+            if (dialog.ShowDialog() == true) {
+
+            }
+        }
+
         #region Commands
         private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -145,5 +155,7 @@ namespace WpfApp
             e.CanExecute = false;
         }
         #endregion
+
+       
     }
 }
