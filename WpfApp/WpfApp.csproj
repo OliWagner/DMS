@@ -68,6 +68,7 @@
     <Compile Include="Dialogs\CsvDialog.xaml.cs">
       <DependentUpon>CsvDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="MyCommands.cs" />
     <Compile Include="UserControls\LookupAuswahl.xaml.cs">
       <DependentUpon>LookupAuswahl.xaml</DependentUpon>

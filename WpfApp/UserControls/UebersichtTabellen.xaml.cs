@@ -90,9 +90,10 @@ namespace WpfApp
         {
             //DIalog öffnen, um Tabellenfelder zur Tabelle hinzuzufügen, oder zu löschen.
             //Es können keine Bezeichnungen geändert werden
-            AendernTabelleDialog dialog = new AendernTabelleDialog();
-            if (dialog.ShowDialog() == true) {
-
+            AendernTabelleDialog dialog = new AendernTabelleDialog(((TreeViewItem)tvMain.SelectedItem).Header.ToString());
+            if (dialog.ShowDialog() == true)
+            {
+                //TOdo,Ergebnisse des DIalogs verarbeiten
             }
         }
 

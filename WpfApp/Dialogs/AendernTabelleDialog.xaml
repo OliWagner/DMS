@@ -5,18 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="Werte festlegen" Height="110" Width="330">
-    <Window.CommandBindings>
-    
+        Title="Tabellenfelder bearbeiten" Height="480" Width="530">
+
+        <Window.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
     </Window.CommandBindings>
 
     <Grid x:Name="MeMyself">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="350"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
-       
-        <Button x:Name="btnOk" Width="55" FontSize="10" Content="OK" Margin="05,5,0,5" Grid.Row="1" Click="btnOk_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-        <Button x:Name="btnAbbrechen" Width="55" FontSize="10" Content="Abbrechen" Margin="65,5,0,5" Grid.Row="1" Click="btnAbbrechen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Label x:Name="lblTabName" FontSize="16" Grid.Row="0" Margin="5,0,0,0" />
+        <ScrollViewer Height="350" Grid.Row="1" HorizontalScrollBarVisibility="Hidden">
+            <Grid x:Name="grdMain" MinHeight="350" Grid.Row="1" />
+        </ScrollViewer>
+        <Button Command="ApplicationCommands.Save" CommandTarget="{Binding ElementName=grdMain}" x:Name="btnOk" Width="70" FontSize="12" Content="Speichern" Margin="05,5,0,5" Grid.Row="2" Click="btnOk_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnHinzu" Width="100" FontSize="12" Content="Feld hinzufügen" Margin="205,5,0,5" Grid.Row="2" Click="btnHinzu_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnAbbrechen" Width="70" FontSize="12" Content="Abbrechen" Margin="85,5,0,5" Grid.Row="2" Click="btnAbbrechen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
      </Grid>
 </Window>

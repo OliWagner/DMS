@@ -130,7 +130,7 @@ namespace WpfApp
         /// <summary>
         /// Liest die Tabelle mit den Metainfomationen für die Datenbank ab
         /// </summary>
-        /// <returns>Tuple of Strings. Tuple<Tabellenname, csvFeldtyp, csvFeldnamen></returns>
+        /// <returns>Tuple of Strings. Tuple aus Tabellenname, csvFeldtyp, csvFeldnamen</returns>
         public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields() {
             List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
             using (SqlCommand cmd = new SqlCommand())
@@ -251,7 +251,7 @@ namespace WpfApp
             da.Fill(dt);
             da.Dispose();
             //Reihe für Reihe
-            int counter = 0;
+            //int counter = 0;
             foreach (DataRow row in dt.Rows)
             {
                 DataRow rowCopy = dtCopy.NewRow();
