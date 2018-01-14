@@ -148,7 +148,17 @@ namespace WpfApp
         #region Eventhandler
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            //Todo --> Werte aus den Eingabefeldern in die Property schreiben
+            ////Werte aus den Eingabefeldern in die Property schreiben
+            //foreach (var item in grdMain.Children)
+            //{
+               
+            //    if (item.GetType() == typeof(EingabeTabellenfelder))
+            //    {
+            //        EingabeTabellenfelder feld = (EingabeTabellenfelder)item;
+            //        FelderHinzufuegen.Add(feld);
+            //    }
+            //}
+
             this.DialogResult = true;
         }
 
@@ -159,7 +169,7 @@ namespace WpfApp
 
         private void btnHinzu_Click(object sender, RoutedEventArgs e)
         {
-            EingabeTabellenfelder eingabeTabellenfeld = new EingabeTabellenfelder();
+            EingabeTabellenfelder eingabeTabellenfeld = new EingabeTabellenfelder("", Tabelle);
             eingabeTabellenfeld.chkLoeschen.ToolTip = "Hier klicken, um das Feld wieder zu entfernen!";
             eingabeTabellenfeld.chkLoeschen.Click += eingabeTabellenfeld_ChkLoeschen_Click;
             FelderHinzufuegen.Add(eingabeTabellenfeld);

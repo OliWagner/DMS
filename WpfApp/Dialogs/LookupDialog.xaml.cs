@@ -23,17 +23,18 @@ namespace WpfApp
             get { return cboFeld.Text; }
         }
 
-        public LookupDialog()
+        public LookupDialog(string AufrufendeTabelle = "")
         {
             InitializeComponent();
-            List<string> strList = new List<string>();
+           
             tupleList = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
             foreach (var item in tupleList)
             {
-                strList.Add(item.Item1);
-                cboTabelle.Items.Add(new ComboBoxItem() { Content = item.Item1 });
+                if (!item.Item1.Equals(AufrufendeTabelle)) {
+                    cboTabelle.Items.Add(new ComboBoxItem() { Content = item.Item1 });
+                }
+                
             }
-            //cboTabelle.ItemsSource = strList;
         }
 
         private void btnOk_Click(object sender, RoutedEventArgs e)

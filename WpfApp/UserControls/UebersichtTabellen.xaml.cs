@@ -94,6 +94,11 @@ namespace WpfApp
             if (dialog.ShowDialog() == true)
             {
                 //TOdo,Ergebnisse des DIalogs verarbeiten
+                string Tabelle = dialog.Tabelle;
+                List<string> FelderLoeschen = dialog.FelderLoeschen;
+                List<EingabeTabellenfelder> FelderHinzufuegen = dialog.FelderHinzufuegen;
+                ((DbConnector)App.Current.Properties["Connector"]).ChangeTableStructure(Tabelle, FelderLoeschen, FelderHinzufuegen);
+
             }
         }
 

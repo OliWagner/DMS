@@ -75,9 +75,17 @@ namespace WpfApp
             tabDaten.btnLoeschen.Click += tabDatenBtnLoeschen_Click;
             uebersichtTabellen.btnLoeschen.Click += uebersichtTabellenbtnLoeschen_Click;
             uebersichtTabellen.btnLeeren.Click += uebersichtTabellenbtnLeeren_Click;
+            uebersichtTabellen.btnAendern.Click += uebersichtTabellenBtnAendern_Click;
         }
 
-        # region Eventhandler
+        private void uebersichtTabellenBtnAendern_Click(object sender, RoutedEventArgs e)
+        {
+            pflegeTabellendaten.grdMain.Children.Clear();
+            tabDaten.dgTabelle.ItemsSource = null;
+            InitializeVendorComponents();
+        }
+
+        #region Eventhandler
 
         #region Eigene 
         private void btnNeueDb_Click(object sender, RoutedEventArgs e)

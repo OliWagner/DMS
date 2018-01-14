@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace WpfApp
 {
@@ -32,8 +33,7 @@ namespace WpfApp
                 return false;
             }
         }
-        
-        
+                
         public bool CreateNewTable(string Tabellenname, Dictionary<string, string> Werte)
         {
             SqlCommand command = _con.CreateCommand();
@@ -152,6 +152,92 @@ namespace WpfApp
             }
             return liste;
         }
+
+        public void ChangeTableStructure(string Tabelle, List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen) {
+            List<string> csvFeldnamen = new List<string>();
+            List<string> csvTypen = new List<string>();
+            List<Tuple<string, string, string>> alleTabDaten = ReadTableNamesTypesAndFields();
+            foreach (var item in alleTabDaten)
+            {
+                if (item.Item1.Equals(Tabelle)) {
+                    csvFeldnamen = item.Item3.Split(';').ToList();
+                    csvTypen = item.Item2.Split(';').ToList();
+                }
+            }
+
+
+
+
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in FelderLoeschen)
+            {
+                sb.Append("ALTER TABLE " + Tabelle + " DROP COLUMN " + item + " ;");
+                int index = csvFeldnamen.IndexOf(item);
+                csvFeldnamen.Remove(item);
+                csvTypen.RemoveAt(index);
+            }
+
+            foreach (EingabeTabellenfelder item in FelderHinzufuegen)
+            {
+                string ersatztext = "";
+                string txt = "";
+                var strIn = item.comBoxFeldtyp.Text;
+                if (strIn.Equals("Nachschlagefeld"))
+                {
+                    string tag = item.txtBezeichnung.Tag.ToString();
+                    ersatztext = "|x|" + item.txtBezeichnung.Text + "|" + (tag.Replace("_", "|"));
+                }
+                var strOut = ((ComboBoxItem)item.comBoxFeldtyp.SelectedItem).Tag.ToString();
+                if (ersatztext.Equals(""))
+                {
+                    txt = item.txtBezeichnung.Text;
+                }
+                else
+                {
+                    txt = ersatztext.Replace("|", "_");
+                    ersatztext = "";
+                }
+                sb.Append("ALTER TABLE " + Tabelle + " ADD " + txt + " " + GetFieldTypes(strOut) + ";");
+                csvFeldnamen.Add(txt);
+                csvTypen.Add(strOut);
+                txt = "";
+            }
+
+            StringBuilder sbCsvFelder = new StringBuilder();
+            StringBuilder sbCsvTypen = new StringBuilder();
+            for (int i = 0; i < csvFeldnamen.Count; i++)
+            {
+                sbCsvFelder.Append(csvFeldnamen[i] + ";");
+                sbCsvTypen.Append(csvTypen[i] + ";");
+            }
+
+            string csvFelder = sbCsvFelder.ToString().Substring(0, sbCsvFelder.Length - 1);
+            string csvTypes = sbCsvTypen.ToString().Substring(0, sbCsvTypen.Length - 1); ;
+
+            sb.Append("UPDATE Tabellenfeldtypen SET CsvWertetypen = '" + csvTypes + "', CsvFeldnamen = '" + csvFelder + "' Where Tabellenname = '" + Tabelle + "';");
+            //< CsvWertetypen, varchar(max),> ,[CsvFeldnamen] = < CsvFeldnamen, varchar(max),> WHERE < Suchbedingungen,,>);
+
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception ex) {
+                transaction.Rollback();
+            }
+         }
 
         public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld)
         {
@@ -301,10 +387,6 @@ namespace WpfApp
             }
             return dtCopy;
         }
-
-
-
-
 
         /// <summary>
         /// Fügt einer Tabelle einen neuen Eintrag hinzu
@@ -546,6 +628,7 @@ namespace WpfApp
                 Console.WriteLine("Neither record was written to database.");
             }
         }
+
         public void UpdateTableData(string tabellenname, int datensatzId, Dictionary<string, object> werte, string csvWerteTypen)
         {
             //SQL bauen
