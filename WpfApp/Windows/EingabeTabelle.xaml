@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:WpfApp"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="500">
+
     <Window.CommandBindings>
         <CommandBinding Command="Save" 
                   CanExecute="Save_CanExecute"

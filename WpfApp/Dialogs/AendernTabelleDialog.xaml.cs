@@ -23,6 +23,7 @@ namespace WpfApp
         public string Tabelle { get; set; }
         private int _anzahlFelder { get; set; }
         private int _anzahlFelderDisabled { get; set; }
+        private List<string> FelderStart = new List<string>();
         public List<string> FelderLoeschen = new List<string>();
         public List<EingabeTabellenfelder> FelderHinzufuegen = new List<EingabeTabellenfelder>();
 
@@ -55,6 +56,7 @@ namespace WpfApp
             //Nun die Tabelendaten darstellen
             for (int i = 0; i < feldtypen.Length; i++)
             {
+                FelderStart.Add(feldnamen[i].Substring(0, 3).Equals("_x_") ? feldnamen[i].Split('_')[2] : feldnamen[i]);
                 RowDefinition gridRow1 = new RowDefinition();
                 gridRow1.Height = new GridLength(30);
                 grdMain.RowDefinitions.Add(gridRow1);
@@ -148,17 +150,6 @@ namespace WpfApp
         #region Eventhandler
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            ////Werte aus den Eingabefeldern in die Property schreiben
-            //foreach (var item in grdMain.Children)
-            //{
-               
-            //    if (item.GetType() == typeof(EingabeTabellenfelder))
-            //    {
-            //        EingabeTabellenfelder feld = (EingabeTabellenfelder)item;
-            //        FelderHinzufuegen.Add(feld);
-            //    }
-            //}
-
             this.DialogResult = true;
         }
 
@@ -211,6 +202,8 @@ namespace WpfApp
         }
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
+            List<string> Checkliste = FelderStart;
+
             e.CanExecute = true;
             //sollte noch garnichts passiert sein, ist es BLödsinn zu speichern
             if (FelderLoeschen.Count() == 0 && grdMain.Children.Count == _anzahlFelder) {
@@ -241,7 +234,14 @@ namespace WpfApp
                         e.CanExecute = false;
                     }
                     //Dann schauen, ob die Feldnamen schon existieren
+                    if (Checkliste.Contains(eingabeTabellenfeld.txtBezeichnung.Text))
+                    {
 
+                        e.CanExecute = false;
+                    }
+                    else {
+                        Checkliste.Add(eingabeTabellenfeld.txtBezeichnung.Text);
+                    }
                 }
             }
         }

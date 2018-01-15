@@ -6,6 +6,16 @@
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
         Title="Werte festlegen" Height="320" Width="330">
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Border.CornerRadius" Value="10,10,10,10" />
+            <Setter Property="Border.BorderThickness" Value="2" />
+            <Setter Property="Border.BorderBrush" Value="Black" />
+        </Style>
+    </Window.Resources>
+
     <Window.CommandBindings>
         <CommandBinding Command="local:MyCommands.Verbinden" CanExecute="VerbindenCommand_CanExecute" Executed="VerbindenCommand_Executed" />
         <CommandBinding Command="local:MyCommands.Neu" CanExecute="NeuCommand_CanExecute" Executed="NeuCommand_Executed" />
