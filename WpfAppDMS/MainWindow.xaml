@@ -1,0 +1,17 @@
+﻿<Window x:Class="WpfAppDMS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppDMS"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid AllowDrop="True" x:Name="grdDropzone" Margin="0,0,0,0" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="200" Height="100" Background="Green">
+            <!--<ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Height="100" HorizontalScrollBarVisibility="Hidden">-->
+                <TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Text="Datei hier ablegen" MinHeight="100"></TextBlock>
+            <!--</ScrollViewer>-->
+        </Grid>
+        <Button Content="Button" Click="Button_Click" HorizontalAlignment="Left" Margin="65,185,0,0" VerticalAlignment="Top" Width="75"/>
+    </Grid>
+</Window>

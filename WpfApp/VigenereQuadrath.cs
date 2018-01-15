@@ -165,9 +165,9 @@ namespace Vigenere
                     }
                 }
             }
-            StreamWriter sw = new StreamWriter(@"c:\copy\VIGINERE"+ Guid.NewGuid() +".txt");
-            sw.Write(verschlüsselterText);
-            sw.Close();
+            //StreamWriter sw = new StreamWriter(@"c:\copy\VIGINERE"+ Guid.NewGuid() +".txt");
+            //sw.Write(verschlüsselterText);
+            //sw.Close();
             return verschlüsselterText;
         }
 
