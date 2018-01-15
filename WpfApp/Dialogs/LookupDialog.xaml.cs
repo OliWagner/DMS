@@ -32,8 +32,7 @@ namespace WpfApp
             {
                 if (!item.Item1.Equals(AufrufendeTabelle)) {
                     cboTabelle.Items.Add(new ComboBoxItem() { Content = item.Item1 });
-                }
-                
+                }                
             }
         }
 
@@ -66,12 +65,8 @@ namespace WpfApp
                         return;
                     }
                 }
-            }
-            
+            }           
         }
-
-        private bool CheckCboIsEnabled() {
-            return false;
-        }
+        
     }
 }

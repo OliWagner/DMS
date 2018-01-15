@@ -29,8 +29,7 @@ namespace WpfApp
         {
             
             InitializeComponent();
-            Connect();
-            
+            Connect();           
             InitializeVendorComponents();
             
         }
@@ -52,6 +51,7 @@ namespace WpfApp
                 {
                     Connect(connectionDialog.txtDataSource.Text + ";" + connectionDialog.txtInitialCatalog.Text + ";" + connectionDialog.txtUserName.Text + ";" + connectionDialog.txtPassword.Text);
                 }
+                Title = "Bearbeiten des Dokumententyps: " + connectionDialog.txtInitialCatalog.Text;
             }
             else {
                 Connect();

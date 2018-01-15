@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="845" Width="1035" Background="White">
+        Title="Bearbeiten des Dokumententyps:" Height="845" Width="1035" Background="White">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="400"/>
