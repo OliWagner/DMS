@@ -26,8 +26,20 @@ namespace WpfAppDMS
     {
 
         private SqlConnection _con { get; set; }
-        
 
+        //Felder für die Datenbank
+        private string Dateiname { get; set; }
+        private string Dateipfad { get; set; }
+        private string DateiTitel { get; set; }
+        private string DateiBeschreibung { get; set; }
+
+        //Noch zu belegen
+        private string Dokumententyp { get; set; }
+        private string Tabelle { get; set; }
+        private int IdInTabelle { get; set; }
+        private string Dateigroesse { get; set; }
+        private string ErfasstAm { get; set; }
+       
         public MainWindow()
         {
             InitializeComponent();
@@ -42,7 +54,16 @@ namespace WpfAppDMS
                 data = e.Data.GetData(DataFormats.FileDrop) as string[];
                 // handle the files here!
             }
-            databaseFilePut(data[0]);
+            //databaseFilePut(data[0]);
+            txtTitel.Text = "";
+            txtTitel.IsEnabled = true;
+            txtBeschreibung.Text = "";
+            txtBeschreibung.IsEnabled = true;
+            Dateipfad = data[0];
+            string[] txtArray = data[0].Split('\\');
+            Dateiname = txtDropzone.Text = txtArray[txtArray.Length - 1];
+            DateiTitel = "";
+            DateiBeschreibung = "";
         }
 
         
@@ -112,11 +133,22 @@ namespace WpfAppDMS
             }
         }
 
+        //obsolete
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            databaseFileReadToDisk("1", "FIcken100.txt");
+            //databaseFileReadToDisk("1", "Output.txt");
             //MemoryStream ms = databaseFileReadToMemoryStream("1");
             var test = 0;
+        }
+
+        private void txtTitel_LostFocus(object sender, RoutedEventArgs e)
+        {
+            DateiTitel = txtTitel.Text;
+        }
+
+        private void txtBeschreibung_LostFocus(object sender, RoutedEventArgs e)
+        {
+            DateiBeschreibung = txtBeschreibung.Text;
         }
     }
 }

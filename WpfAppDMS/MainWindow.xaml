@@ -5,13 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppDMS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="600" Width="800">
     <Grid>
-        <Grid AllowDrop="True" x:Name="grdDropzone" Margin="0,0,0,0" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="200" Height="100" Background="Green">
-            <!--<ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Height="100" HorizontalScrollBarVisibility="Hidden">-->
-                <TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Text="Datei hier ablegen" MinHeight="100"></TextBlock>
-            <!--</ScrollViewer>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="250" />
+            <RowDefinition Height="350" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition Width="390"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid AllowDrop="True" x:Name="grdDropzone" Margin="0,0,0,0" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="200" Height="100" Background="Green">
+                <!--<ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Height="100" HorizontalScrollBarVisibility="Hidden">-->
+                <TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Text="Datei hier hinziehen" MinHeight="100"></TextBlock>
+                <!--</ScrollViewer>-->
+            </Grid>
+            <TextBox x:Name="txtTitel" LostFocus="txtTitel_LostFocus" IsEnabled="False" HorizontalAlignment="Left" Height="23" Margin="10,114,0,0" TextWrapping="NoWrap" Text="TextBox" VerticalAlignment="Top" Width="190"/>
+            <TextBox x:Name="txtBeschreibung" LostFocus="txtBeschreibung_LostFocus" IsEnabled="False" HorizontalAlignment="Left" Height="83" Margin="10,144,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="190"/>
         </Grid>
-        <Button Content="Button" Click="Button_Click" HorizontalAlignment="Left" Margin="65,185,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>
