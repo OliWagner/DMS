@@ -133,14 +133,6 @@ namespace WpfAppDMS
             }
         }
 
-        //obsolete
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //databaseFileReadToDisk("1", "Output.txt");
-            //MemoryStream ms = databaseFileReadToMemoryStream("1");
-            var test = 0;
-        }
-
         private void txtTitel_TextChanged(object sender, RoutedEventArgs e)
         {
             DateiTitel = txtTitel.Text;

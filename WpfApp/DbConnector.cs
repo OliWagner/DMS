@@ -165,10 +165,11 @@ namespace WpfApp
         {
             Tuple<List<string>, List<int>, List<string>> gruppenDaten;
             Tuple<List<string>, List<int>, List<string>, List<int>, List<string>> typenDaten;
-
+            //Item 1-3 Tuple1
             List<string> gruppen = new List<string>();
             List<int> gruppenIds = new List<int>();
             List<string> gruppenBeschreibungen = new List<string>();
+            //Item 1-5 Tuple2
             List<string> typen = new List<string>();
             List<int> typenIds = new List<int>();
             List<string> typenBeschreibungen = new List<string>();

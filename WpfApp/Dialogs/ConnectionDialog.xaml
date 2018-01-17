@@ -31,11 +31,11 @@
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="25"></RowDefinition>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Dokumententypen:"></Label>
+        <Label Grid.Row="0" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Datenbank:"></Label>
         <ComboBox x:Name="cboConnections" Width="185" Height="21" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="130,0,0,0" Grid.Row="0" SelectionChanged="cboConnections_SelectionChanged"/>
         <Label Grid.Row="1" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Data Source:"></Label>
         <TextBox x:Name="txtDataSource" Width="185" Grid.Row="1" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Label Grid.Row="2" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Dok-Typ (DB):"></Label>
+        <Label Grid.Row="2" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Initial Catalog:"></Label>
         <TextBox x:Name="txtInitialCatalog" Width="185" Grid.Row="2" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
         <Label Grid.Row="3" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="User Name:"></Label>
         <TextBox x:Name="txtUserName" Width="185" Grid.Row="3" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />

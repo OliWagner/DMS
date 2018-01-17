@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="Dokumentengruppen und -typen verwalten" Height="510" Width="500">
+        Title="Dokumentengruppen und -typen verwalten" Height="510" Width="720">
     <Window.CommandBindings>
         <CommandBinding Command="local:MyCommands.SichernDokGruppen" CanExecute="SichernDokGruppen_CanExecute" Executed="SichernDokGruppen_Executed" />
         <CommandBinding Command="local:MyCommands.SichernDokTypen" CanExecute="SichernDokTypen_CanExecute" Executed="SichernDokTypen_Executed" />
@@ -16,7 +16,11 @@
             <RowDefinition Height="230"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
-        <Button x:Name="btnFertig" Width="65" FontSize="10" Content="Fertig" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="150,0,0,0" Grid.Row="2" Click="btnFertig_Click"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="380"/>
+            <ColumnDefinition Width="320"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="btnFertig" Grid.ColumnSpan="2" Width="65" FontSize="10" Content="Fertig" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="150,0,20,0" Grid.Row="2" Click="btnFertig_Click"/>
 
 
         <Grid x:Name="grdDokumentengruppe" Grid.Row="0">
@@ -57,6 +61,12 @@
         <ComboBox x:Name="cboTabelle" Grid.Row="4" Width="205" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,5,0,0" />
             <Button x:Name="btnTypSpeichern" Click="btnTypSpeichern_Click" Command="local:MyCommands.SichernDokTypen" CommandTarget="{Binding ElementName=grdDokumententyp}" Width="65" FontSize="10" Content="Speichern" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,0,0,0" Grid.Row="5" />
         <Button x:Name="btnTypVerwerfen" Click="btnTypVerwerfen_Click" Width="65" FontSize="10" Content="Abbrechen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="290,0,0,0" Grid.Row="5" />
+        </Grid>
+
+        <Grid x:Name="grdTreeView" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="0,0,0,0">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" Margin="0,0,0,0">
+                <TreeView x:Name="tvMain" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" />
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>
