@@ -141,12 +141,12 @@ namespace WpfAppDMS
             var test = 0;
         }
 
-        private void txtTitel_LostFocus(object sender, RoutedEventArgs e)
+        private void txtTitel_TextChanged(object sender, RoutedEventArgs e)
         {
             DateiTitel = txtTitel.Text;
         }
 
-        private void txtBeschreibung_LostFocus(object sender, RoutedEventArgs e)
+        private void txtBeschreibung_TextChanged(object sender, RoutedEventArgs e)
         {
             DateiBeschreibung = txtBeschreibung.Text;
         }

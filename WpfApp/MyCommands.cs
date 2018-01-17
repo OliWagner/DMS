@@ -36,6 +36,20 @@ namespace WpfApp
                                "Leeren",
                                typeof(MyCommands)
                        );
+
+        public static readonly RoutedUICommand SichernDokGruppen = new RoutedUICommand
+                       (
+                               "SichernDokGruppen",
+                               "SichernDokGruppen",
+                               typeof(MyCommands)
+                       );
+
+        public static readonly RoutedUICommand SichernDokTypen = new RoutedUICommand
+                      (
+                              "SichernDokTypen",
+                              "SichernDokTypen",
+                              typeof(MyCommands)
+                      );
     }
 
 }

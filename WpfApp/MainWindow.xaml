@@ -17,9 +17,10 @@
             <ColumnDefinition Width="625*"  />
         </Grid.ColumnDefinitions>
         <!-- <local:EingabeTabelle x:Name="eingabeTabelle" Grid.Column="0" Grid.Row="0"/>-->
-        <Button x:Name="btnNeueTabelle" Click="BtnNeueTabelle_Click" Width="150" Height="30" Content="Neue Tabelle anlegen" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
-        <Button x:Name="btnCsvEinlesenMain" Click="BtnCsvEinlesenMain_Click" Width="150" Height="30" Content="Tabelle aus CSV einlesen" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
-        <Button x:Name="btnNeueDb" Click="btnNeueDb_Click" Width="150" Height="30" Content="Datenbank wechseln" Margin="10,360,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
+        <Button x:Name="btnNeueTabelle" Click="BtnNeueTabelle_Click" Width="160" Height="30" Content="Neue Tabelle anlegen" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
+        <Button x:Name="btnCsvEinlesenMain" Click="BtnCsvEinlesenMain_Click" Width="160" Height="30" Content="Tabelle aus CSV einlesen" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
+        <Button x:Name="btnDokTypen" Click="btnDokTypenGruppen_Click" Width="160" Height="30" Content="Dokumententypen/gruppen" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
+        <Button x:Name="btnNeueDb" Click="btnNeueDb_Click" Width="160" Height="30" Content="Datenbank wechseln" Margin="10,360,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0"/>
         <local:UebersichtTabellen x:Name="uebersichtTabellen" Grid.Column="1" Grid.Row="0" />
         <local:PflegeTabellendaten Margin="0,10,0,0" x:Name="pflegeTabellendaten" Grid.Column="2" Grid.Row="0" />
         <local:Tabellendaten x:Name="tabDaten" Grid.Row="1" Grid.ColumnSpan="3" />

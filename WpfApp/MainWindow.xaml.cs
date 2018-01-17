@@ -94,6 +94,16 @@ namespace WpfApp
             InitializeVendorComponents();
         }
 
+        private void btnDokTypenGruppen_Click(object sender, RoutedEventArgs e)
+        {
+            GruppenTypenDialog dialog = new GruppenTypenDialog();
+            if (dialog.ShowDialog() == true) {
+                var test = 0;
+            }
+        }
+
+        
+
         private void BtnNeueTabelle_Click(object sender, RoutedEventArgs e)
                 {
                     if (!eingabeTabelleAktiv) {
@@ -265,6 +275,7 @@ namespace WpfApp
             uebersichtTabellen.zeichneGrid();
             tabDaten.Clear();
         }
+
 
         #endregion
 

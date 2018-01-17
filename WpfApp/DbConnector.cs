@@ -153,6 +153,71 @@ namespace WpfApp
             return liste;
         }
 
+        /// <summary>
+        /// Liest alle Daten zu Dokumentengruppen und Dokumententypen ein
+        /// </summary>
+        /// <returns>
+        /// Tuple aus zwei weiteren Tuplen
+        /// Item 1 --> Gruppen string, GruppenIds int, Gruppenbeschreibungen string
+        /// Item 2 --> Typen string, TypenIds int, Typenbeschreibungen string, TypenGruppenIds int, TypenTabellen string
+        /// </returns>
+        public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> ReadDoksAndTypesData()
+        {
+            Tuple<List<string>, List<int>, List<string>> gruppenDaten;
+            Tuple<List<string>, List<int>, List<string>, List<int>, List<string>> typenDaten;
+
+            List<string> gruppen = new List<string>();
+            List<int> gruppenIds = new List<int>();
+            List<string> gruppenBeschreibungen = new List<string>();
+            List<string> typen = new List<string>();
+            List<int> typenIds = new List<int>();
+            List<string> typenBeschreibungen = new List<string>();
+            List<int> typenGruppenIds = new List<int>();
+            List<string> typenTabellen = new List<string>();
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokumentengruppen";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    gruppen.Add(row.Field<string>(1));
+                    gruppenIds.Add(row.Field<int>(0));
+                    gruppenBeschreibungen.Add(row.Field<string>(2));
+                }
+            }
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokumententyp";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    typen.Add(row.Field<string>(1));
+                    typenIds.Add(row.Field<int>(0));
+                    typenBeschreibungen.Add(row.Field<string>(2));
+                    typenGruppenIds.Add(row.Field<int>(3));
+                    typenTabellen.Add(row.Field<string>(4));
+                }
+            }
+
+            gruppenDaten = Tuple.Create(gruppen, gruppenIds, gruppenBeschreibungen);
+            typenDaten = Tuple.Create(typen, typenIds, typenBeschreibungen, typenGruppenIds, typenTabellen);
+            return Tuple.Create(gruppenDaten, typenDaten);
+        }
+
         public void ChangeTableStructure(string Tabelle, List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen) {
             List<string> csvFeldnamen = new List<string>();
             List<string> csvTypen = new List<string>();
@@ -764,6 +829,85 @@ namespace WpfApp
             command2.ExecuteNonQuery();
             transaction.Commit();
         }
+
+        public void AddDokGruppe(string bezeichnung, string beschreibung) {           
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = "Insert into OkoDokumentengruppen (Bezeichnung, Beschreibung) VALUES ('" + bezeichnung + "', '" + beschreibung + "')";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Console.WriteLine("An exception of type " + ex.GetType() +
+                            " was encountered while attempting to roll back the transaction.");
+                    }
+                }
+                Console.WriteLine("An exception of type " + e.GetType() +
+                    " was encountered while inserting the data.");
+                Console.WriteLine("Neither record was written to database.");
+            }
+
+        }
+
+        public void AddDokTyp(string bezeichnung, string beschreibung, int gruppenId, string tabelle) {
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = "Insert into OkoDokumententyp (Bezeichnung, Beschreibung, OkoDokumentengruppenId, Tabelle) VALUES ('" + bezeichnung + "', '" + beschreibung + "', "+gruppenId+", '"+tabelle+"')";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Console.WriteLine("An exception of type " + ex.GetType() +
+                            " was encountered while attempting to roll back the transaction.");
+                    }
+                }
+                Console.WriteLine("An exception of type " + e.GetType() +
+                    " was encountered while inserting the data.");
+                Console.WriteLine("Neither record was written to database.");
+            }
+
+
+        }
+
+        public void UpdateDokTyp(string bezeichnung) { }
+
+
 
     }
 }
