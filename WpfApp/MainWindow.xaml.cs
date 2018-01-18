@@ -51,7 +51,7 @@ namespace WpfApp
                 {
                     Connect(connectionDialog.txtDataSource.Text + ";" + connectionDialog.txtInitialCatalog.Text + ";" + connectionDialog.txtUserName.Text + ";" + connectionDialog.txtPassword.Text);
                 }
-                Title = "Bearbeiten des Dokumententyps: " + connectionDialog.txtInitialCatalog.Text;
+                Title = "Bearbeiten der Datenbank: " + connectionDialog.txtInitialCatalog.Text;
             }
             else {
                 Connect();

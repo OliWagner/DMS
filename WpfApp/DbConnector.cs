@@ -231,10 +231,6 @@ namespace WpfApp
                 }
             }
 
-
-
-
-
             StringBuilder sb = new StringBuilder();
 
             foreach (var item in FelderLoeschen)
@@ -866,6 +862,49 @@ namespace WpfApp
                 Console.WriteLine("Neither record was written to database.");
             }
 
+        }
+
+        public void UpdateDokGruppe(string bezeichnung, string beschreibung, int id) {
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            try
+            {
+                command.CommandText = "UPDATE OkoDokumentengruppen SET Bezeichnung = '" + bezeichnung + "', Beschreibung = '" + beschreibung + "' Where OkoDokumentengruppenId = '" + id + "';";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+            }
+        }
+
+        public void UpdateDokTyp(string bezeichnung, string beschreibung, int id, int dokGruppenId, string tabelle)
+        {
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            try
+            {
+                command.CommandText = "UPDATE OkoDokumententyp SET Bezeichnung = '" + bezeichnung + "', Beschreibung = '" + beschreibung + "', OkoDokumentengruppenId = '" + dokGruppenId + "', Tabelle = '" + tabelle + "' Where OkoDokumententypId = '" + id + "';";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+            }
         }
 
         public void AddDokTyp(string bezeichnung, string beschreibung, int gruppenId, string tabelle) {

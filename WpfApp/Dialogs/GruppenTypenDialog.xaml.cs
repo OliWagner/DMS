@@ -17,9 +17,15 @@ namespace WpfApp
         private List<int> alleDokGruppenIds;
         private List<string> alleDokGruppenBeschreibungen;
         private List<string> alleDokTypenBeschreibungen;
-        private List<int> alleDokTypenIds;
+        private List<int> alleDokTypenGruppenIds;
         private List<string> alleDokTypen;
+        private List<int> alleDokTypenIds;
+        private List<string> alleDokTypTabellen;
         private List<string> alleTabellenInDb;
+
+        //Variable, die entscheidet, ob es sich bei dem Datensatz im Formular um einen neuen EIntrag handelt, oder ob der EIntrag geändert werden soll
+        int AktDokGruppenId = 0;
+        int AktDokTypenId = 0;
 
         public GruppenTypenDialog()
         {            
@@ -33,14 +39,42 @@ namespace WpfApp
             LiesListen();
         }
 
+        private void Item_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeViewItem item = (TreeViewItem)sender;
+            int index = alleDokGruppen.IndexOf(item.Header.ToString());
+            AktDokGruppenId = alleDokGruppenIds.ElementAt(index);
+            txtGruppeBezeichnung.Text = item.Header.ToString();
+            txtGruppeBeschreibung.Text = alleDokGruppenBeschreibungen.ElementAt(index);
+        }
+
+        private void Unteritem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeViewItem item = (TreeViewItem)sender;
+            string txtHeader = item.Header.ToString().Split('[')[0].Trim();
+            int index = alleDokTypen.IndexOf(txtHeader);
+            AktDokTypenId = alleDokTypenIds.ElementAt(index);
+            txtTypBezeichnung.Text = txtHeader;
+            txtTypBeschreibung.Text = alleDokTypenBeschreibungen.ElementAt(index);
+            cboTabelle.SelectedValue = alleDokTypTabellen.ElementAt(index);
+
+            int AktGruppenid = alleDokTypenGruppenIds.ElementAt(index);
+            int GruppenIndex = alleDokGruppenIds.IndexOf(AktGruppenid);
+            cboGruppe.SelectedValue = alleDokGruppen.ElementAt(GruppenIndex);
+            e.Handled = true;
+        }
+
+
         private void LiesListen() {
             Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> gruppenundTypenTuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDoksAndTypesData();
             alleDokGruppen = gruppenundTypenTuple.Item1.Item1;
             alleDokGruppenIds = gruppenundTypenTuple.Item1.Item2;
             alleDokGruppenBeschreibungen = gruppenundTypenTuple.Item1.Item3;
             alleDokTypen = gruppenundTypenTuple.Item2.Item1;
+            alleDokTypenIds = gruppenundTypenTuple.Item2.Item2;
             alleDokTypenBeschreibungen = gruppenundTypenTuple.Item2.Item3;
-            alleDokTypenIds = gruppenundTypenTuple.Item2.Item4;
+            alleDokTypenGruppenIds = gruppenundTypenTuple.Item2.Item4;
+            alleDokTypTabellen = gruppenundTypenTuple.Item2.Item5;
 
             cboGruppe.ItemsSource = alleDokGruppen;
             cboTabelle.ItemsSource = alleTabellenInDb;
@@ -62,6 +96,7 @@ namespace WpfApp
                 TreeViewItem item = new TreeViewItem();
                 item.Header = kvp.Value;
                 item.ToolTip = alleDokGruppenBeschreibungen.ElementAt(alleDokGruppenIds.IndexOf(kvp.Key));
+                item.MouseRightButtonDown += Item_MouseRightButtonDown;
                 //TODO Die UnterItems auflisten
                 List<string> lstItems = (from KeyValuePair<string, int> typ in dicTypen where typ.Value == kvp.Key orderby typ.Key select typ.Key).ToList();
                 
@@ -69,19 +104,19 @@ namespace WpfApp
                 {
                     TreeViewItem unteritem = new TreeViewItem();
                     unteritem.Header = tvUnterItem;
+                    unteritem.MouseRightButtonDown += Unteritem_MouseRightButtonDown;
                     string[] txtArray = tvUnterItem.Split('[');
                     string wert = txtArray[0].Trim();
                     int index = alleDokTypen.IndexOf(wert);
-                    unteritem.ToolTip = alleDokTypenBeschreibungen.ElementAt(index);
+                    unteritem.ToolTip = alleDokTypenBeschreibungen.ElementAt(index);                    
                     item.Items.Add(unteritem);
                 }
                 tvMain.Items.Add(item);
-                //TODO Die UnterItems auflisten
             }
 
         }
 
-
+       
         private void SichernDokGruppen_Executed(object sender, ExecutedRoutedEventArgs e)
         {}
 
@@ -89,9 +124,17 @@ namespace WpfApp
         {
             e.CanExecute = true;
             string AllowedChars = @"^[a-zA-Z0-9 .,ÄäÖöÜü()]+$";
-            if (txtGruppeBezeichnung.Text.Equals("") || txtGruppeBeschreibung.Text.Equals("") || alleDokGruppen.Contains(txtGruppeBezeichnung.Text.Trim()) || !Regex.IsMatch(txtGruppeBezeichnung.Text, AllowedChars) || !Regex.IsMatch(txtGruppeBeschreibung.Text, AllowedChars)) {
+            if (txtGruppeBezeichnung.Text.Equals("") || txtGruppeBeschreibung.Text.Equals("") || !Regex.IsMatch(txtGruppeBezeichnung.Text, AllowedChars) || !Regex.IsMatch(txtGruppeBeschreibung.Text, AllowedChars)) {
                 e.CanExecute = false;
             }
+
+            if (alleDokGruppen != null && alleDokGruppen.Contains(txtGruppeBezeichnung.Text.Trim())) {
+                e.CanExecute = false;
+                if (AktDokGruppenId != 0) {
+                    e.CanExecute = true;
+                }
+            }
+
         }
 
         private void SichernDokTypen_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -108,6 +151,14 @@ namespace WpfApp
             if (cboGruppe.SelectedItem == null) {
                 e.CanExecute = false;
             }
+            if (alleDokTypen != null && alleDokTypen.Contains(txtTypBezeichnung.Text.Trim()))
+            {
+                e.CanExecute = false;
+                if (AktDokTypenId != 0)
+                {
+                    e.CanExecute = true;
+                }
+            }
         }
 
         private void btnFertig_Click(object sender, RoutedEventArgs e)
@@ -119,6 +170,8 @@ namespace WpfApp
         {
             txtGruppeBeschreibung.Text = "";
             txtGruppeBezeichnung.Text = "";
+            AktDokGruppenId = 0;
+
         }
 
         private void btnTypVerwerfen_Click(object sender, RoutedEventArgs e)
@@ -127,11 +180,18 @@ namespace WpfApp
             txtTypBezeichnung.Text = "";
             cboGruppe.SelectedItem = null;
             cboTabelle.SelectedItem = null;
+            AktDokTypenId = 0;
         }
 
         private void btnGruppeSpeichern_Click(object sender, RoutedEventArgs e)
         {
-            ((DbConnector)App.Current.Properties["Connector"]).AddDokGruppe(txtGruppeBezeichnung.Text, txtGruppeBeschreibung.Text);
+            if (AktDokGruppenId == 0) {
+                ((DbConnector)App.Current.Properties["Connector"]).AddDokGruppe(txtGruppeBezeichnung.Text, txtGruppeBeschreibung.Text);
+                         
+            } else {
+                ((DbConnector)App.Current.Properties["Connector"]).UpdateDokGruppe(txtGruppeBezeichnung.Text, txtGruppeBeschreibung.Text, AktDokGruppenId);
+                AktDokGruppenId = 0;
+            }
             txtGruppeBeschreibung.Text = "";
             txtGruppeBezeichnung.Text = "";
             LiesListen();
@@ -141,12 +201,19 @@ namespace WpfApp
         {
             int idGruppe = alleDokGruppenIds.ElementAt(alleDokGruppen.IndexOf(cboGruppe.SelectedValue.ToString()));
 
-
-            ((DbConnector)App.Current.Properties["Connector"]).AddDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, idGruppe, cboTabelle.SelectedValue.ToString());
+            if (AktDokTypenId == 0)
+            {
+                ((DbConnector)App.Current.Properties["Connector"]).AddDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, idGruppe, cboTabelle.SelectedValue.ToString());
+            }
+            else
+            {
+                ((DbConnector)App.Current.Properties["Connector"]).UpdateDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, AktDokTypenId, idGruppe, cboTabelle.SelectedValue.ToString());
+            }
             txtTypBeschreibung.Text = "";
             txtTypBezeichnung.Text = "";
             cboGruppe.SelectedItem = null;
             cboTabelle.SelectedItem = null;
+            AktDokTypenId = 0;
             LiesListen();
         }
     }
