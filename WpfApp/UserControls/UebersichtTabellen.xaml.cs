@@ -116,7 +116,7 @@ namespace WpfApp
                 {
                     foreach (var feldname in item.Item3.Split(';'))
                     {
-                        if (feldname.Substring(0, 3).Equals("_x_"))
+                        if (feldname.Length > 2 && feldname.Substring(0, 3).Equals("_x_"))
                         {
                             if (feldname.Split('_')[3].Equals(txtTabelle))
                             {

@@ -75,7 +75,7 @@ namespace WpfApp
                 grdMain.RowDefinitions.Add(gR);
 
                 TextBlock tbLabel = new TextBlock();
-                tbLabel.Text = (csvFeldnamen.ElementAt(i).Substring(0, 3).Equals("_x_") ? csvFeldnamen.ElementAt(i).Split('_')[2] : csvFeldnamen.ElementAt(i)) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
+                tbLabel.Text = (csvFeldnamen.ElementAt(i).Length > 2 && csvFeldnamen.ElementAt(i).Substring(0, 3).Equals("_x_") ? csvFeldnamen.ElementAt(i).Split('_')[2] : csvFeldnamen.ElementAt(i)) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
                 tbLabel.Tag = csvFeldnamen.ElementAt(i);
                 tbLabel.Width = 180;
                 tbLabel.Height = 30;
@@ -216,7 +216,7 @@ namespace WpfApp
                 grdMain.RowDefinitions.Add(gR);
 
                 TextBlock tbLabel = new TextBlock();
-                tbLabel.Text = (csvFeldnamen.ElementAt(i).Substring(0, 3).Equals("_x_") ? csvFeldnamen.ElementAt(i).Split('_')[2] : csvFeldnamen.ElementAt(i)) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
+                tbLabel.Text = (csvFeldnamen.ElementAt(i).Length > 2 && csvFeldnamen.ElementAt(i).Substring(0, 3).Equals("_x_") ? csvFeldnamen.ElementAt(i).Split('_')[2] : csvFeldnamen.ElementAt(i)) + " (" + csvFeldtypen.ElementAt(i).Substring(0,3) + ")";
                 tbLabel.Tag = csvFeldnamen.ElementAt(i);
                 tbLabel.Width = 180;
                 tbLabel.Height = 30;

@@ -433,8 +433,14 @@ namespace WpfApp
                             if (row.Field<int?>(i) != null)
                             {
                                 int index = tuple.Item1.IndexOf(row.Field<int>(i));
-                                string wert = tuple.Item2.ElementAt(index).ToString();
-                                rowCopy[_csvWerteFeldnamen[i]] = wert;
+                                if (index >= 0) {
+                                    string wert = tuple.Item2.ElementAt(index).ToString();
+                                    rowCopy[_csvWerteFeldnamen[i]] = wert;
+                                } else {
+                                    rowCopy[_csvWerteFeldnamen[i]] = "";
+                                }
+                                
+
                             }
                             else {
                                 rowCopy[_csvWerteFeldnamen[i]] = "";

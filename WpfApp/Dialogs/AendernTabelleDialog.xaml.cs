@@ -35,6 +35,7 @@ namespace WpfApp
         }
 
         private void zeichneGrid() {
+            FelderStart = new List<string>();
             _anzahlFelderDisabled = 0;
             grdMain.RowDefinitions.Clear();
             grdMain.Children.Clear();
@@ -56,11 +57,11 @@ namespace WpfApp
             //Nun die Tabelendaten darstellen
             for (int i = 0; i < feldtypen.Length; i++)
             {
-                FelderStart.Add(feldnamen[i].Substring(0, 3).Equals("_x_") ? feldnamen[i].Split('_')[2] : feldnamen[i]);
+                FelderStart.Add(feldnamen[i].Length > 2 && feldnamen[i].Substring(0, 3).Equals("_x_") ? feldnamen[i].Split('_')[2] : feldnamen[i]);
                 RowDefinition gridRow1 = new RowDefinition();
                 gridRow1.Height = new GridLength(30);
                 grdMain.RowDefinitions.Add(gridRow1);
-                TextBlock lbl = new TextBlock() { Text = feldnamen[i].Substring(0,3).Equals("_x_") ? feldnamen[i].Split('_')[2] : feldnamen[i] };
+                TextBlock lbl = new TextBlock() { Text = feldnamen[i].Length > 2 && feldnamen[i].Substring(0,3).Equals("_x_") ? feldnamen[i].Split('_')[2] : feldnamen[i] };
                 lbl.HorizontalAlignment = HorizontalAlignment.Left;
                 lbl.Margin = new Thickness(5, 0, 0, 0);
                 lbl.FontSize = 14;
@@ -240,7 +241,7 @@ namespace WpfApp
                         e.CanExecute = false;
                     }
                     else {
-                        Checkliste.Add(eingabeTabellenfeld.txtBezeichnung.Text);
+                        //Checkliste.Add(eingabeTabellenfeld.txtBezeichnung.Text);
                     }
                 }
             }
