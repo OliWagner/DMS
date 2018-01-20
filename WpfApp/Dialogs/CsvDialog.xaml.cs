@@ -34,6 +34,18 @@ namespace WpfApp
             InitializeComponent();
         }
 
+        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Nix
+        }
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+            if(cboBoolean.SelectedItem == null || cboTrenner.SelectedItem == null)
+                 e.CanExecute = false;
+        }
+
+
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;

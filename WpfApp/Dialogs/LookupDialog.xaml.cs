@@ -41,6 +41,17 @@ namespace WpfApp
             this.DialogResult = true;
         }
 
+        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Nix
+        }
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+            if (cboFeld.SelectedItem == null || cboTabelle.SelectedItem == null)
+                e.CanExecute = false;
+        }
+
         private void cboTabelle_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var _tabName = (((ComboBoxItem)cboTabelle.SelectedItem).Content);

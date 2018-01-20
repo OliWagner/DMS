@@ -6,7 +6,12 @@
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
         Title="Werte festlegen" Height="170" Width="300">
-    <Grid>
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
+    </Window.CommandBindings>
+    <Grid x:Name="grdMain">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
@@ -31,6 +36,6 @@
             <ComboBoxItem Content="Wert/kein Wert" />
         </ComboBox>
 
-        <Button x:Name="btnOk" FontSize="10" Content="Ok" Margin="80,5,80,5" Grid.Row="2" Click="btnOk_Click"/>
+        <Button x:Name="btnOk" Command="Save" CommandTarget="{Binding ElementName=grdMain}" FontSize="10" Content="Ok" Margin="80,5,80,5" Grid.Row="2" Click="btnOk_Click"/>
     </Grid>
 </Window>

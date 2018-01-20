@@ -111,8 +111,7 @@ namespace WpfApp
 
             //Nun noch die EIngaben für neue Tabellenfelder
             foreach (EingabeTabellenfelder eingabeTabellenfeld in FelderHinzufuegen)
-            {
-                
+            {                
                 //Man gebe dem Ganzen ein wenig EIngabeTabellenfeld hinzu
                 RowDefinition gridRow1 = new RowDefinition();
                 gridRow1.Height = new GridLength(30);
@@ -240,9 +239,10 @@ namespace WpfApp
 
                         e.CanExecute = false;
                     }
-                    else {
-                        //Checkliste.Add(eingabeTabellenfeld.txtBezeichnung.Text);
-                    }
+                    //else {
+                    //    //Checkliste.Add(eingabeTabellenfeld.txtBezeichnung.Text);
+                    //TODO --> Es ist noch möglich, zwei mal denselben Namen als Tabellenfeld anzugeben
+                    //}
                 }
             }
         }
