@@ -40,6 +40,63 @@ namespace WpfAppDMS
             _con.Dispose();
         }
 
+        public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> ReadDoksAndTypesData()
+        {
+            Tuple<List<string>, List<int>, List<string>> gruppenDaten;
+            Tuple<List<string>, List<int>, List<string>, List<int>, List<string>> typenDaten;
+            //Item 1-3 Tuple1
+            List<string> gruppen = new List<string>();
+            List<int> gruppenIds = new List<int>();
+            List<string> gruppenBeschreibungen = new List<string>();
+            //Item 1-5 Tuple2
+            List<string> typen = new List<string>();
+            List<int> typenIds = new List<int>();
+            List<string> typenBeschreibungen = new List<string>();
+            List<int> typenGruppenIds = new List<int>();
+            List<string> typenTabellen = new List<string>();
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokumentengruppen";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    gruppen.Add(row.Field<string>(1));
+                    gruppenIds.Add(row.Field<int>(0));
+                    gruppenBeschreibungen.Add(row.Field<string>(2));
+                }
+            }
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokumententyp";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    typen.Add(row.Field<string>(1));
+                    typenIds.Add(row.Field<int>(0));
+                    typenBeschreibungen.Add(row.Field<string>(2));
+                    typenGruppenIds.Add(row.Field<int>(3));
+                    typenTabellen.Add(row.Field<string>(4));
+                }
+            }
+
+            gruppenDaten = Tuple.Create(gruppen, gruppenIds, gruppenBeschreibungen);
+            typenDaten = Tuple.Create(typen, typenIds, typenBeschreibungen, typenGruppenIds, typenTabellen);
+            return Tuple.Create(gruppenDaten, typenDaten);
+        }
 
 
 

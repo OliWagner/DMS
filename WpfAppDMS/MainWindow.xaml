@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppDMS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        Title="MainWindow" Height="600" Width="1030">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="250" />
@@ -13,8 +13,8 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210"></ColumnDefinition>
-            <ColumnDefinition Width="200"></ColumnDefinition>
-            <ColumnDefinition Width="390"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="490"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid AllowDrop="True" x:Name="grdDropzone" Margin="0,0,0,0" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="200" Height="100" Background="Green">
@@ -25,5 +25,9 @@
             <TextBox x:Name="txtTitel" TextChanged="txtTitel_TextChanged" IsEnabled="False" HorizontalAlignment="Left" Height="23" Margin="10,114,0,0" TextWrapping="NoWrap" Text="TextBox" VerticalAlignment="Top" Width="190"/>
             <TextBox x:Name="txtBeschreibung" TextChanged="txtBeschreibung_TextChanged" IsEnabled="False" HorizontalAlignment="Left" Height="83" Margin="10,144,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="190"/>
         </Grid>
+
+        <local:DokTree x:Name="dokTree" Grid.Row="0" Grid.Column="1" />
+
+        <local:TabsDaten x:Name="tabsDaten" Grid.Row="0" Grid.Column="2" />
     </Grid>
 </Window>

@@ -42,8 +42,21 @@ namespace WpfAppDMS
        
         public MainWindow()
         {
-            InitializeComponent();
             Connect();
+            InitializeComponent();
+
+            dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
+        }
+
+        private void dokTree_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeView tv = ((DokTree)sender).tvMain;
+            string header = ((TreeViewItem)tv.SelectedItem).Header.ToString();
+            int id = Int32.Parse(((TreeViewItem)tv.SelectedItem).Tag.ToString());
+            if (header.Contains('[') && !tabsDaten.Items.Contains(header.Split('[')[0].Trim())) {
+                tabsDaten.Add(header.Split('[')[0].Trim(), id);
+            }
+            
         }
 
         private void Grid_Drop(object sender, DragEventArgs e)
@@ -66,13 +79,37 @@ namespace WpfAppDMS
             DateiBeschreibung = "";
         }
 
-        
-
-        public void Connect()
+        private void conDialogBtnAbbrechen_Click(object sender, RoutedEventArgs e)
         {
-                _con = new SqlConnection();
-                _con.ConnectionString = "Data Source='LAPTOP-CTMG3F1D\\SQLEXPRESS';Initial Catalog='OKOrganizer';User ID='sa';Password='95hjh11!';";
-                _con.Open();
+            Environment.Exit(0);
+        }
+
+        private void Connect(string vorherigeEingabe = "")
+        {
+            ConnectionDialog connectionDialog = new ConnectionDialog();
+            connectionDialog.btnAbbrechen.Click += conDialogBtnAbbrechen_Click;
+            if (!vorherigeEingabe.Equals(""))
+            {
+                connectionDialog.txtDataSource.Text = vorherigeEingabe.Split(';')[0];
+                connectionDialog.txtInitialCatalog.Text = vorherigeEingabe.Split(';')[1];
+                connectionDialog.txtUserName.Text = vorherigeEingabe.Split(';')[2];
+                connectionDialog.txtPassword.Text = vorherigeEingabe.Split(';')[3];
+            }
+            if (connectionDialog.ShowDialog() == true)
+            {
+                //Datenbankverbindung initialisieren und in Objekt schreiben
+                App.Current.Properties["Connector"] = new DbConnector("Data Source=" + connectionDialog.txtDataSource.Text + ";Initial Catalog=" + connectionDialog.txtInitialCatalog.Text + ";User ID=" + connectionDialog.txtUserName.Text + ";Password=" + connectionDialog.txtPassword.Text + ";");
+                if (!((DbConnector)App.Current.Properties["Connector"]).Connect())
+                {
+                    Connect(connectionDialog.txtDataSource.Text + ";" + connectionDialog.txtInitialCatalog.Text + ";" + connectionDialog.txtUserName.Text + ";" + connectionDialog.txtPassword.Text);
+                }
+                Title = "Bearbeiten der Datenbank: " + connectionDialog.txtInitialCatalog.Text;
+            }
+            else
+            {
+                Connect();
+            }
+
         }
 
         public void databaseFileReadToDisk(string varID, string dateiname)

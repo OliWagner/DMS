@@ -1,0 +1,54 @@
+﻿<Window x:Class="WpfAppDMS.ConnectionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppDMS"
+        mc:Ignorable="d"
+        Title="Werte festlegen" Height="320" Width="360">
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="local:MyCommands.Verbinden" CanExecute="VerbindenCommand_CanExecute" Executed="VerbindenCommand_Executed" />
+        <CommandBinding Command="local:MyCommands.Neu" CanExecute="NeuCommand_CanExecute" Executed="NeuCommand_Executed" />
+        <CommandBinding Command="local:MyCommands.Loeschen" CanExecute="LoeschenCommand_CanExecute" Executed="LoeschenCommand_Executed" />
+    </Window.CommandBindings>
+    
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Border.CornerRadius" Value="10,10,10,10" />
+            <Setter Property="Border.BorderThickness" Value="2" />
+            <Setter Property="Border.BorderBrush" Value="Black" />
+        </Style>
+    </Window.Resources>
+
+    
+
+    <Grid x:Name="MeMyself">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Datenbank:"></Label>
+        <ComboBox x:Name="cboConnections" Width="185" Height="21" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="130,0,0,0" Grid.Row="0" SelectionChanged="cboConnections_SelectionChanged"/>
+        <Label Grid.Row="1" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Data Source:"></Label>
+        <TextBox x:Name="txtDataSource" Width="185" Grid.Row="1" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Grid.Row="2" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Initial Catalog:"></Label>
+        <TextBox x:Name="txtInitialCatalog" Width="185" Grid.Row="2" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Grid.Row="3" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="User Name:"></Label>
+        <TextBox x:Name="txtUserName" Width="185" Grid.Row="3" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Grid.Row="4" Width="110" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Password:"></Label>
+        <TextBox x:Name="txtPassword" Width="185" Grid.Row="4" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox x:Name="txtGuid" Visibility="Hidden" />
+        <Button x:Name="btnOk" CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Verbinden" Width="55" FontSize="10" Content="Verbinden" Margin="05,5,0,5" Grid.Row="5" Click="btnOk_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnAbbrechen" Width="55" FontSize="10" Content="Schließen" Margin="65,5,0,5" Grid.Row="5" Click="btnAbbrechen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnSpeichern"  CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Verbinden" Width="55" FontSize="10" Content="Speichern" Margin="125,5,0,5" Grid.Row="5" Click="btnSpeichern_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnNeu" CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Neu" Width="55" FontSize="10" Content="Verwerfen" Margin="185,5,0,5" Grid.Row="5" Click="btnNeu_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Button x:Name="btnLoeschen" CommandTarget="{Binding ElementName=MeMyself}" Command="local:MyCommands.Loeschen" Width="55" FontSize="10" Content="Löschen" Margin="245,5,0,5" Grid.Row="5" Click="btnLoeschen_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    </Grid>
+</Window>
