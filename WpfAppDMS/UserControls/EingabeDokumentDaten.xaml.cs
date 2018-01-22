@@ -35,6 +35,7 @@ namespace WpfAppDMS
         }
 
         public void zeichneGrid(string dokumentenTyp, int dokumentenTypId) {
+            btnAbbruch.Tag = dokumentenTyp;
             //Tabelle zu DOkumententyp ermitteln und zeichneGrid(3 Params) aufrufen
             string tabName = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNameByDokId(dokumentenTypId);
             List<Tuple<string, string, string>> tableNamesAndTypes = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
@@ -438,12 +439,7 @@ namespace WpfAppDMS
 
         private void btnAbbruch_Click(object sender, RoutedEventArgs e)
         {
-            Clear();
-        }
-
-        public void Clear()
-        {
-            grdMain.Children.Clear();
+            //Entfernt das Tab aus dem TabControl, wird in TabsDaten behandelt
         }
 
         private void btnSpeichern_Click(object sender, RoutedEventArgs e)
