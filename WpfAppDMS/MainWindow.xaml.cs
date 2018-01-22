@@ -117,6 +117,7 @@ namespace WpfAppDMS
 
         }
 
+        #region Filestreaming Database
         public void databaseFileReadToDisk(string varID, string dateiname)
         {
             FileInfo fi = new FileInfo(Assembly.GetEntryAssembly().Location);
@@ -174,15 +175,36 @@ namespace WpfAppDMS
                 sqlWrite.ExecuteNonQuery();
             }
         }
+        #endregion
 
+        #region Textbox Events, Enable/Disable der Usercontrols
         private void txtTitel_TextChanged(object sender, RoutedEventArgs e)
         {
             DateiTitel = txtTitel.Text;
+            DateiBeschreibung = txtBeschreibung.Text;
+            CheckEnableUserControls();
         }
 
         private void txtBeschreibung_TextChanged(object sender, RoutedEventArgs e)
         {
+            DateiTitel = txtTitel.Text;
             DateiBeschreibung = txtBeschreibung.Text;
+            CheckEnableUserControls();
         }
+
+        private void CheckEnableUserControls()
+        {
+            if (DateiTitel.Trim().Equals(""))
+            {
+                tabsDaten.IsEnabled = false;
+                dokTree.IsEnabled = false;
+            }
+            else
+            {
+                tabsDaten.IsEnabled = true;
+                dokTree.IsEnabled = true;
+            }
+        }
+        #endregion
     }
 }

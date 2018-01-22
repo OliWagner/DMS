@@ -33,6 +33,10 @@ namespace WpfAppDMS
         public DokTree()
         {
             InitializeComponent();
+            Start();
+        }
+
+        private void Start() {
             alleTabellenInDb = new List<string>();
             List<Tuple<string, string, string>> lst = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
             foreach (Tuple<string, string, string> tuple in lst)
