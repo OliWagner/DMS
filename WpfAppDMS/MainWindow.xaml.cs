@@ -51,12 +51,17 @@ namespace WpfAppDMS
         private void dokTree_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             TreeView tv = ((DokTree)sender).tvMain;
-            string header = ((TreeViewItem)tv.SelectedItem).Header.ToString();
-            int id = Int32.Parse(((TreeViewItem)tv.SelectedItem).Tag.ToString());
-            if (header.Contains('[') && !tabsDaten.Items.Contains(header.Split('[')[0].Trim())) {
-                tabsDaten.Add(header.Split('[')[0].Trim(), id);
+            if ((TreeViewItem)tv.SelectedItem != null) { 
+                string header = ((TreeViewItem)tv.SelectedItem).Header.ToString();
+                if (((TreeViewItem)tv.SelectedItem).Tag != null) {
+                    int id = Int32.Parse(((TreeViewItem)tv.SelectedItem).Tag.ToString());
+                    if (header.Contains('[') && !tabsDaten.Items.Contains(header))
+                    {
+                        tabsDaten.Add(header, id);
+                    }
+                }
+                
             }
-            
         }
 
         private void Grid_Drop(object sender, DragEventArgs e)

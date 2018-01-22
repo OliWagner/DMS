@@ -40,6 +40,132 @@ namespace WpfAppDMS
             _con.Dispose();
         }
 
+        public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen)
+        {
+            int neueId = 0;
+            //Zunächst mal aus den Angaben einen SQL-String bauen
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbSpalten = new StringBuilder();
+            StringBuilder sbWerte = new StringBuilder();
+            int counter = 0;
+            var csvArray = csvWerteTypen.Split(';');
+            foreach (KeyValuePair<string, object> entry in werte)
+            {
+                if (csvArray[counter].Substring(0, 3).Equals("txt"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    sbWerte.Append("'" + entry.Value.ToString().Replace("'", "''") + "',");
+                }
+                else if (csvArray[counter].Substring(0, 3).Equals("dec"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    if (entry.Value.ToString().Equals(""))
+                    {
+                        sbWerte.Append("NULL,");
+                    }
+                    else
+                    {
+                        decimal val = Decimal.Parse(entry.Value.ToString());
+                        sbWerte.Append(val.ToString().Replace(",", ".") + ",");
+                    }
+                }
+                else if (csvArray[counter].Substring(0, 3).Equals("int"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    if (entry.Value.ToString().Equals(""))
+                    {
+                        sbWerte.Append("NULL,");
+                    }
+                    else
+                    {
+                        sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
+                    }
+                }
+                else if (csvArray[counter].Substring(0, 3).Equals("loo"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    if (entry.Value == null || entry.Value.ToString().Equals(""))
+                    {
+                        sbWerte.Append("NULL,");
+                    }
+                    else
+                    {
+                        sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
+                    }
+                }
+                else if (csvArray[counter].Substring(0, 3).Equals("dat"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    if (entry.Value == null || entry.Value.ToString().Equals(""))
+                    {
+                        sbWerte.Append("NULL,");
+                    }
+                    else
+                    {
+                        sbWerte.Append("'" + entry.Value.ToString() + "',");
+                    }
+                }
+                else if (csvArray[counter].Substring(0, 3).Equals("bol"))
+                {
+                    sbSpalten.Append(entry.Key + ",");
+                    sbWerte.Append("'" + entry.Value.ToString() + "',");
+                }
+                counter++;
+            }
+            string sqlSpalten = sbSpalten.ToString().Substring(0, sbSpalten.Length - 1);
+            string sqlWerte = sbWerte.ToString().Substring(0, sbWerte.Length - 1);
+
+            sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
+
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+
+                try
+                {
+                    command.CommandText = "SELECT ISNULL(MAX(" + tabellenname + "Id), 0) FROM " + tabellenname;
+                    Int32.TryParse(command.ExecuteScalar().ToString(), out neueId);
+                }
+                catch (Exception innerEx)
+                {
+                    var test = innerEx.InnerException.Message;
+                }
+
+
+                transaction.Commit();
+                return neueId;
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Console.WriteLine("An exception of type " + ex.GetType() +
+                            " was encountered while attempting to roll back the transaction.");
+                    }
+                }
+                Console.WriteLine("An exception of type " + e.GetType() +
+                    " was encountered while inserting the data.");
+                Console.WriteLine("Neither record was written to database.");
+            }
+            return neueId;
+        }
+
         public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> ReadDoksAndTypesData()
         {
             Tuple<List<string>, List<int>, List<string>> gruppenDaten;
@@ -98,7 +224,154 @@ namespace WpfAppDMS
             return Tuple.Create(gruppenDaten, typenDaten);
         }
 
+        public void UpdateTableData(string tabellenname, int datensatzId, Dictionary<string, object> werte, string csvWerteTypen)
+        {
+            //SQL bauen
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbInner = new StringBuilder();
 
+            //array für ABgleich der Wertetypen
+            string[] arrayAbgleich = csvWerteTypen.Split(';');
+
+
+            sb.Append("UPDATE " + tabellenname + " SET ");
+            int counter = 0;
+            foreach (var item in werte)
+            {
+                //Unterscheidung nach Feldtypen
+                if (arrayAbgleich[counter].Substring(0, 3).Equals("dec"))
+                {
+                    if (!item.Value.ToString().Equals(""))
+                    {
+                        sbInner.Append(item.Key + "=" + item.Value.ToString().Replace(",", ".") + ",");
+                    }
+                    else
+                    {
+                        sbInner.Append(item.Key + "=NULL,");
+                    }
+                }
+                else if (arrayAbgleich[counter].Substring(0, 3).Equals("int"))
+                {
+                    if (!item.Value.ToString().Equals(""))
+                    {
+                        sbInner.Append(item.Key + "=" + Int32.Parse(item.Value.ToString()) + ",");
+                    }
+                    else
+                    {
+                        sbInner.Append(item.Key + "=NULL,");
+                    }
+                }
+                else if (arrayAbgleich[counter].Substring(0, 3).Equals("dat"))
+                {
+                    if (item.Value != null && !item.Value.ToString().Equals(""))
+                    {
+                        sbInner.Append(item.Key + "='" + DateTime.Parse(item.Value.ToString()) + "',");
+                    }
+                    else
+                    {
+                        sbInner.Append(item.Key + "=NULL,");
+                    }
+                }
+                else if (arrayAbgleich[counter].Substring(0, 3).Equals("bol"))
+                {
+                    sbInner.Append(item.Key + "='" + Boolean.Parse(item.Value.ToString()) + "',");
+                }
+                else
+                {
+                    //Ansonsten muss es ein String sein
+                    sbInner.Append(item.Key + "='" + item.Value.ToString().Replace("'", "''") + "',");
+                }
+
+
+                counter++;
+            }
+            string txt = sbInner.ToString();
+            txt = txt.Substring(0, txt.Length - 1);
+            sb.Append(txt);
+            sb.Append(" WHERE " + tabellenname + "Id = " + datensatzId);
+
+            string sql = sb.ToString();
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            command.CommandText = sql;
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
+
+        public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld)
+        {
+            List<int> lstInt = new List<int>();
+            List<object> lstObject = new List<object>();
+
+            DataTable dt = new DataTable();
+            string query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle;
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            foreach (DataRow row in dt.Rows)
+            {
+                lstInt.Add(row.Field<int>(0));
+                lstObject.Add(row.Field<object>(1));
+            }
+            return Tuple.Create(lstInt, lstObject);
+        }
+
+        /// <summary>
+        /// Liest die Tabelle mit den Metainfomationen für die Datenbank ab
+        /// </summary>
+        /// <returns>Tuple of Strings. Tuple aus Tabellenname, csvFeldtyp, csvFeldnamen</returns>
+        public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields()
+        {
+            List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM Tabellenfeldtypen";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var myT = Tuple.Create<string, string, string>(row.Field<string>(1), row.Field<string>(2), row.Field<string>(3));
+
+                    liste.Add(myT);
+                }
+            }
+            return liste;
+        }
+
+        public string ReadTableNameByDokId(int id)
+        {
+            List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT Tabelle FROM OkoDokumententyp where OkoDokumententypId = " + id;
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    return row.Field<string>(0);
+                }
+            }
+            return "";
+        }
 
 
 
@@ -138,54 +411,8 @@ namespace WpfAppDMS
             return returner;
         }
 
-        /// <summary>
-        /// Liest die Tabelle mit den Metainfomationen für die Datenbank ab
-        /// </summary>
-        /// <returns>Tuple of Strings. Tuple aus Tabellenname, csvFeldtyp, csvFeldnamen</returns>
-        public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields()
-        {
-            List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
-            using (SqlCommand cmd = new SqlCommand())
-            {
-                cmd.Connection = _con;
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT * FROM Tabellenfeldtypen";
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var myT = Tuple.Create<string, string, string>(row.Field<string>(1), row.Field<string>(2), row.Field<string>(3));
-
-                    liste.Add(myT);
-                }
-            }
-            return liste;
-        }
-
-        public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld)
-        {
-            List<int> lstInt = new List<int>();
-            List<object> lstObject = new List<object>();
-
-            DataTable dt = new DataTable();
-            string query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle;
-            SqlCommand cmd = new SqlCommand(query, _con);
-            // create data adapter
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            // this will query your database and return the result to your datatable
-            da.Fill(dt);
-            da.Dispose();
-            foreach (DataRow row in dt.Rows)
-            {
-                lstInt.Add(row.Field<int>(0));
-                lstObject.Add(row.Field<object>(1));
-            }
-            return Tuple.Create(lstInt, lstObject);
-        }
-
+        
+       
         /// <summary>
         /// Liest die Originaldaten der Tabelle ein
         /// </summary>
@@ -319,85 +546,85 @@ namespace WpfAppDMS
             return dtCopy;
         }
 
-        public void UpdateTableData(string tabellenname, int datensatzId, Dictionary<string, object> werte, string csvWerteTypen)
-        {
-            //SQL bauen
-            StringBuilder sb = new StringBuilder();
-            StringBuilder sbInner = new StringBuilder();
+        //public void UpdateTableData(string tabellenname, int datensatzId, Dictionary<string, object> werte, string csvWerteTypen)
+        //{
+        //    //SQL bauen
+        //    StringBuilder sb = new StringBuilder();
+        //    StringBuilder sbInner = new StringBuilder();
 
-            //array für ABgleich der Wertetypen
-            string[] arrayAbgleich = csvWerteTypen.Split(';');
-
-
-            sb.Append("UPDATE " + tabellenname + " SET ");
-            int counter = 0;
-            foreach (var item in werte)
-            {
-                //Unterscheidung nach Feldtypen
-                if (arrayAbgleich[counter].Substring(0, 3).Equals("dec"))
-                {
-                    if (!item.Value.ToString().Equals(""))
-                    {
-                        sbInner.Append(item.Key + "=" + item.Value.ToString().Replace(",", ".") + ",");
-                    }
-                    else
-                    {
-                        sbInner.Append(item.Key + "=NULL,");
-                    }
-                }
-                else if (arrayAbgleich[counter].Substring(0, 3).Equals("int"))
-                {
-                    if (!item.Value.ToString().Equals(""))
-                    {
-                        sbInner.Append(item.Key + "=" + Int32.Parse(item.Value.ToString()) + ",");
-                    }
-                    else
-                    {
-                        sbInner.Append(item.Key + "=NULL,");
-                    }
-                }
-                else if (arrayAbgleich[counter].Substring(0, 3).Equals("dat"))
-                {
-                    if (item.Value != null && !item.Value.ToString().Equals(""))
-                    {
-                        sbInner.Append(item.Key + "='" + DateTime.Parse(item.Value.ToString()) + "',");
-                    }
-                    else
-                    {
-                        sbInner.Append(item.Key + "=NULL,");
-                    }
-                }
-                else if (arrayAbgleich[counter].Substring(0, 3).Equals("bol"))
-                {
-                    sbInner.Append(item.Key + "='" + Boolean.Parse(item.Value.ToString()) + "',");
-                }
-                else
-                {
-                    //Ansonsten muss es ein String sein
-                    sbInner.Append(item.Key + "='" + item.Value.ToString().Replace("'", "''") + "',");
-                }
+        //    //array für ABgleich der Wertetypen
+        //    string[] arrayAbgleich = csvWerteTypen.Split(';');
 
 
-                counter++;
-            }
-            string txt = sbInner.ToString();
-            txt = txt.Substring(0, txt.Length - 1);
-            sb.Append(txt);
-            sb.Append(" WHERE " + tabellenname + "Id = " + datensatzId);
+        //    sb.Append("UPDATE " + tabellenname + " SET ");
+        //    int counter = 0;
+        //    foreach (var item in werte)
+        //    {
+        //        //Unterscheidung nach Feldtypen
+        //        if (arrayAbgleich[counter].Substring(0, 3).Equals("dec"))
+        //        {
+        //            if (!item.Value.ToString().Equals(""))
+        //            {
+        //                sbInner.Append(item.Key + "=" + item.Value.ToString().Replace(",", ".") + ",");
+        //            }
+        //            else
+        //            {
+        //                sbInner.Append(item.Key + "=NULL,");
+        //            }
+        //        }
+        //        else if (arrayAbgleich[counter].Substring(0, 3).Equals("int"))
+        //        {
+        //            if (!item.Value.ToString().Equals(""))
+        //            {
+        //                sbInner.Append(item.Key + "=" + Int32.Parse(item.Value.ToString()) + ",");
+        //            }
+        //            else
+        //            {
+        //                sbInner.Append(item.Key + "=NULL,");
+        //            }
+        //        }
+        //        else if (arrayAbgleich[counter].Substring(0, 3).Equals("dat"))
+        //        {
+        //            if (item.Value != null && !item.Value.ToString().Equals(""))
+        //            {
+        //                sbInner.Append(item.Key + "='" + DateTime.Parse(item.Value.ToString()) + "',");
+        //            }
+        //            else
+        //            {
+        //                sbInner.Append(item.Key + "=NULL,");
+        //            }
+        //        }
+        //        else if (arrayAbgleich[counter].Substring(0, 3).Equals("bol"))
+        //        {
+        //            sbInner.Append(item.Key + "='" + Boolean.Parse(item.Value.ToString()) + "',");
+        //        }
+        //        else
+        //        {
+        //            //Ansonsten muss es ein String sein
+        //            sbInner.Append(item.Key + "='" + item.Value.ToString().Replace("'", "''") + "',");
+        //        }
 
-            string sql = sb.ToString();
-            SqlCommand command = _con.CreateCommand();
-            SqlTransaction transaction;
-            // Start a local transaction.
-            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            // Must assign both transaction object and connection
-            // to Command object for a pending local transaction
-            command.Connection = _con;
-            command.Transaction = transaction;
-            command.CommandText = sql;
-            command.ExecuteNonQuery();
-            transaction.Commit();
-        }
+
+        //        counter++;
+        //    }
+        //    string txt = sbInner.ToString();
+        //    txt = txt.Substring(0, txt.Length - 1);
+        //    sb.Append(txt);
+        //    sb.Append(" WHERE " + tabellenname + "Id = " + datensatzId);
+
+        //    string sql = sb.ToString();
+        //    SqlCommand command = _con.CreateCommand();
+        //    SqlTransaction transaction;
+        //    // Start a local transaction.
+        //    transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+        //    // Must assign both transaction object and connection
+        //    // to Command object for a pending local transaction
+        //    command.Connection = _con;
+        //    command.Transaction = transaction;
+        //    command.CommandText = sql;
+        //    command.ExecuteNonQuery();
+        //    transaction.Commit();
+        //}
 
         public void DeleteTableData(string tabellenname, int datensatzId)
         {

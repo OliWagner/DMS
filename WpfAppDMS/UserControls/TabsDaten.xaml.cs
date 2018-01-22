@@ -27,18 +27,13 @@ namespace WpfAppDMS
             InitializeComponent();
         }
 
-        public void Add(string tabName, int id) {
+        public void Add(string dokumentenTyp, int dokumentenTypId) {
             TabItem item = new TabItem();
             EingabeDokumentDaten edd = new EingabeDokumentDaten();
-            edd.Dokumententyp = tabName;
-            edd.DokumententypId = id;
-
-
-
-
+            edd.zeichneGrid(dokumentenTyp, dokumentenTypId);
             item.Content = edd;
-            item.Header = tabName;
-            Items.Add(tabName);
+            item.Header = dokumentenTyp;
+            Items.Add(dokumentenTyp);
             tabsMain.Items.Add(item);
         }
     }

@@ -64,6 +64,9 @@
     <Compile Include="UserControls\EingabeDokumentDaten.xaml.cs">
       <DependentUpon>EingabeDokumentDaten.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\LookupAuswahl.xaml.cs">
+      <DependentUpon>LookupAuswahl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\TabsDaten.xaml.cs">
       <DependentUpon>TabsDaten.xaml</DependentUpon>
     </Compile>
@@ -92,6 +95,10 @@
     <Page Include="UserControls\EingabeDokumentDaten.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\LookupAuswahl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\TabsDaten.xaml">
       <SubType>Designer</SubType>
