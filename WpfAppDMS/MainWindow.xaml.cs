@@ -48,22 +48,7 @@ namespace WpfAppDMS
             dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
         }
 
-        private void dokTree_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            TreeView tv = ((DokTree)sender).tvMain;
-            if ((TreeViewItem)tv.SelectedItem != null) { 
-                string header = ((TreeViewItem)tv.SelectedItem).Header.ToString();
-                if (((TreeViewItem)tv.SelectedItem).Tag != null) {
-                    int id = Int32.Parse(((TreeViewItem)tv.SelectedItem).Tag.ToString());
-                    if (header.Contains('[') && !tabsDaten.Items.Contains(header))
-                    {
-                        tabsDaten.Add(header, id);
-                    }
-                }
-                
-            }
-        }
-
+        
         private void Grid_Drop(object sender, DragEventArgs e)
         {
             string[] data = { };
@@ -82,11 +67,6 @@ namespace WpfAppDMS
             Dateiname = txtDropzone.Text = txtArray[txtArray.Length - 1];
             DateiTitel = "";
             DateiBeschreibung = "";
-        }
-
-        private void conDialogBtnAbbrechen_Click(object sender, RoutedEventArgs e)
-        {
-            Environment.Exit(0);
         }
 
         private void Connect(string vorherigeEingabe = "")
@@ -116,6 +96,34 @@ namespace WpfAppDMS
             }
 
         }
+
+        #region Events other Components
+
+
+        private void dokTree_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeView tv = ((DokTree)sender).tvMain;
+            if ((TreeViewItem)tv.SelectedItem != null)
+            {
+                string header = ((TreeViewItem)tv.SelectedItem).Header.ToString();
+                if (((TreeViewItem)tv.SelectedItem).Tag != null)
+                {
+                    int id = Int32.Parse(((TreeViewItem)tv.SelectedItem).Tag.ToString());
+                    if (header.Contains('[') && !tabsDaten.Items.Contains(header))
+                    {
+                        tabsDaten.Add(header, id);
+                    }
+                }
+
+            }
+        }
+        private void conDialogBtnAbbrechen_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        #endregion
+
 
         #region Filestreaming Database
         public void databaseFileReadToDisk(string varID, string dateiname)

@@ -18,7 +18,7 @@
             <Grid x:Name="grdMain" MinHeight="200" Width="490"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0"/>
         </ScrollViewer>
         <Button x:Name="btnAbbruch" Click="btnAbbruch_Click" Grid.Row="1" Margin="400,5,0,0" HorizontalAlignment="Left" Content="Abbrechen" Height="20" VerticalAlignment="Center" Width="70" />
-        <Button x:Name="btnSpeichern" Grid.Row="1" Margin="320,5,0,0" HorizontalAlignment="Left" Content="Speichern" Height="20" VerticalAlignment="Center" Width="70" />
+        <Button x:Name="btnSpeichern" Click="btnSpeichern_Click" Grid.Row="1" Margin="320,5,0,0" HorizontalAlignment="Left" Content="Speichern" Height="20" VerticalAlignment="Center" Width="70" />
     </Grid>
     
 </UserControl>

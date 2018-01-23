@@ -32,10 +32,17 @@ namespace WpfAppDMS
             EingabeDokumentDaten edd = new EingabeDokumentDaten();
             edd.zeichneGrid(dokumentenTyp, dokumentenTypId);
             edd.btnAbbruch.Click += EingabeDokumentDaten_BtnAbbruch_Click;
+            edd.btnSpeichern.Click += EingabeDokumentDaten_BtnSpeichern_Click;
             item.Content = edd;
             item.Header = dokumentenTyp;
             Items.Add(dokumentenTyp);
             tabsMain.Items.Add(item);
+        }
+
+        private void EingabeDokumentDaten_BtnSpeichern_Click(object sender, RoutedEventArgs e)
+        {
+            //Datensatz ist gespeichert (sonst wäre der e.Handled vorher auf true gesetzt worden), Tag bei Abbrechen und Speichern ist der gleiche, also einfach Tab entfernen wie bei Abbruch
+            EingabeDokumentDaten_BtnAbbruch_Click(sender, e);
         }
 
         private void EingabeDokumentDaten_BtnAbbruch_Click(object sender, RoutedEventArgs e)
