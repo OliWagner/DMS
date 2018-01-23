@@ -12,7 +12,7 @@ namespace WpfAppDMS
 {
     class DbConnector
     {
-        SqlConnection _con;
+        public SqlConnection _con;
         string _conString;
  
         public DbConnector(String conString) {

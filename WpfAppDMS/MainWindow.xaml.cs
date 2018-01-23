@@ -33,12 +33,14 @@ namespace WpfAppDMS
         private string DateiTitel { get; set; }
         private string DateiBeschreibung { get; set; }
 
-        //Noch zu belegen
+        //Todo Noch zu belegen
         private string Dokumententyp { get; set; }
         private string Tabelle { get; set; }
         private int IdInTabelle { get; set; }
         private string Dateigroesse { get; set; }
         private string ErfasstAm { get; set; }
+
+        public int _idDesGeradeBearbeitetenDokuments = 0;
        
         public MainWindow()
         {
@@ -46,11 +48,36 @@ namespace WpfAppDMS
             InitializeComponent();
 
             dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
+            //Nach hinzufügen des Items noch den lokalen Eventhandler für das spätere Abfangen in EingabeDokumentDaten_BtnSpeichern_Click einbauen
+            tabsDaten.ItemAdded += AddHandlerToEingabeDokumentenDatenInstanz;
         }
 
-        
+        private void AddHandlerToEingabeDokumentenDatenInstanz(object sender, EingabeDokumentDatenEventArgs e)
+        {
+            ((EingabeDokumentDaten)e.eingabeDokumentDaten).btnSpeichern.Click += EingabeDokumentDaten_BtnSpeichern_Click;
+        }
+
+        private void EingabeDokumentDaten_BtnSpeichern_Click(object sender, RoutedEventArgs e)
+        {
+            //Der Datensatz ist schon in die Stammdatentabelle geschrieben
+            //Datensatz eintragen und Id des eingetragenen Datensatzes ermitteln, ist dem Button als Tag hinterlegt
+            int IdEingetragenerDatensatz = Int32.Parse(((Button)sender).Tag.ToString());
+
+            //Als nächstes Checken, ob das Dokument schon eingetragen wurde
+            if (_idDesGeradeBearbeitetenDokuments == 0) {
+                //Der Datensatz wurde noch nicht eingetragen
+                _idDesGeradeBearbeitetenDokuments = databaseFilePut(Dateipfad);
+            }
+
+            //Wenn wir hier angekommen sind, dann klappt auch das Eintragen der Datei in die DB
+            //Wir haben jetzt eigentlich alles für die Tabelle Dokumentendaten
+            //Todo --> Dokumentendaten in DB schreiben
+
+        }
+
         private void Grid_Drop(object sender, DragEventArgs e)
         {
+            _idDesGeradeBearbeitetenDokuments = 0;
             string[] data = { };
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -166,7 +193,7 @@ namespace WpfAppDMS
         //    return memoryStream;
         //}
 
-        private void databaseFilePut(string varFilePath)
+        private int databaseFilePut(string varFilePath)
         {
             byte[] file;
             using (var stream = new FileStream(varFilePath, FileMode.Open, FileAccess.Read))
@@ -177,11 +204,19 @@ namespace WpfAppDMS
                 }
             }
 
-            using (var sqlWrite = new SqlCommand("INSERT INTO Dokumente (Dokument) Values(@File)", _con))
+            using (var sqlWrite = new SqlCommand("INSERT INTO OkoDokumente (Dokument) Values(@File)", ((DbConnector)App.Current.Properties["Connector"])._con))
             {
                 sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
-                sqlWrite.ExecuteNonQuery();
+                sqlWrite.ExecuteNonQuery();             
             }
+
+            int neueId = 0;
+            using (var command = new SqlCommand("SELECT ISNULL(MAX(OkoDokumenteId), 0) FROM OkoDokumente", ((DbConnector)App.Current.Properties["Connector"])._con))
+            {
+               
+                Int32.TryParse(command.ExecuteScalar().ToString(), out neueId);
+            }
+            return neueId;  
         }
         #endregion
 

@@ -28,12 +28,12 @@ namespace WpfAppDMS
         public string _csvTabFeldwerte { get; set; }
         public int _idAktuellerDatensatz { get; set; }
 
-
         public EingabeDokumentDaten()
         {            
             InitializeComponent();
         }
 
+        #region zeichenGrid
         public void zeichneGrid(string dokumentenTyp, int dokumentenTypId) {
             btnAbbruch.Tag = dokumentenTyp;
             btnSpeichern.Tag = dokumentenTyp;
@@ -358,7 +358,9 @@ namespace WpfAppDMS
                 }
             }
         }
+        #endregion
 
+        #region TextChanged Events für die Eingabefelder
         private void Tb_TextChangedDec(object sender, TextChangedEventArgs e)
         {
             Regex r = new Regex("^[0-9]+(?:[\\.\\,]\\d{0,5})?$");
@@ -437,6 +439,7 @@ namespace WpfAppDMS
                 }
             }
         }
+        #endregion
 
         private void btnAbbruch_Click(object sender, RoutedEventArgs e)
         {
@@ -445,92 +448,97 @@ namespace WpfAppDMS
 
         private void btnSpeichern_Click(object sender, RoutedEventArgs e)
         {
+           
+            #region Datensatz der bezogenen Tabelle speichern
+            //Benötigte Werte um InsertTableData aufrufen zu können
+            string _tabellenname = "";
+            Dictionary<string, object> _dic = new Dictionary<string, object>();
+            StringBuilder _csv = new StringBuilder();
 
-            ////Benötigte Werte um InsertTableData aufrufen zu können
-            //string _tabellenname = "";
-            //Dictionary<string, object> _dic = new Dictionary<string, object>();
-            //StringBuilder _csv = new StringBuilder();
+            string keepValueForDic = "";
+            //TODO Datensatz in DB eintragen
+            int counter = 0; //wird benötigt, um erstes Element zu kennzeichnen
+            foreach (var item in grdMain.Children)
+            {
+                //item kann Textbox oder Textblock sein
 
-            //string keepValueForDic = "";
-            ////TODO Datensatz in DB eintragen
-            //int counter = 0; //wird benötigt, um erstes Element zu kennzeichnen
-            //foreach (var item in grdMain.Children)
-            //{
-            //    //item kann Textbox oder Textblock sein
+                //Textblock kann 'Tabellenname' oder 'Feldname (Typ)' sein
+                if (item.GetType() == typeof(TextBlock))
+                {
+                    if (counter == 0)
+                    {
+                        _tabellenname = ((TextBlock)item).Text;
+                    }
+                    else
+                    {
+                        //Tabellenfeldname --> Neues Element für Dictionary, aber erst den Wert merken
+                        //Wert muss gesplittet werden, davon [0] nehmen
+                        keepValueForDic = ((TextBlock)item).Text.Split(' ')[0];
+                        var str = ((TextBlock)item).Text.Split(' ')[1].Replace("(", "").Replace(")", "") + ";";
+                        if (str.Substring(0, 3).Equals("loo")) { keepValueForDic = ((TextBlock)item).Tag.ToString(); }
+                        _csv.Append(str);
+                    }
+                }
 
-            //    //Textblock kann 'Tabellenname' oder 'Feldname (Typ)' sein
-            //    if (item.GetType() == typeof(TextBlock))
-            //    {
-            //        if (counter == 0)
-            //        {
-            //            _tabellenname = ((TextBlock)item).Text;
-            //        }
-            //        else
-            //        {
-            //            //Tabellenfeldname --> Neues Element für Dictionary, aber erst den Wert merken
-            //            //Wert muss gesplittet werden, davon [0] nehmen
-            //            keepValueForDic = ((TextBlock)item).Text.Split(' ')[0];
-            //            var str = ((TextBlock)item).Text.Split(' ')[1].Replace("(", "").Replace(")", "") + ";";
-            //            if (str.Substring(0, 3).Equals("loo")) { keepValueForDic = ((TextBlock)item).Tag.ToString(); }
-            //            _csv.Append(str);
-            //        }
-            //    }
+                //Textbox kann nur zu einem Feldnamen gehören, der bereits als Key in die Dictionary einger
+                if (item.GetType() == typeof(TextBox))
+                {
+                    //Nun neues Element für Dictionary erzeugen und Werte intragen
+                    var kvp = new KeyValuePair<string, object>(keepValueForDic, ((TextBox)item).Text);
+                    _dic.Add(kvp.Key, kvp.Value);
+                } //Das Gleiche gilt für eine Checkbox bei Boolean-Werten
+                else if (item.GetType() == typeof(CheckBox))
+                {
+                    var kvp = new KeyValuePair<string, object>(keepValueForDic, ((CheckBox)item).IsChecked);
+                    _dic.Add(kvp.Key, kvp.Value);
+                }
+                else if (item.GetType() == typeof(DatePicker))
+                {
+                    var kvp = new KeyValuePair<string, object>(keepValueForDic, ((DatePicker)item).SelectedDate);
+                    _dic.Add(kvp.Key, kvp.Value);
+                }
+                else if (item.GetType() == typeof(LookupAuswahl))
+                {
+                    if ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem != null)
+                    {
+                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem).Tag);
+                        _dic.Add(kvp.Key, kvp.Value);
+                    }
+                    else
+                    {
+                        var kvp = new KeyValuePair<string, object>(keepValueForDic, null);
+                        _dic.Add(kvp.Key, kvp.Value);
+                    }
 
-            //    //Textbox kann nur zu einem Feldnamen gehören, der bereits als Key in die Dictionary einger
-            //    if (item.GetType() == typeof(TextBox))
-            //    {
-            //        //Nun neues Element für Dictionary erzeugen und Werte intragen
-            //        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((TextBox)item).Text);
-            //        _dic.Add(kvp.Key, kvp.Value);
-            //    } //Das Gleiche gilt für eine Checkbox bei Boolean-Werten
-            //    else if (item.GetType() == typeof(CheckBox))
-            //    {
-            //        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((CheckBox)item).IsChecked);
-            //        _dic.Add(kvp.Key, kvp.Value);
-            //    }
-            //    else if (item.GetType() == typeof(DatePicker))
-            //    {
-            //        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((DatePicker)item).SelectedDate);
-            //        _dic.Add(kvp.Key, kvp.Value);
-            //    }
-            //    else if (item.GetType() == typeof(LookupAuswahl))
-            //    {
-            //        if ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem != null)
-            //        {
-            //            var kvp = new KeyValuePair<string, object>(keepValueForDic, ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem).Tag);
-            //            _dic.Add(kvp.Key, kvp.Value);
-            //        }
-            //        else
-            //        {
-            //            var kvp = new KeyValuePair<string, object>(keepValueForDic, null);
-            //            _dic.Add(kvp.Key, kvp.Value);
-            //        }
+                }
+                counter++;
+            }
+            //DBConnector aufrufen
+            string txt = _csv.ToString().Substring(0, _csv.Length - 1);
+            //Für Aktualisierung in MainWindow merken
+            TabNameUebergabe = _tabellenname;
 
-            //    }
-            //    counter++;
-            //}
-            ////DBConnector aufrufen
-            //string txt = _csv.ToString().Substring(0, _csv.Length - 1);
-            ////Für Aktualisierung in MainWindow merken
-            //TabNameUebergabe = _tabellenname;
+            if (btnSpeichern.Content.Equals("Speichern"))
+            {
+                int tagWert = ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt);
+                btnSpeichern.Tag = tagWert;
 
-            //if (btnSpeichern.Content.Equals("Speichern"))
-            //{
-            //    ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt);
-            //    zeichneGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
-            //}
-            //else if (btnSpeichern.Content.Equals("Sichern"))
-            //{
-            //    ((DbConnector)App.Current.Properties["Connector"]).UpdateTableData(_tabellenname, _idAktuellerDatensatz, _dic, txt);
-            //    StringBuilder sb = new StringBuilder();
-            //    foreach (var value in _dic.Values)
-            //    {
-            //        sb.Append(value + ";");
-            //    }
-            //    string txtCsv = sb.ToString();
-            //    _csvTabFeldwerte = txtCsv.Substring(0, txtCsv.Length - 1);
-            //    zeichneGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen, _csvTabFeldwerte);
-            //}
+                //zeichneGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
+            }
+            else if (btnSpeichern.Content.Equals("Sichern"))
+            {
+                btnSpeichern.Tag = _idAktuellerDatensatz;
+                ((DbConnector)App.Current.Properties["Connector"]).UpdateTableData(_tabellenname, _idAktuellerDatensatz, _dic, txt);
+                StringBuilder sb = new StringBuilder();
+                foreach (var value in _dic.Values)
+                {
+                    sb.Append(value + ";");
+                }
+                string txtCsv = sb.ToString();
+                _csvTabFeldwerte = txtCsv.Substring(0, txtCsv.Length - 1);
+                //zeichneGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen, _csvTabFeldwerte);
+            }
+            #endregion
         }
     }
 }

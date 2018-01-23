@@ -22,6 +22,13 @@ namespace WpfAppDMS
     {
         public List<string> Items = new List<string>();
 
+        /// <summary>
+        /// Event dient MainWIndow dazu, selbst noch einen Eventhandler an das neue Element anzupappen
+        /// Sonst kriegt MainWIndow den Klick auf den Speichern Button nicht mit
+        /// MainWIndow muss dann noch die eigenen Daten in die DB schreiben
+        /// </summary>
+        public event EventHandler<EingabeDokumentDatenEventArgs> ItemAdded;
+
         public TabsDaten()
         {
             InitializeComponent();
@@ -37,6 +44,8 @@ namespace WpfAppDMS
             item.Header = dokumentenTyp;
             Items.Add(dokumentenTyp);
             tabsMain.Items.Add(item);
+            //Hier müsste nun ein Event gefeuert werden, das als Argument das edd haben müsste, damit diesem 
+            ItemAdded?.Invoke(this, new EingabeDokumentDatenEventArgs() { eingabeDokumentDaten = edd });
         }
 
         private void EingabeDokumentDaten_BtnSpeichern_Click(object sender, RoutedEventArgs e)
@@ -58,5 +67,12 @@ namespace WpfAppDMS
             }
             tabsMain.Items.Remove(toRemove);
         }
+    }
+
+
+
+    public class EingabeDokumentDatenEventArgs : EventArgs
+    {
+        public EingabeDokumentDaten eingabeDokumentDaten { get; set; }
     }
 }
