@@ -45,13 +45,25 @@ namespace WpfAppDMS
             Items.Add(dokumentenTyp);
             tabsMain.Items.Add(item);
             //Hier müsste nun ein Event gefeuert werden, das als Argument das edd haben müsste, damit diesem 
-            ItemAdded?.Invoke(this, new EingabeDokumentDatenEventArgs() { eingabeDokumentDaten = edd });
+            EingabeDokumentDatenEventArgs args = new EingabeDokumentDatenEventArgs();
+            ItemAdded?.Invoke(this, new EingabeDokumentDatenEventArgs() { eingabeDokumentDaten = edd , DokumentenTypId = dokumentenTypId });
         }
 
         private void EingabeDokumentDaten_BtnSpeichern_Click(object sender, RoutedEventArgs e)
         {
             //Datensatz ist gespeichert (sonst wäre der e.Handled vorher auf true gesetzt worden), Tag bei Abbrechen und Speichern ist der gleiche, also einfach Tab entfernen wie bei Abbruch
-            EingabeDokumentDaten_BtnAbbruch_Click(sender, e);
+            TabItem toRemove = new TabItem();
+            string table = ((Button)sender).Tag.ToString().Split('_')[0];
+
+            foreach (TabItem item in tabsMain.Items)
+            {
+                if (item.Header.Equals(table))
+                {
+                    toRemove = item;
+                    Items.Remove(item.Header.ToString());
+                }
+            }
+            tabsMain.Items.Remove(toRemove);
         }
 
         private void EingabeDokumentDaten_BtnAbbruch_Click(object sender, RoutedEventArgs e)
@@ -74,5 +86,6 @@ namespace WpfAppDMS
     public class EingabeDokumentDatenEventArgs : EventArgs
     {
         public EingabeDokumentDaten eingabeDokumentDaten { get; set; }
+        public int DokumentenTypId { get; set; }
     }
 }

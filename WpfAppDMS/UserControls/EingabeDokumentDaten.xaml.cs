@@ -26,7 +26,9 @@ namespace WpfAppDMS
         public string _csvTabFeldnamen { get; set; }
         public string _csvTabFeldtypen { get; set; }
         public string _csvTabFeldwerte { get; set; }
-        public int _idAktuellerDatensatz { get; set; }
+        private int _idAktuellerDatensatz { get; set; }
+        private int _aktuelleDokumentenTypId { get; set; }
+        private string _aktuellerTabName { get; set; }
 
         public EingabeDokumentDaten()
         {            
@@ -35,10 +37,12 @@ namespace WpfAppDMS
 
         #region zeichenGrid
         public void zeichneGrid(string dokumentenTyp, int dokumentenTypId) {
+            _aktuelleDokumentenTypId = dokumentenTypId;
             btnAbbruch.Tag = dokumentenTyp;
             btnSpeichern.Tag = dokumentenTyp;
             //Tabelle zu DOkumententyp ermitteln und zeichneGrid(3 Params) aufrufen
             string tabName = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNameByDokId(dokumentenTypId);
+            _aktuellerTabName = tabName;
             List<Tuple<string, string, string>> tableNamesAndTypes = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
             string csvTypen = "";
             string csvFelder = "";
@@ -441,12 +445,12 @@ namespace WpfAppDMS
         }
         #endregion
 
-        private void btnAbbruch_Click(object sender, RoutedEventArgs e)
+        public void btnAbbruch_Click(object sender, RoutedEventArgs e)
         {
             //Entfernt das Tab aus dem TabControl, wird in TabsDaten behandelt
         }
 
-        private void btnSpeichern_Click(object sender, RoutedEventArgs e)
+        public void btnSpeichern_Click(object sender, RoutedEventArgs e)
         {
            
             #region Datensatz der bezogenen Tabelle speichern
@@ -521,7 +525,8 @@ namespace WpfAppDMS
             if (btnSpeichern.Content.Equals("Speichern"))
             {
                 int tagWert = ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt);
-                btnSpeichern.Tag = tagWert;
+
+                btnSpeichern.Tag = btnSpeichern.Tag.ToString() + "_" + tagWert + "_" + _aktuelleDokumentenTypId + "_" + _aktuellerTabName;
 
                 //zeichneGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
             }

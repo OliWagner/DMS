@@ -61,7 +61,7 @@ namespace WpfAppDMS
         {
             //Der Datensatz ist schon in die Stammdatentabelle geschrieben
             //Datensatz eintragen und Id des eingetragenen Datensatzes ermitteln, ist dem Button als Tag hinterlegt
-            int IdEingetragenerDatensatz = Int32.Parse(((Button)sender).Tag.ToString());
+            int IdEingetragenerDatensatz = Int32.Parse((((Button)sender).Tag.ToString().Split('_')[1]));
 
             //Als nächstes Checken, ob das Dokument schon eingetragen wurde
             if (_idDesGeradeBearbeitetenDokuments == 0) {
@@ -72,7 +72,12 @@ namespace WpfAppDMS
             //Wenn wir hier angekommen sind, dann klappt auch das Eintragen der Datei in die DB
             //Wir haben jetzt eigentlich alles für die Tabelle Dokumentendaten
             //Todo --> Dokumentendaten in DB schreiben
+            string _Tabelle = ((Button)sender).Tag.ToString().Split('_')[3];
+            string _IdDokumentenTyp = ((Button)sender).Tag.ToString().Split('_')[2];
 
+            string dataTxt = _idDesGeradeBearbeitetenDokuments + ";" + _IdDokumentenTyp + ";" + _Tabelle + ";" + IdEingetragenerDatensatz 
+                + ";" + txtTitel.Text + ";" + txtBeschreibung.Text + ";" + Dateiname + ";" + DateTime.Today.ToString();
+            ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
         }
 
         private void Grid_Drop(object sender, DragEventArgs e)

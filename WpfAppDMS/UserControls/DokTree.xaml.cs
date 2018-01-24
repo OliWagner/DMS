@@ -88,6 +88,7 @@ namespace WpfAppDMS
                     string wert = txtArray[0].Trim();
                     int index = alleDokTypen.IndexOf(wert);
                     unteritem.ToolTip = alleDokTypenBeschreibungen.ElementAt(index);
+                    //DokumententypId zur späteren Verwendung an Tag des Items hängen
                     unteritem.Tag = alleDokTypenIds.ElementAt(index);
                     item.Items.Add(unteritem);
                 }

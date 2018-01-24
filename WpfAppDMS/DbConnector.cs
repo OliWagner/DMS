@@ -166,6 +166,50 @@ namespace WpfAppDMS
             return neueId;
         }
 
+        /// <summary>
+        /// Schreibt den Datensatz in die Tabelle
+        /// </summary>
+        /// <param name="daten">Ein csv mit allen Werten in der Reihenfolge der Felder</param>
+        /// <returns></returns>
+        public void InsertDocumentData(string daten)
+        {
+            string[] _daten = daten.Split(';');
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = "Insert into OkoDokumenteDaten (OkoDokumenteId, OkoDokumentenTypId, Tabelle, DatensatzIdInTabelle, Titel, Beschreibung, Dateiname, ErfasstAm) VALUES (" + _daten[0] + ", " + _daten[1] + ", '" + _daten[2] + "', " + _daten[3] + ", '" + _daten[4] + "', '" + _daten[5] + "', '" + _daten[6] + "', '" + _daten[7] + "')";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Console.WriteLine("An exception of type " + ex.GetType() +
+                            " was encountered while attempting to roll back the transaction.");
+                    }
+                }
+                Console.WriteLine("An exception of type " + e.GetType() +
+                    " was encountered while inserting the data.");
+                Console.WriteLine("Neither record was written to database.");
+            }
+        }
+
+
         public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> ReadDoksAndTypesData()
         {
             Tuple<List<string>, List<int>, List<string>> gruppenDaten;
