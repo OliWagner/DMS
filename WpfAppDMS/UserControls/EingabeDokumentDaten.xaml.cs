@@ -41,9 +41,14 @@ namespace WpfAppDMS
             btnAbbruch.Tag = dokumentenTyp;
             btnSpeichern.Tag = dokumentenTyp;
             //Tabelle zu DOkumententyp ermitteln und zeichneGrid(3 Params) aufrufen
-            string tabName = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNameByDokId(dokumentenTypId);
+            //alter Code
+            //string tabName = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNameByDokId(dokumentenTypId);
+            //neuer Code
+            string tabName = "xyx" + dokumentenTyp.Split('[')[0].Trim();
+
+
             _aktuellerTabName = tabName;
-            List<Tuple<string, string, string>> tableNamesAndTypes = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
+            List<Tuple<string, string, string>> tableNamesAndTypes = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields(true);
             string csvTypen = "";
             string csvFelder = "";
             foreach (var tuple in tableNamesAndTypes)
@@ -72,7 +77,7 @@ namespace WpfAppDMS
             TextBlock txtBlock1 = new TextBlock();
             txtBlock1.FontSize = 14;
             txtBlock1.FontWeight = FontWeights.Bold;
-            txtBlock1.Text = tabName;
+            txtBlock1.Text = tabName.Replace("xyx", ""); ;
             txtBlock1.Margin = new Thickness(5, 0, 0, 0);
             txtBlock1.Foreground = new SolidColorBrush(Colors.Black);
             txtBlock1.VerticalAlignment = VerticalAlignment.Top;
@@ -524,7 +529,7 @@ namespace WpfAppDMS
 
             if (btnSpeichern.Content.Equals("Speichern"))
             {
-                int tagWert = ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt);
+                int tagWert = ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt, true);
 
                 btnSpeichern.Tag = btnSpeichern.Tag.ToString() + "_" + tagWert + "_" + _aktuelleDokumentenTypId + "_" + _aktuellerTabName;
 

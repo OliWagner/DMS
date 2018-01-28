@@ -40,7 +40,7 @@ namespace WpfAppDMS
             _con.Dispose();
         }
 
-        public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen)
+        public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen, bool IsDokType = false)
         {
             int neueId = 0;
             //Zunächst mal aus den Angaben einen SQL-String bauen
@@ -114,8 +114,14 @@ namespace WpfAppDMS
             }
             string sqlSpalten = sbSpalten.ToString().Substring(0, sbSpalten.Length - 1);
             string sqlWerte = sbWerte.ToString().Substring(0, sbWerte.Length - 1);
-
-            sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
+            if (IsDokType) {
+                sb.Append("Insert into xyx" + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
+            } else {
+                sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
+            }
+            
+         
+            
 
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
@@ -133,7 +139,10 @@ namespace WpfAppDMS
 
                 try
                 {
-                    command.CommandText = "SELECT ISNULL(MAX(" + tabellenname + "Id), 0) FROM " + tabellenname;
+                    if (IsDokType)
+                    { command.CommandText = "SELECT ISNULL(MAX(xyx" + tabellenname + "Id), 0) FROM xyx" + tabellenname; }
+                    else { command.CommandText = "SELECT ISNULL(MAX(" + tabellenname + "Id), 0) FROM " + tabellenname; }
+                        
                     Int32.TryParse(command.ExecuteScalar().ToString(), out neueId);
                 }
                 catch (Exception innerEx)
@@ -373,14 +382,19 @@ namespace WpfAppDMS
         /// Liest die Tabelle mit den Metainfomationen für die Datenbank ab
         /// </summary>
         /// <returns>Tuple of Strings. Tuple aus Tabellenname, csvFeldtyp, csvFeldnamen</returns>
-        public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields()
+        public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields(bool IsDokumentType = false)
         {
             List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
             using (SqlCommand cmd = new SqlCommand())
             {
                 cmd.Connection = _con;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT * FROM Tabellenfeldtypen";
+                if (IsDokumentType) {
+                    cmd.CommandText = "SELECT * FROM DokTypTabellenfeldtypen";
+                } else {
+                    cmd.CommandText = "SELECT * FROM Tabellenfeldtypen";
+                }
+                
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();

@@ -212,7 +212,7 @@ namespace WpfApp
             if (AktDokTypenId == 0)
             {
                 ((DbConnector)App.Current.Properties["Connector"]).AddDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, idGruppe, cboTabelle.SelectedValue.ToString());
-                ((DbConnector)App.Current.Properties["Connector"]).CreateNewTable("_"+txtTypBezeichnung.Text, DokTypFeldwerte, true);
+                ((DbConnector)App.Current.Properties["Connector"]).CreateNewTable("xyx"+txtTypBezeichnung.Text, DokTypFeldwerte, true);
             }
             else
             {
