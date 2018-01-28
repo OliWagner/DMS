@@ -36,7 +36,7 @@ namespace WpfAppDMS
             Start();
         }
 
-        private void Start() {
+        public void Start() {
             alleTabellenInDb = new List<string>();
             List<Tuple<string, string, string>> lst = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
             foreach (Tuple<string, string, string> tuple in lst)

@@ -27,6 +27,9 @@ namespace WpfApp
         int AktDokGruppenId = 0;
         int AktDokTypenId = 0;
 
+        //DIe Tabellenfelder für die Tabelle zum Dokumententypen
+        private Dictionary<string, string> DokTypFeldwerte = new Dictionary<string, string>();
+
         public GruppenTypenDialog()
         {            
             InitializeComponent();
@@ -61,6 +64,7 @@ namespace WpfApp
             int AktGruppenid = alleDokTypenGruppenIds.ElementAt(index);
             int GruppenIndex = alleDokGruppenIds.IndexOf(AktGruppenid);
             cboGruppe.SelectedValue = alleDokGruppen.ElementAt(GruppenIndex);
+            btnWerteAnlegen.IsEnabled = false;
             e.Handled = true;
         }
 
@@ -134,7 +138,6 @@ namespace WpfApp
                     e.CanExecute = true;
                 }
             }
-
         }
 
         private void SichernDokTypen_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -159,6 +162,10 @@ namespace WpfApp
                     e.CanExecute = true;
                 }
             }
+            if (DokTypFeldwerte.Count == 0)
+            {
+                e.CanExecute = false;
+            }
         }
 
         private void btnFertig_Click(object sender, RoutedEventArgs e)
@@ -181,6 +188,7 @@ namespace WpfApp
             cboGruppe.SelectedItem = null;
             cboTabelle.SelectedItem = null;
             AktDokTypenId = 0;
+            btnWerteAnlegen.IsEnabled = true;
         }
 
         private void btnGruppeSpeichern_Click(object sender, RoutedEventArgs e)
@@ -204,6 +212,7 @@ namespace WpfApp
             if (AktDokTypenId == 0)
             {
                 ((DbConnector)App.Current.Properties["Connector"]).AddDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, idGruppe, cboTabelle.SelectedValue.ToString());
+                ((DbConnector)App.Current.Properties["Connector"]).CreateNewTable("_"+txtTypBezeichnung.Text, DokTypFeldwerte, true);
             }
             else
             {
@@ -215,6 +224,18 @@ namespace WpfApp
             cboTabelle.SelectedItem = null;
             AktDokTypenId = 0;
             LiesListen();
+        }
+
+        private void btnWerteAnlegen_Click(object sender, RoutedEventArgs e)
+        {
+            EingabeDokTypFelder eingabeDokTypFelder = new EingabeDokTypFelder();
+            eingabeDokTypFelder.Start();
+            eingabeDokTypFelder.Width = 550;
+            eingabeDokTypFelder.Height = 530;
+            eingabeDokTypFelder.Title = "Zum Dokumententyp zu erfassende Werte festlegen";
+            if (eingabeDokTypFelder.ShowDialog() == true) {
+                DokTypFeldwerte = eingabeDokTypFelder.Werte;
+            }
         }
     }
 }

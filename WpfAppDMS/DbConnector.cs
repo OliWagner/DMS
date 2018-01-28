@@ -185,7 +185,7 @@ namespace WpfAppDMS
 
             try
             {
-                command.CommandText = "Insert into OkoDokumenteDaten (OkoDokumenteId, OkoDokumentenTypId, Tabelle, DatensatzIdInTabelle, Titel, Beschreibung, Dateiname, ErfasstAm) VALUES (" + _daten[0] + ", " + _daten[1] + ", '" + _daten[2] + "', " + _daten[3] + ", '" + _daten[4] + "', '" + _daten[5] + "', '" + _daten[6] + "', '" + _daten[7] + "')";
+                command.CommandText = "Insert into OkoDokumenteDaten (OkoDokumenteId, OkoDokumentenTypId, Tabelle, IdInTabelle, Titel, Beschreibung, Dateiname, ErfasstAm) VALUES (" + _daten[0] + ", " + _daten[1] + ", '" + _daten[2] + "', " + _daten[3] + ", '" + _daten[4] + "', '" + _daten[5] + "', '" + _daten[6] + "', '" + _daten[7] + "')";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }

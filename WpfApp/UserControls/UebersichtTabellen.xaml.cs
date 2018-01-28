@@ -46,7 +46,7 @@ namespace WpfApp
                 foreach (var csvItem in csvNamen)
                 {
                     string item2 = csvItem;
-                    if (csvItem.Substring(0,3).Equals("_x_")) { item2 = csvItem.Split('_')[2]; }
+                    if (csvItem.Length > 2 && csvItem.Substring(0,3).Equals("_x_")) { item2 = csvItem.Split('_')[2]; }
                     var newItem = new TreeViewItem() { Header = item2 + " (" + csvTypen.ElementAt(counter).Substring(0,3) + ")" };
                     newItem.IsEnabled = false;
                     //newItem.Tag = item.Item3 + ":" + item.Item2;

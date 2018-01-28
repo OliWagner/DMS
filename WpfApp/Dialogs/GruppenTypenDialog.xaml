@@ -61,6 +61,7 @@
         <ComboBox x:Name="cboTabelle" Grid.Row="4" Width="205" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,5,0,0" />
             <Button x:Name="btnTypSpeichern" Click="btnTypSpeichern_Click" Command="local:MyCommands.SichernDokTypen" CommandTarget="{Binding ElementName=grdDokumententyp}" Width="65" FontSize="10" Content="Speichern" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,0,0,0" Grid.Row="5" />
         <Button x:Name="btnTypVerwerfen" Click="btnTypVerwerfen_Click" Width="65" FontSize="10" Content="Abbrechen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="290,0,0,0" Grid.Row="5" />
+        <Button x:Name="btnWerteAnlegen" Click="btnWerteAnlegen_Click" Width="65" FontSize="10" Content="Werte" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="220,0,0,0" Grid.Row="5" />
         </Grid>
 
         <Grid x:Name="grdTreeView" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="0,0,0,0">

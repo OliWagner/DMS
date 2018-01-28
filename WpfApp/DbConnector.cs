@@ -34,7 +34,7 @@ namespace WpfApp
             }
         }
                 
-        public bool CreateNewTable(string Tabellenname, Dictionary<string, string> Werte)
+        public bool CreateNewTable(string Tabellenname, Dictionary<string, string> Werte, bool IsDokTypTabelle = false)
         {
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
@@ -65,7 +65,13 @@ namespace WpfApp
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
                 //Die Tabellenstruktur speichern
-                command.CommandText = ("Insert into Tabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname+ "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
+                if (IsDokTypTabelle) {
+                    command.CommandText = ("Insert into DokTypTabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname + "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
+                }
+                else {
+                    command.CommandText = ("Insert into Tabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname + "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
+                }
+
                 command.ExecuteNonQuery();
                 transaction.Commit();
                 return true;

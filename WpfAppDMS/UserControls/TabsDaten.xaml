@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="250" d:DesignWidth="490" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Grid x:Name="grdMain" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-        <TabControl x:Name="tabsMain" Width="490" Height="250"/>
+        <TabControl x:Name="tabsMain" Width="490" Height="260"/>
     </Grid>
 </UserControl>

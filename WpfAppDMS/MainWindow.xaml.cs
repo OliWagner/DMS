@@ -80,6 +80,21 @@ namespace WpfAppDMS
             ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
         }
 
+        private void btnNeueDb_Click(object sender, RoutedEventArgs e)
+        {
+            ((DbConnector)App.Current.Properties["Connector"]).Close();
+            Connect();
+            InitializeComponent();
+            //dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
+            ////Nach hinzufügen des Items noch den lokalen Eventhandler für das spätere Abfangen in EingabeDokumentDaten_BtnSpeichern_Click einbauen
+            //tabsDaten.ItemAdded += AddHandlerToEingabeDokumentenDatenInstanz;
+            dokTree.Start();
+            dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
+            tabsDaten.Items.Clear();
+            tabsDaten.tabsMain.Items.Clear();
+            tabsDaten.ItemAdded += AddHandlerToEingabeDokumentenDatenInstanz;
+        }
+
         private void Grid_Drop(object sender, DragEventArgs e)
         {
             _idDesGeradeBearbeitetenDokuments = 0;
