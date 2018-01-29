@@ -20,7 +20,6 @@ namespace WpfApp
         private List<int> alleDokTypenGruppenIds;
         private List<string> alleDokTypen;
         private List<int> alleDokTypenIds;
-        private List<string> alleDokTypTabellen;
         private List<string> alleTabellenInDb;
 
         //Variable, die entscheidet, ob es sich bei dem Datensatz im Formular um einen neuen EIntrag handelt, oder ob der EIntrag geändert werden soll
@@ -59,7 +58,7 @@ namespace WpfApp
             AktDokTypenId = alleDokTypenIds.ElementAt(index);
             txtTypBezeichnung.Text = txtHeader;
             txtTypBeschreibung.Text = alleDokTypenBeschreibungen.ElementAt(index);
-            cboTabelle.SelectedValue = alleDokTypTabellen.ElementAt(index);
+            
 
             int AktGruppenid = alleDokTypenGruppenIds.ElementAt(index);
             int GruppenIndex = alleDokGruppenIds.IndexOf(AktGruppenid);
@@ -70,7 +69,7 @@ namespace WpfApp
 
 
         private void LiesListen() {
-            Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> gruppenundTypenTuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDoksAndTypesData();
+            Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>>> gruppenundTypenTuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDoksAndTypesData();
             alleDokGruppen = gruppenundTypenTuple.Item1.Item1;
             alleDokGruppenIds = gruppenundTypenTuple.Item1.Item2;
             alleDokGruppenBeschreibungen = gruppenundTypenTuple.Item1.Item3;
@@ -78,16 +77,14 @@ namespace WpfApp
             alleDokTypenIds = gruppenundTypenTuple.Item2.Item2;
             alleDokTypenBeschreibungen = gruppenundTypenTuple.Item2.Item3;
             alleDokTypenGruppenIds = gruppenundTypenTuple.Item2.Item4;
-            alleDokTypTabellen = gruppenundTypenTuple.Item2.Item5;
-
+    
             cboGruppe.ItemsSource = alleDokGruppen;
-            cboTabelle.ItemsSource = alleTabellenInDb;
             // Den Treeview bauen
             //Erst Dictionary bauen. Key ist DOkumententyp (Tabelle) / Value ist die GruppenId
             Dictionary<string, int> dicTypen = new Dictionary<string, int>();
             for (int i = 0; i < alleDokTypen.Count; i++)
             {
-                dicTypen.Add(alleDokTypen.ElementAt(i) + " [" + gruppenundTypenTuple.Item2.Item5.ElementAt(i) + "]", gruppenundTypenTuple.Item2.Item4.ElementAt(i));
+                dicTypen.Add(alleDokTypen.ElementAt(i) + " []", gruppenundTypenTuple.Item2.Item4.ElementAt(i));
             }
             Dictionary<int, string> dicGruppen = new Dictionary<int, string>();
             for (int i = 0; i < alleDokGruppen.Count; i++)
@@ -186,7 +183,6 @@ namespace WpfApp
             txtTypBeschreibung.Text = "";
             txtTypBezeichnung.Text = "";
             cboGruppe.SelectedItem = null;
-            cboTabelle.SelectedItem = null;
             AktDokTypenId = 0;
             btnWerteAnlegen.IsEnabled = true;
         }
@@ -211,17 +207,16 @@ namespace WpfApp
 
             if (AktDokTypenId == 0)
             {
-                ((DbConnector)App.Current.Properties["Connector"]).AddDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, idGruppe, cboTabelle.SelectedValue.ToString());
+                ((DbConnector)App.Current.Properties["Connector"]).AddDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, idGruppe);
                 ((DbConnector)App.Current.Properties["Connector"]).CreateNewTable("xyx"+txtTypBezeichnung.Text, DokTypFeldwerte, true);
             }
             else
             {
-                ((DbConnector)App.Current.Properties["Connector"]).UpdateDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, AktDokTypenId, idGruppe, cboTabelle.SelectedValue.ToString());
+                ((DbConnector)App.Current.Properties["Connector"]).UpdateDokTyp(txtTypBezeichnung.Text, txtTypBeschreibung.Text, AktDokTypenId, idGruppe);
             }
             txtTypBeschreibung.Text = "";
             txtTypBezeichnung.Text = "";
             cboGruppe.SelectedItem = null;
-            cboTabelle.SelectedItem = null;
             AktDokTypenId = 0;
             LiesListen();
         }

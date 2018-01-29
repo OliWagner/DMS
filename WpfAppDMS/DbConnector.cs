@@ -268,7 +268,7 @@ namespace WpfAppDMS
                     typenIds.Add(row.Field<int>(0));
                     typenBeschreibungen.Add(row.Field<string>(2));
                     typenGruppenIds.Add(row.Field<int>(3));
-                    typenTabellen.Add(row.Field<string>(4));
+                    
                 }
             }
 

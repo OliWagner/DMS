@@ -45,7 +45,6 @@ CREATE TABLE [dbo].[OkoDokumententyp](
 	[Bezeichnung] [varchar](50) NOT NULL,
 	[Beschreibung] [varchar](255) NULL,
 	[OkoDokumentengruppenId] [int] NOT NULL,
-	[Tabelle] [varchar](50) NULL,
  CONSTRAINT [PK_OkoDokumententyp] PRIMARY KEY CLUSTERED 
 (
 	[OkoDokumententypId] ASC

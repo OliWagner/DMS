@@ -53,15 +53,15 @@
         <Label Grid.Row="1" Width="120" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Bezeichnung:" />
         <Label Grid.Row="2" Width="120" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Beschreibung:" />
         <Label Grid.Row="3" Width="120" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Dokumentengruppe:" />
-        <Label Grid.Row="4" Width="120" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Tabelle:" />
+        
 
         <TextBox Grid.Row="1" x:Name="txtTypBezeichnung" Width="205" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,5,0,0" />
         <TextBox Grid.Row="2" x:Name="txtTypBeschreibung" Width="205" Height="80" TextWrapping="Wrap" MaxLength="255" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,5,0,0" />
         <ComboBox x:Name="cboGruppe" Grid.Row="3" Width="205" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,5,0,0" />
-        <ComboBox x:Name="cboTabelle" Grid.Row="4" Width="205" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,5,0,0" />
-            <Button x:Name="btnTypSpeichern" Click="btnTypSpeichern_Click" Command="local:MyCommands.SichernDokTypen" CommandTarget="{Binding ElementName=grdDokumententyp}" Width="65" FontSize="10" Content="Speichern" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,0,0,0" Grid.Row="5" />
-        <Button x:Name="btnTypVerwerfen" Click="btnTypVerwerfen_Click" Width="65" FontSize="10" Content="Abbrechen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="290,0,0,0" Grid.Row="5" />
-        <Button x:Name="btnWerteAnlegen" Click="btnWerteAnlegen_Click" Width="65" FontSize="10" Content="Werte" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="220,0,0,0" Grid.Row="5" />
+       
+        <Button x:Name="btnTypSpeichern" Click="btnTypSpeichern_Click" Command="local:MyCommands.SichernDokTypen" CommandTarget="{Binding ElementName=grdDokumententyp}" Width="65" FontSize="10" Content="Speichern" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,0,0,0" Grid.Row="4" />
+        <Button x:Name="btnTypVerwerfen" Click="btnTypVerwerfen_Click" Width="65" FontSize="10" Content="Abbrechen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="290,0,0,0" Grid.Row="4" />
+        <Button x:Name="btnWerteAnlegen" Click="btnWerteAnlegen_Click" Width="65" FontSize="10" Content="Werte" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="220,0,0,0" Grid.Row="4" />
         </Grid>
 
         <Grid x:Name="grdTreeView" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="0,0,0,0">

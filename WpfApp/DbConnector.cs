@@ -167,10 +167,10 @@ namespace WpfApp
         /// Item 1 --> Gruppen string, GruppenIds int, Gruppenbeschreibungen string
         /// Item 2 --> Typen string, TypenIds int, Typenbeschreibungen string, TypenGruppenIds int, TypenTabellen string
         /// </returns>
-        public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> ReadDoksAndTypesData()
+        public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>>> ReadDoksAndTypesData()
         {
             Tuple<List<string>, List<int>, List<string>> gruppenDaten;
-            Tuple<List<string>, List<int>, List<string>, List<int>, List<string>> typenDaten;
+            Tuple<List<string>, List<int>, List<string>, List<int>> typenDaten;
             //Item 1-3 Tuple1
             List<string> gruppen = new List<string>();
             List<int> gruppenIds = new List<int>();
@@ -180,7 +180,7 @@ namespace WpfApp
             List<int> typenIds = new List<int>();
             List<string> typenBeschreibungen = new List<string>();
             List<int> typenGruppenIds = new List<int>();
-            List<string> typenTabellen = new List<string>();
+            //List<string> typenTabellen = new List<string>();
 
             using (SqlCommand cmd = new SqlCommand())
             {
@@ -216,12 +216,11 @@ namespace WpfApp
                     typenIds.Add(row.Field<int>(0));
                     typenBeschreibungen.Add(row.Field<string>(2));
                     typenGruppenIds.Add(row.Field<int>(3));
-                    typenTabellen.Add(row.Field<string>(4));
                 }
             }
 
             gruppenDaten = Tuple.Create(gruppen, gruppenIds, gruppenBeschreibungen);
-            typenDaten = Tuple.Create(typen, typenIds, typenBeschreibungen, typenGruppenIds, typenTabellen);
+            typenDaten = Tuple.Create(typen, typenIds, typenBeschreibungen, typenGruppenIds);
             return Tuple.Create(gruppenDaten, typenDaten);
         }
 
@@ -897,7 +896,7 @@ namespace WpfApp
             }
         }
 
-        public void UpdateDokTyp(string bezeichnung, string beschreibung, int id, int dokGruppenId, string tabelle)
+        public void UpdateDokTyp(string bezeichnung, string beschreibung, int id, int dokGruppenId)
         {
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
@@ -909,7 +908,7 @@ namespace WpfApp
             command.Transaction = transaction;
             try
             {
-                command.CommandText = "UPDATE OkoDokumententyp SET Bezeichnung = '" + bezeichnung + "', Beschreibung = '" + beschreibung + "', OkoDokumentengruppenId = '" + dokGruppenId + "', Tabelle = '" + tabelle + "' Where OkoDokumententypId = '" + id + "';";
+                command.CommandText = "UPDATE OkoDokumententyp SET Bezeichnung = '" + bezeichnung + "', Beschreibung = '" + beschreibung + "', OkoDokumentengruppenId = '" + dokGruppenId + "' Where OkoDokumententypId = '" + id + "';";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -919,7 +918,7 @@ namespace WpfApp
             }
         }
 
-        public void AddDokTyp(string bezeichnung, string beschreibung, int gruppenId, string tabelle) {
+        public void AddDokTyp(string bezeichnung, string beschreibung, int gruppenId) {
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
             // Start a local transaction.
@@ -931,7 +930,7 @@ namespace WpfApp
 
             try
             {
-                command.CommandText = "Insert into OkoDokumententyp (Bezeichnung, Beschreibung, OkoDokumentengruppenId, Tabelle) VALUES ('" + bezeichnung + "', '" + beschreibung + "', "+gruppenId+", '"+tabelle+"')";
+                command.CommandText = "Insert into OkoDokumententyp (Bezeichnung, Beschreibung, OkoDokumentengruppenId) VALUES ('" + bezeichnung + "', '" + beschreibung + "', "+gruppenId+")";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
