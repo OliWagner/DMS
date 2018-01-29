@@ -30,7 +30,6 @@ CREATE TABLE [dbo].[OkoDokumenteDaten](
 	[Titel] [varchar](50) NOT NULL,
 	[Beschreibung] [varchar](255) NULL,
 	[Dateiname] [varchar](50) NOT NULL,
-	[Dateigroesse] [int] NULL,
 	[ErfasstAm] [date] NULL,
  CONSTRAINT [PK_DokumenteDaten] PRIMARY KEY CLUSTERED 
 (
