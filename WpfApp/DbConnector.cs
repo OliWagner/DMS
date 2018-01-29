@@ -66,10 +66,10 @@ namespace WpfApp
                 command.ExecuteNonQuery();
                 //Die Tabellenstruktur speichern
                 if (IsDokTypTabelle) {
-                    command.CommandText = ("Insert into DokTypTabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname + "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
+                    command.CommandText = ("Insert into OkoDokTypTabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname + "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
                 }
                 else {
-                    command.CommandText = ("Insert into Tabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname + "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
+                    command.CommandText = ("Insert into OkoTabellenfeldtypen (Tabellenname, CsvWertetypen, CsvFeldnamen) VALUES ('" + Tabellenname + "','" + sbFeldtypen.ToString().Substring(0, sbFeldtypen.Length - 1) + "','" + sbFeldnamen.ToString().Substring(0, sbFeldnamen.Length - 1) + "')");
                 }
 
                 command.ExecuteNonQuery();
@@ -143,7 +143,7 @@ namespace WpfApp
             {
                 cmd.Connection = _con;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT * FROM Tabellenfeldtypen";
+                cmd.CommandText = "SELECT * FROM OkoTabellenfeldtypen";
              
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -283,7 +283,7 @@ namespace WpfApp
             string csvFelder = sbCsvFelder.ToString().Substring(0, sbCsvFelder.Length - 1);
             string csvTypes = sbCsvTypen.ToString().Substring(0, sbCsvTypen.Length - 1); ;
 
-            sb.Append("UPDATE Tabellenfeldtypen SET CsvWertetypen = '" + csvTypes + "', CsvFeldnamen = '" + csvFelder + "' Where Tabellenname = '" + Tabelle + "';");
+            sb.Append("UPDATE OkoTabellenfeldtypen SET CsvWertetypen = '" + csvTypes + "', CsvFeldnamen = '" + csvFelder + "' Where Tabellenname = '" + Tabelle + "';");
             //< CsvWertetypen, varchar(max),> ,[CsvFeldnamen] = < CsvFeldnamen, varchar(max),> WHERE < Suchbedingungen,,>);
 
             SqlCommand command = _con.CreateCommand();
@@ -815,7 +815,7 @@ namespace WpfApp
         {
           
             string sql = "Drop Table " + tabellenname;
-            string sql2 = "Delete from Tabellenfeldtypen where Tabellenname = '" + tabellenname + "'";
+            string sql2 = "Delete from OkoTabellenfeldtypen where Tabellenname = '" + tabellenname + "'";
 
             SqlTransaction transaction;
             // Start a local transaction.

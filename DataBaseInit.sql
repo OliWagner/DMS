@@ -53,27 +53,27 @@ CREATE TABLE [dbo].[OkoDokumententyp](
 
 GO
 
-CREATE TABLE [dbo].[Tabellenfeldtypen](
-	[TabellenfeldtypenId] [int] IDENTITY(1,1) NOT NULL,
+CREATE TABLE [dbo].[OkoTabellenfeldtypen](
+	[OkoTabellenfeldtypenId] [int] IDENTITY(1,1) NOT NULL,
 	[Tabellenname] [varchar](50) NOT NULL,
 	[CsvWertetypen] [varchar](max) NOT NULL,
 	[CsvFeldnamen] [varchar](max) NOT NULL,
- CONSTRAINT [PK_Tabellenfeldtypen] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_OkoTabellenfeldtypen] PRIMARY KEY CLUSTERED 
 (
-	[TabellenfeldtypenId] ASC
+	[OkoTabellenfeldtypenId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
 
-CREATE TABLE [dbo].[DokTypTabellenfeldtypen](
-	[DokTypTabellenfeldtypenId] [int] IDENTITY(1,1) NOT NULL,
+CREATE TABLE [dbo].[OkoDokTypTabellenfeldtypen](
+	[OkoDokTypTabellenfeldtypenId] [int] IDENTITY(1,1) NOT NULL,
 	[Tabellenname] [varchar](50) NOT NULL,
 	[CsvWertetypen] [varchar](max) NOT NULL,
 	[CsvFeldnamen] [varchar](max) NOT NULL,
- CONSTRAINT [PK_DokTypTabellenfeldtypen] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_OkoDokTypTabellenfeldtypen] PRIMARY KEY CLUSTERED 
 (
-	[DokTypTabellenfeldtypenId] ASC
+	[OkoDokTypTabellenfeldtypenId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 

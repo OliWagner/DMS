@@ -390,9 +390,9 @@ namespace WpfAppDMS
                 cmd.Connection = _con;
                 cmd.CommandType = CommandType.Text;
                 if (IsDokumentType) {
-                    cmd.CommandText = "SELECT * FROM DokTypTabellenfeldtypen";
+                    cmd.CommandText = "SELECT * FROM OkoDokTypTabellenfeldtypen";
                 } else {
-                    cmd.CommandText = "SELECT * FROM Tabellenfeldtypen";
+                    cmd.CommandText = "SELECT * FROM OkoTabellenfeldtypen";
                 }
                 
 
