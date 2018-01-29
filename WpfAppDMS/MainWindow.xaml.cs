@@ -156,7 +156,7 @@ namespace WpfAppDMS
                 if (((TreeViewItem)tv.SelectedItem).Tag != null)
                 {
                     int id = Int32.Parse(((TreeViewItem)tv.SelectedItem).Tag.ToString());
-                    if (header.Contains('[') && !tabsDaten.Items.Contains(header))
+                    if (!tabsDaten.Items.Contains(header))
                     {
                         tabsDaten.Add(header, id);
                     }

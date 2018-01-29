@@ -44,7 +44,7 @@ namespace WpfAppDMS
             //alter Code
             //string tabName = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNameByDokId(dokumentenTypId);
             //neuer Code
-            string tabName = "xyx" + dokumentenTyp.Split('[')[0].Trim();
+            string tabName = "xyx" + dokumentenTyp;
 
 
             _aktuellerTabName = tabName;

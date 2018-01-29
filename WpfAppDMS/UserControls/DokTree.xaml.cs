@@ -62,7 +62,7 @@ namespace WpfAppDMS
             Dictionary<string, int> dicTypen = new Dictionary<string, int>();
             for (int i = 0; i < alleDokTypen.Count; i++)
             {
-                dicTypen.Add(alleDokTypen.ElementAt(i) + " []", gruppenundTypenTuple.Item2.Item4.ElementAt(i));
+                dicTypen.Add(alleDokTypen.ElementAt(i), gruppenundTypenTuple.Item2.Item4.ElementAt(i));
             }
             Dictionary<int, string> dicGruppen = new Dictionary<int, string>();
             for (int i = 0; i < alleDokGruppen.Count; i++)
@@ -83,9 +83,7 @@ namespace WpfAppDMS
                     TreeViewItem unteritem = new TreeViewItem();
                     unteritem.Header = tvUnterItem;
                     unteritem.MouseRightButtonDown += Unteritem_MouseRightButtonDown;
-                    string[] txtArray = tvUnterItem.Split('[');
-                    string wert = txtArray[0].Trim();
-                    int index = alleDokTypen.IndexOf(wert);
+                    int index = alleDokTypen.IndexOf(tvUnterItem);
                     unteritem.ToolTip = alleDokTypenBeschreibungen.ElementAt(index);
                     //DokumententypId zur späteren Verwendung an Tag des Items hängen
                     unteritem.Tag = alleDokTypenIds.ElementAt(index);

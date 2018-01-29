@@ -22,6 +22,9 @@ namespace WpfApp
         private List<int> alleDokTypenIds;
         private List<string> alleTabellenInDb;
 
+        private bool DokumentTypInBearbeitung = false;
+        private bool DokumentGruppeInBearbeitung = false;
+
         //Variable, die entscheidet, ob es sich bei dem Datensatz im Formular um einen neuen EIntrag handelt, oder ob der EIntrag geändert werden soll
         int AktDokGruppenId = 0;
         int AktDokTypenId = 0;
@@ -48,15 +51,16 @@ namespace WpfApp
             AktDokGruppenId = alleDokGruppenIds.ElementAt(index);
             txtGruppeBezeichnung.Text = item.Header.ToString();
             txtGruppeBeschreibung.Text = alleDokGruppenBeschreibungen.ElementAt(index);
+            DokumentGruppeInBearbeitung = true;
         }
 
         private void Unteritem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             TreeViewItem item = (TreeViewItem)sender;
-            string txtHeader = item.Header.ToString().Split('[')[0].Trim();
-            int index = alleDokTypen.IndexOf(txtHeader);
+            int index = alleDokTypen.IndexOf(item.Header.ToString());
             AktDokTypenId = alleDokTypenIds.ElementAt(index);
-            txtTypBezeichnung.Text = txtHeader;
+            txtTypBezeichnung.Text = item.Header.ToString();
+            txtTypBezeichnung.IsEnabled = false;
             txtTypBeschreibung.Text = alleDokTypenBeschreibungen.ElementAt(index);
             
 
@@ -64,6 +68,7 @@ namespace WpfApp
             int GruppenIndex = alleDokGruppenIds.IndexOf(AktGruppenid);
             cboGruppe.SelectedValue = alleDokGruppen.ElementAt(GruppenIndex);
             btnWerteAnlegen.IsEnabled = false;
+            DokumentTypInBearbeitung = true;
             e.Handled = true;
         }
 
@@ -84,7 +89,7 @@ namespace WpfApp
             Dictionary<string, int> dicTypen = new Dictionary<string, int>();
             for (int i = 0; i < alleDokTypen.Count; i++)
             {
-                dicTypen.Add(alleDokTypen.ElementAt(i) + " []", gruppenundTypenTuple.Item2.Item4.ElementAt(i));
+                dicTypen.Add(alleDokTypen.ElementAt(i), gruppenundTypenTuple.Item2.Item4.ElementAt(i));
             }
             Dictionary<int, string> dicGruppen = new Dictionary<int, string>();
             for (int i = 0; i < alleDokGruppen.Count; i++)
@@ -106,9 +111,7 @@ namespace WpfApp
                     TreeViewItem unteritem = new TreeViewItem();
                     unteritem.Header = tvUnterItem;
                     unteritem.MouseRightButtonDown += Unteritem_MouseRightButtonDown;
-                    string[] txtArray = tvUnterItem.Split('[');
-                    string wert = txtArray[0].Trim();
-                    int index = alleDokTypen.IndexOf(wert);
+                    int index = alleDokTypen.IndexOf(tvUnterItem);
                     unteritem.ToolTip = alleDokTypenBeschreibungen.ElementAt(index);                    
                     item.Items.Add(unteritem);
                 }
@@ -144,14 +147,8 @@ namespace WpfApp
         {
             e.CanExecute = true;
             string AllowedChars = @"^[a-zA-Z0-9 .,ÄäÖöÜü()]+$";
-            if (txtTypBezeichnung.Text.Equals("") || alleDokTypen.Contains(txtTypBezeichnung.Text.Trim()) || !Regex.IsMatch(txtTypBezeichnung.Text, AllowedChars) || !Regex.IsMatch(txtTypBeschreibung.Text, AllowedChars))
-            {
-                e.CanExecute = false;
-            }
-            if (cboGruppe.SelectedItem == null) {
-                e.CanExecute = false;
-            }
-            if (alleDokTypen != null && alleDokTypen.Contains(txtTypBezeichnung.Text.Trim()))
+            
+            if (alleDokTypen != null && (alleDokTypen.Contains(txtTypBezeichnung.Text.Trim()) || DokTypFeldwerte.Count == 0))
             {
                 e.CanExecute = false;
                 if (AktDokTypenId != 0)
@@ -159,7 +156,12 @@ namespace WpfApp
                     e.CanExecute = true;
                 }
             }
-            if (DokTypFeldwerte.Count == 0)
+            if (txtTypBezeichnung.Text.Equals("") || (alleDokTypen.Contains(txtTypBezeichnung.Text.Trim()) && DokumentTypInBearbeitung == false ) || !Regex.IsMatch(txtTypBezeichnung.Text, AllowedChars) || !Regex.IsMatch(txtTypBeschreibung.Text, AllowedChars))
+            {
+                e.CanExecute = false;
+
+            }
+            if (cboGruppe.SelectedItem == null)
             {
                 e.CanExecute = false;
             }
@@ -175,7 +177,7 @@ namespace WpfApp
             txtGruppeBeschreibung.Text = "";
             txtGruppeBezeichnung.Text = "";
             AktDokGruppenId = 0;
-
+            DokumentGruppeInBearbeitung = false;
         }
 
         private void btnTypVerwerfen_Click(object sender, RoutedEventArgs e)
@@ -185,6 +187,8 @@ namespace WpfApp
             cboGruppe.SelectedItem = null;
             AktDokTypenId = 0;
             btnWerteAnlegen.IsEnabled = true;
+            DokumentTypInBearbeitung = false;
+            txtTypBezeichnung.IsEnabled = true;
         }
 
         private void btnGruppeSpeichern_Click(object sender, RoutedEventArgs e)
@@ -198,6 +202,7 @@ namespace WpfApp
             }
             txtGruppeBeschreibung.Text = "";
             txtGruppeBezeichnung.Text = "";
+            DokumentGruppeInBearbeitung = false;
             LiesListen();
         }
 
@@ -218,7 +223,9 @@ namespace WpfApp
             txtTypBezeichnung.Text = "";
             cboGruppe.SelectedItem = null;
             AktDokTypenId = 0;
+            DokumentTypInBearbeitung = false;
             LiesListen();
+            txtTypBezeichnung.IsEnabled = true;
         }
 
         private void btnWerteAnlegen_Click(object sender, RoutedEventArgs e)
