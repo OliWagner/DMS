@@ -58,6 +58,9 @@
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="MyCommands.cs" />
+    <Compile Include="UserControls\DarstellungDokumente.xaml.cs">
+      <DependentUpon>DarstellungDokumente.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\DokTree.xaml.cs">
       <DependentUpon>DokTree.xaml</DependentUpon>
     </Compile>
@@ -88,6 +91,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\DarstellungDokumente.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\DokTree.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -40,6 +40,8 @@ namespace WpfAppDMS
             _con.Dispose();
         }
 
+        
+
         public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen, bool IsDokType = false)
         {
             int neueId = 0;
@@ -216,6 +218,59 @@ namespace WpfAppDMS
                     " was encountered while inserting the data.");
                 Console.WriteLine("Neither record was written to database.");
             }
+        }
+
+        /// <summary>
+        /// GIbt die Daten nur anders aus....
+        /// </summary>
+        /// <returns></returns>
+        public Tuple<Dictionary<int,string>, Dictionary<int, string>, List<string>, List<int>>  ReadAllDataDarstellungDokumente()
+        {
+            Dictionary<int, string> dicGruppen = new Dictionary<int, string>();
+            Dictionary<int, string> dicTypen = new Dictionary<int, string>();
+            List<string> AlleDokumententypenBezeichnungen = new List<string>();
+            List<int> AlleDokumententypenIds = new List<int>();
+
+            Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> data = ReadDoksAndTypesData();
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokumentengruppen";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    dicGruppen.Add(row.Field<int>(0), row.Field<string>(1));
+                }
+            }
+            foreach (KeyValuePair<int, string> kvp in dicGruppen.OrderBy(kvp => kvp.Value)) ;
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokumententyp";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    //Wir nehmen hier als Id die GruppenId, um das Ding in der Anzeige filtern zu können
+                    dicTypen.Add(row.Field<int>(3), row.Field<string>(1));
+                    AlleDokumententypenBezeichnungen.Add(row.Field<string>(1));
+                    AlleDokumententypenIds.Add(row.Field<int>(0));
+                }
+            }
+            foreach (KeyValuePair<int, string> kvp in dicTypen.OrderBy(kvp => kvp.Value)) ;
+
+            return Tuple.Create(dicGruppen, dicTypen, AlleDokumententypenBezeichnungen, AlleDokumententypenIds);
         }
 
 

@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppDMS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1030">
+        Title="MainWindow" Height="900" Width="1030">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="260" />
-            <RowDefinition Height="340" />
+            <RowDefinition Height="640" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210"></ColumnDefinition>
@@ -31,5 +31,8 @@
         <local:DokTree x:Name="dokTree" IsEnabled="False" Grid.Row="0" Grid.Column="1" />
 
         <local:TabsDaten x:Name="tabsDaten" IsEnabled="False" Grid.Row="0" Grid.Column="2" />
+        <Grid Background="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="3" Width="1000" Height="600">
+            <local:DarstellungDokumente x:Name="darstellungDokumente" IsEnabled="True" Grid.Row="1" Grid.ColumnSpan="3" />
+        </Grid>
     </Grid>
 </Window>
