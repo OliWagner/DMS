@@ -78,6 +78,13 @@ namespace WpfAppDMS
             string dataTxt = _idDesGeradeBearbeitetenDokuments + ";" + _IdDokumentenTyp + ";" + _Tabelle + ";" + IdEingetragenerDatensatz 
                 + ";" + txtTitel.Text + ";" + txtBeschreibung.Text + ";" + Dateiname + ";" + DateTime.Today.ToString();
             ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
+
+            if (darstellungDokumente.cboTypen.SelectedItem != null)
+            {
+                KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)darstellungDokumente.cboTypen.SelectedItem;
+                int id = darstellungDokumente.AlleDokumententypenIds.ElementAt(darstellungDokumente.AlleDokumententypenBezeichnungen.IndexOf(kvp.Value));
+                darstellungDokumente.ZeichneDatagrid(id);
+            }
         }
 
         private void btnNeueDb_Click(object sender, RoutedEventArgs e)

@@ -9,22 +9,25 @@
     <Grid x:Name="grdContainer" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1000" Height="600">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
-            <RowDefinition Height="520" />
+            <RowDefinition Height="60" />
+            <RowDefinition Height="500" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1000" Height="40" Background="AliceBlue">
+        <Grid Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="40" Background="AliceBlue">
             <ComboBox SelectionChanged="cboGruppen_SelectionChanged" x:Name="cboGruppen" Text="Dokumentengruppe wählen" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="200"/>
             <!--<TextBlock Margin="10,13,0,0" Visibility="{Binding SelectedItem, ElementName=cboGruppen}" IsHitTestVisible="True" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Dokumentengruppe wählen" />-->
             <ComboBox SelectionChanged="cboTypen_SelectionChanged" x:Name="cboTypen" Text="Dokumententyp wählen" HorizontalAlignment="Left" Margin="215,10,0,0" VerticalAlignment="Top" Width="200"/>
             <!--<TextBlock Margin="220,13,0,0" Visibility="{Binding SelectedItem, ElementName=cboTypen}" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Dokumententyp wählen" />-->
-            <Label HorizontalAlignment="Left" Margin="430,9,0,0" Content="Volltextsuche:" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Height="23" Margin="520,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
+            <Label HorizontalAlignment="Left" Margin="430,9,0,0" ToolTip="Suche in Titel und Beschreibung" Content="Volltextsuche:" VerticalAlignment="Top"/>
+            <TextBox HorizontalAlignment="Left" Height="23" ToolTip="Suche in Titel und Beschreibung" Margin="520,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
         </Grid>
-        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1000" Height="40" Background="LightBlue"></Grid>
-        <Grid Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1000" Height="520" Background="LightGray">
-            <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" Width="1000" Height="520" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <DataGrid x:Name="dgMain" VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" MinHeight="520" />
+        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="60" Background="LightBlue">
+            
+        </Grid>
+        <Grid Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="500" Background="LightGray">
+            <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" Height="500" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <DataGrid AutoGeneratingColumn="OnAutoGeneratingColumn" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False" x:Name="dgDokumente" VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" MinHeight="500" />
             </ScrollViewer>
+            <DataGrid IsReadOnly="True" x:Name="dgTabelleOriginal" Visibility="Hidden" />
         </Grid>
     </Grid>
 </UserControl>

@@ -16,6 +16,12 @@ using System.Windows.Shapes;
 
 namespace WpfAppDMS
 {
+    public class OkoDokTypTabellenfeldtypen {
+        public string Tabellenname { get; set; }
+        public string CsvWertetypen { get; set; }
+        public string CsvFeldnamen { get; set; }
+
+    }
     /// <summary>
     /// Interaktionslogik für DarstellungDokumente.xaml
     /// </summary>
@@ -27,8 +33,9 @@ namespace WpfAppDMS
         Dictionary<int, string> AlleDokumentengruppen;
         //Dictionary aller Dokumententypen
         Dictionary<int, string> AlleDokumententypen;
-        List<string> AlleDokumententypenBezeichnungen;
-        List<int> AlleDokumententypenIds;
+        public List<string> AlleDokumententypenBezeichnungen;
+        public List<int> AlleDokumententypenIds;
+        Dictionary<int, OkoDokTypTabellenfeldtypen> okoDokTypTabellenfeldtypen;
 
         public DarstellungDokumente()
         {
@@ -37,11 +44,15 @@ namespace WpfAppDMS
         }
 
         public void ZeichneGrid() {
-            Tuple<Dictionary<int, string>, Dictionary<int, string>, List<string>, List<int>> data = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDataDarstellungDokumente();
+            //Alle aktuellen Daten sammeln
+            Tuple<Dictionary<int, string>, Dictionary<int, string>, List<string>, List<int>, Dictionary<int, OkoDokTypTabellenfeldtypen>> data = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDataDarstellungDokumente();
             AlleDokumentengruppen = data.Item1;
             AlleDokumententypen = data.Item2;
             AlleDokumententypenBezeichnungen = data.Item3;
             AlleDokumententypenIds = data.Item4;
+            okoDokTypTabellenfeldtypen = data.Item5;
+
+            //Checkboxen
             cboGruppen.ItemsSource = AlleDokumentengruppen;
             cboTypen.ItemsSource = AlleDokumententypen;
         }
@@ -59,24 +70,41 @@ namespace WpfAppDMS
             if (cbo.SelectedItem != null) {
                 KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
                 int id = AlleDokumententypenIds.ElementAt(AlleDokumententypenBezeichnungen.IndexOf(kvp.Value));
-                ZeichneDatagrid("xyx" + kvp.Value);
+                ZeichneDatagrid(id);
             }
             
         }
 
-        private void ZeichneDatagrid(string tabelle) {
+        private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            var test = e.PropertyType;
+
+            if (e.PropertyType == typeof(System.DateTime))
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy";
+            if (e.PropertyType == typeof(System.Decimal))
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "F2";
+        }
+
+        public void ZeichneDatagrid(int idInTabelle)
+        {
+            OkoDokTypTabellenfeldtypen typ = (from KeyValuePair<int, OkoDokTypTabellenfeldtypen> kvp in okoDokTypTabellenfeldtypen where kvp.Key == idInTabelle select kvp.Value).FirstOrDefault();
+            dgDokumente.ItemsSource = null;
+            dgDokumente.Columns.Clear();
+            ZeichneDatagrid(typ.Tabellenname, typ.CsvWertetypen, typ.CsvFeldnamen);
+        }
+
+
+        private void ZeichneDatagrid(string tabelle, string csvWertetypen, string csvfeldnamen) {
+
             DataTable dtOriginal = new DataTable();
             DataTable dt = new DataTable();
             dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
             dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
+            
             //DataGrid füllen
-            dgMain.ItemsSource = dt.DefaultView;
-            //dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
-
-
-
-
-
+            //dgDokumente.AutoGenerateColumns = true;
+            dgDokumente.ItemsSource = dt.DefaultView;
+            dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
         }
     }
 }

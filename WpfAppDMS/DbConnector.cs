@@ -224,12 +224,13 @@ namespace WpfAppDMS
         /// GIbt die Daten nur anders aus....
         /// </summary>
         /// <returns></returns>
-        public Tuple<Dictionary<int,string>, Dictionary<int, string>, List<string>, List<int>>  ReadAllDataDarstellungDokumente()
+        public Tuple<Dictionary<int,string>, Dictionary<int, string>, List<string>, List<int>, Dictionary<int, OkoDokTypTabellenfeldtypen>>  ReadAllDataDarstellungDokumente()
         {
             Dictionary<int, string> dicGruppen = new Dictionary<int, string>();
             Dictionary<int, string> dicTypen = new Dictionary<int, string>();
             List<string> AlleDokumententypenBezeichnungen = new List<string>();
             List<int> AlleDokumententypenIds = new List<int>();
+            Dictionary<int, OkoDokTypTabellenfeldtypen> okoDOkTypTabellenfeldtypen = new Dictionary<int, OkoDokTypTabellenfeldtypen>();
 
             Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> data = ReadDoksAndTypesData();
 
@@ -270,7 +271,34 @@ namespace WpfAppDMS
             }
             foreach (KeyValuePair<int, string> kvp in dicTypen.OrderBy(kvp => kvp.Value)) ;
 
-            return Tuple.Create(dicGruppen, dicTypen, AlleDokumententypenBezeichnungen, AlleDokumententypenIds);
+            //Nun noch die Daten zu den einzelnen DOkumententypen einsammeln
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM OkoDokTypTabellenfeldtypen";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    //int IdDesDOkumententyps = AlleDokumententypenIds.ElementAt(
+                    string test = row.Field<string>(1);
+                    test = test.Substring(3, test.Length - 3);
+                    int elementAt =  AlleDokumententypenBezeichnungen.IndexOf(test);
+                    int IdDesDOkumententyps = AlleDokumententypenIds.ElementAt(elementAt);
+                    //Wir nehmen hier als Id die GruppenId, um das Ding in der Anzeige filtern zu können
+                    okoDOkTypTabellenfeldtypen.Add(IdDesDOkumententyps, new OkoDokTypTabellenfeldtypen { Tabellenname = row.Field<string>(1), CsvFeldnamen = row.Field<string>(3), CsvWertetypen = row.Field<string>(2) });
+                    
+                }
+            }
+
+
+
+
+            return Tuple.Create(dicGruppen, dicTypen, AlleDokumententypenBezeichnungen, AlleDokumententypenIds, okoDOkTypTabellenfeldtypen);
         }
 
 
@@ -445,7 +473,11 @@ namespace WpfAppDMS
                 cmd.Connection = _con;
                 cmd.CommandType = CommandType.Text;
                 if (IsDokumentType) {
-                    cmd.CommandText = "SELECT * FROM OkoDokTypTabellenfeldtypen";
+                    //if (IsDataForSuchfelder) {
+                    //    cmd.CommandText = "select * from " + tabellenname + " tab1 INNER JOIN OkoDokumenteDaten tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle";
+                    //} else {
+                        cmd.CommandText = "SELECT * FROM OkoDokTypTabellenfeldtypen";
+                    //}                   
                 } else {
                     cmd.CommandText = "SELECT * FROM OkoTabellenfeldtypen";
                 }
@@ -535,7 +567,11 @@ namespace WpfAppDMS
         {
             DataTable dt = new DataTable();
 
-            string query = "select * from " + tabellenname;
+            string query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname+ "Id = tab2.IdInTabelle AND tab2.Tabelle = '" + tabellenname +  "'";
+
+            //SELECT tabKunden.Kundennummer, Name, Telefon FROM tabKunden INNER JOIN tabRufnummern ON tabKunden.Kundennummer = tabRufnummern.Kundennummer
+
+
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -559,13 +595,13 @@ namespace WpfAppDMS
             List<Tuple<List<int>, List<object>>> _nachschlageFelderWerte = new List<Tuple<List<int>, List<object>>>();
 
             //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
-            List<Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields();
+            List<Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields(true);
             foreach (var item in Werte)
             {
                 if (item.Item1.Equals(tabellenname))
                 {
-                    string _namen = tabellenname + "Id;" + item.Item3;
-                    string _typen = "int;" + item.Item2;
+                    string _namen = tabellenname + "Id;" + item.Item3 + ";Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
+                    string _typen = "int;" + item.Item2 + ";txt;int;txt;txt;txt;dat";
                     _csvWerteFeldnamen = _namen.Split(';');
                     _csvWerteFeldnamenOriginal = _namen.Split(';');
                     _csvWerteFeldTypen = _typen.Split(';');
@@ -598,7 +634,9 @@ namespace WpfAppDMS
                 dtCopy.Columns.Add(column);
             }
 
-            string query = "select * from " + tabellenname;
+            //string query = "select * from " + tabellenname;
+            string query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle ='" + tabellenname+"'";
+
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);

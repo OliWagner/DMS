@@ -17,9 +17,9 @@
             <ColumnDefinition Width="490"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
-            <Grid AllowDrop="True" x:Name="grdDropzone" Margin="0,0,0,0" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="200" Height="100" Background="Green">
+            <Grid AllowDrop="True" x:Name="grdDropzone" Margin="10,5,5,5" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="190" Height="100" Background="#EEE">
                 <!--<ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Height="100" HorizontalScrollBarVisibility="Hidden">-->
-                <TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Text="Datei hier hinziehen" MinHeight="100"></TextBlock>
+                <TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,40,0,0" VerticalAlignment="Top" Width="200" Text="Datei hier hinziehen" TextAlignment="Center" MinHeight="100"></TextBlock>
                 <!--</ScrollViewer>-->
             </Grid>
             <TextBox x:Name="txtTitel" TextChanged="txtTitel_TextChanged" IsEnabled="False" HorizontalAlignment="Left" Height="23" Margin="10,114,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="190"/>
