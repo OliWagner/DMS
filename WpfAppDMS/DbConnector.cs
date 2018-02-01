@@ -563,14 +563,18 @@ namespace WpfAppDMS
         /// </summary>
         /// <param name="tabellenname">Einzulesende Tabelle</param>
         /// <returns></returns>
-        public DataTable ReadTableData(string tabellenname)
+        public DataTable ReadTableData(string tabellenname = "")
         {
             DataTable dt = new DataTable();
-
-            string query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname+ "Id = tab2.IdInTabelle AND tab2.Tabelle = '" + tabellenname +  "'";
-
-            //SELECT tabKunden.Kundennummer, Name, Telefon FROM tabKunden INNER JOIN tabRufnummern ON tabKunden.Kundennummer = tabRufnummern.Kundennummer
-
+            string query = "";
+            if (tabellenname.Equals(""))
+            {
+                query = "Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
+            }
+            else
+            {
+                query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle = '" + tabellenname + "'";
+            }
 
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
@@ -587,7 +591,7 @@ namespace WpfAppDMS
         /// </summary>
         /// <param name="tabellenname">Die einzulesende Tabelle</param>
         /// <returns>Tabellendaten mit referenzierten Nachschlagewerten</returns>
-        public DataTable ReadTableDataWerteErsetztFuerDarstellung(string tabellenname)
+        public DataTable ReadTableDataWerteErsetztFuerDarstellung(string tabellenname = "")
         {
             string[] _csvWerteFeldnamen = { };
             string[] _csvWerteFeldnamenOriginal = { };
@@ -595,18 +599,31 @@ namespace WpfAppDMS
             List<Tuple<List<int>, List<object>>> _nachschlageFelderWerte = new List<Tuple<List<int>, List<object>>>();
 
             //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
-            List<Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields(true);
-            foreach (var item in Werte)
+
+            string _namen = "";
+            string _typen = "";
+
+            if (tabellenname.Equals(""))
             {
-                if (item.Item1.Equals(tabellenname))
+                _namen = "Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
+                _typen = "txt;int;txt;txt;txt;dat";
+            }
+            else
+            {
+                List<Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields(true);
+                foreach (var item in Werte)
                 {
-                    string _namen = tabellenname + "Id;" + item.Item3 + ";Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
-                    string _typen = "int;" + item.Item2 + ";txt;int;txt;txt;txt;dat";
-                    _csvWerteFeldnamen = _namen.Split(';');
-                    _csvWerteFeldnamenOriginal = _namen.Split(';');
-                    _csvWerteFeldTypen = _typen.Split(';');
+                    if (item.Item1.Equals(tabellenname))
+                    {
+                        _namen = tabellenname + "Id;" + item.Item3 + ";Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
+                        _typen = "int;" + item.Item2 + ";txt;int;txt;txt;txt;dat";
+                    }
                 }
             }
+            _csvWerteFeldnamen = _namen.Split(';');
+            _csvWerteFeldnamenOriginal = _namen.Split(';');
+            _csvWerteFeldTypen = _typen.Split(';');
+
             //Originaldaten einlesen
             DataTable dt = new DataTable();
             DataTable dtCopy = new DataTable();
@@ -634,9 +651,15 @@ namespace WpfAppDMS
                 dtCopy.Columns.Add(column);
             }
 
-            //string query = "select * from " + tabellenname;
-            string query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle ='" + tabellenname+"'";
-
+            string query = "";
+            if (tabellenname.Equals(""))
+            {
+                query = "Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
+            }
+            else
+            {
+                query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle ='" + tabellenname + "'";
+            }
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);

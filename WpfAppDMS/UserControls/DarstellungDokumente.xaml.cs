@@ -55,6 +55,7 @@ namespace WpfAppDMS
             //Checkboxen
             cboGruppen.ItemsSource = AlleDokumentengruppen;
             cboTypen.ItemsSource = AlleDokumententypen;
+            ZeichneDatagrid();
         }
 
         private void cboGruppen_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -90,16 +91,24 @@ namespace WpfAppDMS
             OkoDokTypTabellenfeldtypen typ = (from KeyValuePair<int, OkoDokTypTabellenfeldtypen> kvp in okoDokTypTabellenfeldtypen where kvp.Key == idInTabelle select kvp.Value).FirstOrDefault();
             dgDokumente.ItemsSource = null;
             dgDokumente.Columns.Clear();
-            ZeichneDatagrid(typ.Tabellenname, typ.CsvWertetypen, typ.CsvFeldnamen);
+            ZeichneDatagrid(typ.Tabellenname);
         }
 
 
-        private void ZeichneDatagrid(string tabelle, string csvWertetypen, string csvfeldnamen) {
+        private void ZeichneDatagrid(string tabelle = "") {
 
             DataTable dtOriginal = new DataTable();
             DataTable dt = new DataTable();
-            dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
-            dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
+            if (tabelle.Equals("")) {
+                dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData();
+                dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung();
+            } else {
+                dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
+                dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
+            }
+            
+
+            
             
             //DataGrid füllen
             //dgDokumente.AutoGenerateColumns = true;
