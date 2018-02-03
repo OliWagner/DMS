@@ -130,7 +130,11 @@ namespace WpfAppDMS
                 }
                 else if (csvFeldtypen[i].Substring(0, 3).Equals("loo"))
                 {
-                    LookupAuswahl tb = new LookupAuswahl();
+                    LookupAuswahl tb = new LookupAuswahl(_tabName, _csvTabFeldnamen, _csvTabFeldnamen);
+                    tb.Tag = csvFeldnamen.ElementAt(i).Split('_')[3];
+                    tb.cboAuswahl.Tag = tb;
+                    tb.cboAuswahl.Name = csvFeldnamen.ElementAt(i);
+                    tb.cboAuswahl.SelectionChanged += CboAuswahl_SelectionChanged;
                     tb.Fill(csvFeldnamen.ElementAt(i));
                     tb.VerticalAlignment = VerticalAlignment.Top;
                     tb.HorizontalAlignment = HorizontalAlignment.Left;
@@ -273,7 +277,11 @@ namespace WpfAppDMS
                 }
                 else if (csvFeldtypen[i].Substring(0, 3).Equals("loo"))
                 {
-                    LookupAuswahl tb = new LookupAuswahl();
+                    LookupAuswahl tb = new LookupAuswahl(_tabName, _csvTabFeldnamen, _csvTabFeldnamen);
+                    tb.Tag = csvFeldnamen.ElementAt(i).Split('_')[3];
+                    tb.cboAuswahl.Tag = tb;
+                    tb.cboAuswahl.Name = csvFeldnamen.ElementAt(i);
+                    tb.cboAuswahl.SelectionChanged += CboAuswahl_SelectionChanged;
                     tb.Fill(csvFeldnamen.ElementAt(i));
                     //TODO COmboBOx vorbelegen
                     Tuple<List<int>, List<object>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(csvFeldnamen.ElementAt(i).Split('_')[3], csvFeldnamen.ElementAt(i).Split('_')[4]);
@@ -366,6 +374,67 @@ namespace WpfAppDMS
                     }
                 }
             }
+        }
+
+        private void CboAuswahl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cbo = (ComboBox)sender;
+            LookupAuswahl auswahl = (LookupAuswahl)cbo.Tag;
+            string _TabellenFeldBezogeneTabelle = "";
+            string _TabellenFeldBezogeneTabelleString = "";
+            string xxx = "";
+
+
+            string FeldnameDesLookupFeldes = cbo.Name;
+            //_feld hat immer die Form _x_Feldname_Reftabelle_FeldInRefTabelle
+            string refTabelle = FeldnameDesLookupFeldes.Split('_')[3];
+            string WhereClauseFeld = "";
+
+            if ((ComboBoxItem)cbo.SelectedItem != null) {
+                int IdFuerWhereClause = Int32.Parse(((ComboBoxItem)cbo.SelectedItem).Tag.ToString());
+
+                int counter = 0;
+                foreach (string item in auswahl.StammdatenCsvFeldnamen)
+                {
+                    foreach (var fn in item.Split(';'))
+                    {
+                        if (fn.Length > 2 && fn.Substring(0, 3).Equals("_x_"))
+                        {
+                            if (fn.Split('_')[3].Equals(refTabelle))
+                            {
+
+                                foreach (var csv in auswahl.StammdatenCsvFeldnamen.ElementAt(counter).Split(';'))
+                                {
+                                    if (csv.Contains("_x_") && csv.Contains(refTabelle))
+                                    {
+                                        xxx = csv;
+                                        _TabellenFeldBezogeneTabelle = auswahl.StammdatenTabelle.ElementAt(counter);
+                                        _TabellenFeldBezogeneTabelleString = "___" + auswahl.StammdatenTabelle.ElementAt(counter) + "_Bezeichnung";
+                                        WhereClauseFeld = fn;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    counter++;
+                }
+
+                //Wir haben jetzt das Feld, die WhereCLause und die Id, nun noch rausfinden, welche COmbobox neu zu zeichnen ist
+                foreach (var child in grdMain.Children)
+                {
+                    if (child.GetType() == typeof(LookupAuswahl) && !WhereClauseFeld.Equals(""))
+                    {
+                        if (((LookupAuswahl)child).Tag.ToString().Equals(_TabellenFeldBezogeneTabelle))
+                        {
+                            ((LookupAuswahl)child).cboAuswahl.Items.Clear();
+                            ((LookupAuswahl)child).Fill(_TabellenFeldBezogeneTabelleString, IdFuerWhereClause, WhereClauseFeld);
+                        }
+                    }
+                }
+            }
+
+            
         }
         #endregion
 

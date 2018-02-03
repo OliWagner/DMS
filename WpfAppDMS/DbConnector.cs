@@ -440,13 +440,20 @@ namespace WpfAppDMS
             transaction.Commit();
         }
 
-        public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld)
+        public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld, int idInRefTabelle = 0, string feldIn_tabelle = "")
         {
             List<int> lstInt = new List<int>();
             List<object> lstObject = new List<object>();
 
+            string query = "";
             DataTable dt = new DataTable();
-            string query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle;
+            if (idInRefTabelle == 0) {
+                query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle;
+            } else {
+                query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle + " WHERE " + feldIn_tabelle + "=" + idInRefTabelle;
+            }
+            
+
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);
