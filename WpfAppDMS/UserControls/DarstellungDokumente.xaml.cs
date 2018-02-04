@@ -71,7 +71,7 @@ namespace WpfAppDMS
             if (cbo.SelectedItem != null) {
                 KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
                 int id = AlleDokumententypenIds.ElementAt(AlleDokumententypenBezeichnungen.IndexOf(kvp.Value));
-                ZeichneDatagrid(id);
+                ZeichneDatagrid(id);               
             }
             
         }
@@ -92,6 +92,8 @@ namespace WpfAppDMS
             dgDokumente.ItemsSource = null;
             dgDokumente.Columns.Clear();
             ZeichneDatagrid(typ.Tabellenname);
+            suchfelder.grdMain.Children.Clear();
+            suchfelder.Fill(typ.Tabellenname);
         }
 
 
@@ -106,10 +108,7 @@ namespace WpfAppDMS
                 dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
                 dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
             }
-            
 
-            
-            
             //DataGrid füllen
             //dgDokumente.AutoGenerateColumns = true;
             dgDokumente.ItemsSource = dt.DefaultView;
