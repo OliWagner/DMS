@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfAppDMS"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000">
-    <Grid x:Name="grdContainer" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1000" Height="600">
+             d:DesignHeight="600" MinWidth="1000">
+    <Grid x:Name="grdContainer" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="600">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="60" />
@@ -20,12 +20,12 @@
             <Label HorizontalAlignment="Left" Margin="430,9,0,0" ToolTip="Suche in Titel und Beschreibung" Content="Volltextsuche:" VerticalAlignment="Top"/>
             <TextBox HorizontalAlignment="Left" Height="23" ToolTip="Suche in Titel und Beschreibung" Margin="520,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
         </Grid>
-        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="60" Background="LightBlue">
+        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Margin="0,0,0,0" Height="60" Background="LightBlue">
             
         </Grid>
         <Grid Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="500" Background="LightGray">
-            <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" Height="500" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <DataGrid AutoGeneratingColumn="OnAutoGeneratingColumn" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False" x:Name="dgDokumente" VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" MinHeight="500" />
+            <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" Margin="0,0,0,0" Height="500" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <DataGrid Margin="0,0,0,0" AutoGeneratingColumn="OnAutoGeneratingColumn" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False" x:Name="dgDokumente" VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" MinHeight="500" />
             </ScrollViewer>
             <DataGrid IsReadOnly="True" x:Name="dgTabelleOriginal" Visibility="Hidden" />
         </Grid>

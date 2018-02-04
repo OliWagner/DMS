@@ -14,7 +14,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210"></ColumnDefinition>
             <ColumnDefinition Width="300"></ColumnDefinition>
-            <ColumnDefinition Width="490"></ColumnDefinition>
+            <ColumnDefinition Width="490*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid AllowDrop="True" x:Name="grdDropzone" Margin="10,5,5,5" HorizontalAlignment="Left" DragDrop.Drop="Grid_Drop" VerticalAlignment="Top" Width="190" Height="100" Background="#EEE">
@@ -31,8 +31,8 @@
         <local:DokTree x:Name="dokTree" IsEnabled="False" Grid.Row="0" Grid.Column="1" />
 
         <local:TabsDaten x:Name="tabsDaten" IsEnabled="False" Grid.Row="0" Grid.Column="2" />
-        <Grid Background="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="3" Width="1000" Height="600">
-            <local:DarstellungDokumente x:Name="darstellungDokumente" IsEnabled="True" Grid.Row="1" Grid.ColumnSpan="3" />
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="3" MinWidth="1000" Height="600">
+            <local:DarstellungDokumente x:Name="darstellungDokumente" IsEnabled="True" Grid.Row="1" Margin="0,0,0,0" Grid.ColumnSpan="3" />
         </Grid>
     </Grid>
 </Window>
