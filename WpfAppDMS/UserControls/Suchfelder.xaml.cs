@@ -24,5 +24,12 @@ namespace WpfAppDMS
         {
             InitializeComponent();
         }
+
+        public void Fill(string _tabelle) {
+
+
+        }
+
+
     }
 }

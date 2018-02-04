@@ -21,7 +21,7 @@
             <TextBox HorizontalAlignment="Left" Height="23" ToolTip="Suche in Titel und Beschreibung" Margin="520,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
         </Grid>
         <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Margin="0,0,0,0" Height="60" Background="LightBlue">
-            
+            <local:Suchfelder x:Name="suchfelder" IsEnabled="True" Margin="0,0,0,0" />
         </Grid>
         <Grid Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" MinWidth="1000" MinHeight="500" Background="White">
             <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="1000" Margin="0,0,0,0" MinHeight="500" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">

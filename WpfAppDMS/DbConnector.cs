@@ -576,7 +576,8 @@ namespace WpfAppDMS
             string query = "";
             if (tabellenname.Equals(""))
             {
-                query = "Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
+                query = "Select Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
+                //query = "Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
             }
             else
             {
@@ -589,6 +590,19 @@ namespace WpfAppDMS
             // this will query your database and return the result to your datatable
             da.Fill(dt);
             da.Dispose();
+            //Nicht benötigte Columns entfernen
+            List<DataColumn> zuLoeschen = new List<DataColumn>();
+            foreach (DataColumn column in dt.Columns)
+            {
+                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle"))
+                {
+                    zuLoeschen.Add(column);
+                }
+            }
+            foreach (DataColumn item in zuLoeschen)
+            {
+                dt.Columns.Remove(item);
+            }
 
             return dt;
         }
@@ -724,6 +738,24 @@ namespace WpfAppDMS
                 }
                 dtCopy.Rows.Add(rowCopy);
             }
+
+            //Nicht benötigte Columns entfernen
+            List<DataColumn> zuLoeschen = new List<DataColumn>();
+            foreach (DataColumn column in dtCopy.Columns)
+            {
+                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle"))
+                {
+                    zuLoeschen.Add(column);
+                }
+                if (column.ColumnName.Contains("xyx")) {
+                    column.ColumnName = column.ColumnName.Replace("xyx","");
+                }
+            }
+            foreach (DataColumn item in zuLoeschen)
+            {
+                dtCopy.Columns.Remove(item);
+            }
+
             return dtCopy;
         }
 
