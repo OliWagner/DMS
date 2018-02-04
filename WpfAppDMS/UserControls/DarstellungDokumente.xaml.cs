@@ -95,7 +95,7 @@ namespace WpfAppDMS
         }
 
 
-        private void ZeichneDatagrid(string tabelle = "") {
+        public void ZeichneDatagrid(string tabelle = "") {
 
             DataTable dtOriginal = new DataTable();
             DataTable dt = new DataTable();

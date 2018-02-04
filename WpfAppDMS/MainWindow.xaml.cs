@@ -85,6 +85,9 @@ namespace WpfAppDMS
                 int id = darstellungDokumente.AlleDokumententypenIds.ElementAt(darstellungDokumente.AlleDokumententypenBezeichnungen.IndexOf(kvp.Value));
                 darstellungDokumente.ZeichneDatagrid(id);
             }
+            else {
+                darstellungDokumente.ZeichneDatagrid();
+            }
         }
 
         private void btnNeueDb_Click(object sender, RoutedEventArgs e)
