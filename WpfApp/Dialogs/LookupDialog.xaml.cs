@@ -63,15 +63,22 @@ namespace WpfApp
                     if (item.Item1.Equals(_tabName)) {
                         foreach (var elem in item.Item3.Split(';')) {
                             ComboBoxItem cboItem = new ComboBoxItem();
-                            if (elem.Substring(0,3).Equals("_x_")) {
+                            if (elem.Substring(0, 3).Equals("_x_")) {
                                 //Nachschlagefelder können nicht als Nachschlagewert referenziert werden
                                 cboItem.Content = elem.Split('_')[2];
                                 cboItem.IsEnabled = false;
-                            } else {
+                            } else if (!elem.Equals("Bezeichnung")) {
+                                //Feld MUSS zwingend Bezeichnung heißen
                                 cboItem.Content = elem;
+                                cboItem.IsEnabled = false;
+                            }
+                            else
+                            {
+                                cboItem.Content = elem;
+                                cboFeld.Items.Add(cboItem);
                             }                           
                             
-                            cboFeld.Items.Add(cboItem);
+                            
                         }
                         return;
                     }

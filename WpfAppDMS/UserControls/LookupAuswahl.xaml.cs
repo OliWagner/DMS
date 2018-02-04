@@ -48,6 +48,7 @@ namespace WpfAppDMS
         Tuple<List<int>, List<object>> tuple;
         public void Fill(string _feld, int Id = 0, string WhereClauseFeld = "")
         {
+            cboAuswahl.Items.Clear();
             if (Id > 0)
             {
                 tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(_feld.Split('_')[3], _feld.Split('_')[4], Id, WhereClauseFeld);

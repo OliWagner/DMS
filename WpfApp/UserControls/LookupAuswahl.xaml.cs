@@ -32,10 +32,12 @@ namespace WpfApp.UserControls
 
             for(int i = 0; i < tuple.Item1.Count(); i++)
             {
-                ComboBoxItem cbi = new ComboBoxItem();
-                cbi.Tag = tuple.Item1.ElementAt(i);
-                cbi.Content = tuple.Item2.ElementAt(i);
-                cboAuswahl.Items.Add(cbi);
+                
+                    ComboBoxItem cbi = new ComboBoxItem();
+                    cbi.Tag = tuple.Item1.ElementAt(i);
+                    cbi.Content = tuple.Item2.ElementAt(i);
+                    cboAuswahl.Items.Add(cbi);
+                         
             }
         }
     }

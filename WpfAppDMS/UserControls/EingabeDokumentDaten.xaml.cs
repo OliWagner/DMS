@@ -409,6 +409,10 @@ namespace WpfAppDMS
                                     {
                                         xxx = csv;
                                         _TabellenFeldBezogeneTabelle = auswahl.StammdatenTabelle.ElementAt(counter);
+
+                                       //Leider muss man das Feld Bezeichncung nennen, keine Ahnung, wie es anders gehen könnte. Woher weiss ich, welches Feld im Lookup eigentlich in der COmbobox steht???
+                                       //Wie man es dreht, bei dem Datenodell MUSS ich wohl dabei bleiben, dass Lookupfelder nur auf das Feld Bezeichnung gelegt werden können.
+                                       //Dieselben Probleme hatten wohl mal die Sharepoint-Entwickler, deswegen gibts den Title...
                                         _TabellenFeldBezogeneTabelleString = "___" + auswahl.StammdatenTabelle.ElementAt(counter) + "_Bezeichnung";
                                         WhereClauseFeld = fn;
                                     }
@@ -427,7 +431,6 @@ namespace WpfAppDMS
                     {
                         if (((LookupAuswahl)child).Tag.ToString().Equals(_TabellenFeldBezogeneTabelle))
                         {
-                            ((LookupAuswahl)child).cboAuswahl.Items.Clear();
                             ((LookupAuswahl)child).Fill(_TabellenFeldBezogeneTabelleString, IdFuerWhereClause, WhereClauseFeld);
                         }
                     }
