@@ -563,8 +563,27 @@ namespace WpfAppDMS
             return returner;
         }
 
-        
-       
+
+
+
+
+        public Tuple<List<string>, List<string>> ReadDataSuchfelder(string tabellenname)
+        {
+            DataTable dt = new DataTable();
+            string query = "Select * from OkoDokTypTabellenfeldtypen Where Tabellenname = '" + tabellenname + "'";
+            SqlCommand cmd = new SqlCommand(query, _con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            da.Dispose();
+
+            string feldnamen = dt.Rows[0].Field<string>(3) + ";Dateiname;Beschreibung;Titel";
+            string feldtypen = dt.Rows[0].Field<string>(2) + ";txt;txt;txt";
+
+            string[] _feldnamen = feldnamen.Split(';');
+            string[] _feldtypen = feldtypen.Split(';');
+            return Tuple.Create(_feldnamen.ToList(), _feldtypen.ToList());
+        }
+
         /// <summary>
         /// Liest die Originaldaten der Tabelle ein
         /// </summary>
@@ -743,7 +762,7 @@ namespace WpfAppDMS
             List<DataColumn> zuLoeschen = new List<DataColumn>();
             foreach (DataColumn column in dtCopy.Columns)
             {
-                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle"))
+                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle") || column.ColumnName.Equals(tabellenname + "Id"))
                 {
                     zuLoeschen.Add(column);
                 }

@@ -6,7 +6,13 @@
              xmlns:local="clr-namespace:WpfAppDMS"
              mc:Ignorable="d" 
              d:DesignHeight="60" MinWidth="1000" Background="Beige">
-    <Grid x:Name="grdMain" Height="60" MinWidth="1000" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" />
+    <Grid x:Name="grdMain" Height="60" MinWidth="1000" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="35" />
+        </Grid.RowDefinitions>
+            
+    </Grid>
 
 
 </UserControl>
