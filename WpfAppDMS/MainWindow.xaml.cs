@@ -48,8 +48,48 @@ namespace WpfAppDMS
             InitializeComponent();
 
             dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
+
+            darstellungDokumente.dgDokumente.MouseRightButtonDown += MouseRightButtonDown_Call;
+
+
             //Nach hinzufügen des Items noch den lokalen Eventhandler für das spätere Abfangen in EingabeDokumentDaten_BtnSpeichern_Click einbauen
             tabsDaten.ItemAdded += AddHandlerToEingabeDokumentenDatenInstanz;
+        }
+
+        private void MouseRightButtonDown_Call(object sender, MouseButtonEventArgs e)
+        {
+            int myNewIndex = 0;
+
+            if (((DbConnector)App.Current.Properties["Connector"]).IdCHecker == false && darstellungDokumente.dgDokumente.SelectedItem != null)
+            {
+                DataRowView rowView = (DataRowView)(darstellungDokumente.dgDokumente.SelectedItem);
+                int IdDesDatensatzes = Int32.Parse(rowView.Row.ItemArray[0].ToString());
+                for (int i = 0; i < darstellungDokumente.dgTabelleOriginal.Items.Count; i++)
+                {
+                    darstellungDokumente.dgTabelleOriginal.ScrollIntoView((darstellungDokumente.dgTabelleOriginal.Items[i]));
+                    DataGridRow aktRow = (DataGridRow)(darstellungDokumente.dgTabelleOriginal.ItemContainerGenerator.ContainerFromIndex(i));
+                    if (aktRow != null && (int)((DataRowView)aktRow.Item).Row.ItemArray[0] == IdDesDatensatzes)
+                    {
+                        myNewIndex = i;
+                    }
+                }
+                if (myNewIndex >= 0)
+                {
+                    DataRowView row = (DataRowView)darstellungDokumente.dgTabelleOriginal.Items[myNewIndex];
+                    //DataRowView row = (DataRowView)tabDaten.dgTabelle.SelectedItem;
+                    if (row != null)
+                    {
+                        string DokTyp = darstellungDokumente.dgTabelleOriginal.Columns[0].Header.ToString().Replace("xyx", "").Replace("Id", "");
+                        int DokTypId = Int32.Parse(row.Row.ItemArray[0].ToString());
+                        tabsDaten.IsEnabled = true;
+                        if (tabsDaten.Items.Count() == 0) {
+                            tabsDaten.Add(DokTyp, DokTypId);
+                            tabsDaten.tabsMain.SelectedIndex = 0;
+                        }
+                        
+                    }
+                }
+            }
         }
 
         private void AddHandlerToEingabeDokumentenDatenInstanz(object sender, EingabeDokumentDatenEventArgs e)

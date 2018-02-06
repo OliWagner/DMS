@@ -76,7 +76,8 @@ namespace WpfAppDMS
         {
             ComboBox cbo = (ComboBox)sender;
             if (cbo.SelectedItem != null) {
-                KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
+                ((DbConnector)App.Current.Properties["Connector"]).IdCHecker = false;
+                KeyValuePair <int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
                 int id = AlleDokumententypenIds.ElementAt(AlleDokumententypenBezeichnungen.IndexOf(kvp.Value));
                 ZeichneDatagrid(id);               
             }
@@ -134,6 +135,22 @@ namespace WpfAppDMS
             //dgDokumente.AutoGenerateColumns = true;
             dgDokumente.ItemsSource = dt.DefaultView;
             dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
+        }
+
+        /// <summary>
+        /// Iniziiert den Aufruf des Formulars für den ausgewählten Datensatz
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dgDokumente_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            //Behandlung erfolgt in MainWIndow
+                    
+        }
+
+        private void dgDokumente_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

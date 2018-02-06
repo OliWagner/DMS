@@ -562,8 +562,9 @@ namespace WpfAppDMS
             return returner;
         }
 
-
+        public bool IdCHecker = true;
         public Tuple<DataTable, DataTable> ReadDoksFuerDokgruppe(int dokGruppenId) {
+            IdCHecker = true;
             DataTable tableOriginal = new DataTable();
             DataTable tableDarstellung = new DataTable();
 
@@ -651,6 +652,8 @@ namespace WpfAppDMS
         /// <returns>Tabellendaten mit referenzierten Nachschlagewerten</returns>
         public DataTable ReadTableDataWerteErsetztFuerDarstellung(string tabellenname = "")
         {
+            
+
             string[] _csvWerteFeldnamen = { };
             string[] _csvWerteFeldnamenOriginal = { };
             string[] _csvWerteFeldTypen = { };
@@ -780,7 +783,7 @@ namespace WpfAppDMS
             List<DataColumn> zuLoeschen = new List<DataColumn>();
             foreach (DataColumn column in dtCopy.Columns)
             {
-                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle") || column.ColumnName.Equals(tabellenname + "Id"))
+                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle") ||(column.ColumnName.Equals(tabellenname + "Id") && IdCHecker))
                 {
                     zuLoeschen.Add(column);
                 }
