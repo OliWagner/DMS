@@ -431,7 +431,6 @@ namespace WpfApp
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i);
                             break;
                         case "loo":
-                            //TODO Referentwert ersetzen
                             //Ich brauche eine Liste der Felder und Ids
                             Tuple<List<int>, List<object>> tuple = _nachschlageFelderWerte.ElementAt(_nachschlageZaehler);
                             //Index ermitteln

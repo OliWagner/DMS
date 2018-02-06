@@ -34,10 +34,17 @@ namespace WpfAppDMS
             InitializeComponent();
         }
 
-        public void Add(string dokumentenTyp, int dokumentenTypId) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dokumentenTyp"></param>
+        /// <param name="dokumentenTypId"></param>
+        /// <param name="csvFeldwerte">optional. Wenn gefüllt, wird auch das Formular gefüllt</param>
+        public void Add(string dokumentenTyp, int dokumentenTypId, string csvFeldwerte = "") {
             TabItem item = new TabItem();
             EingabeDokumentDaten edd = new EingabeDokumentDaten();
-            edd.zeichneGrid(dokumentenTyp, dokumentenTypId);
+            edd.zeichneGrid(dokumentenTyp, dokumentenTypId, csvFeldwerte);
+            edd._idAktuellerDatensatz = dokumentenTypId;
             edd.btnAbbruch.Click += EingabeDokumentDaten_BtnAbbruch_Click;
             edd.btnSpeichern.Click += EingabeDokumentDaten_BtnSpeichern_Click;
             item.Content = edd;

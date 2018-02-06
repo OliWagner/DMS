@@ -34,11 +34,11 @@ namespace WpfAppDMS
         private string DateiBeschreibung { get; set; }
 
         //Todo Noch zu belegen
-        private string Dokumententyp { get; set; }
-        private string Tabelle { get; set; }
-        private int IdInTabelle { get; set; }
-        private string Dateigroesse { get; set; }
-        private string ErfasstAm { get; set; }
+        //private string Dokumententyp { get; set; }
+        //private string Tabelle { get; set; }
+        //private int IdInTabelle { get; set; }
+        //private string Dateigroesse { get; set; }
+        //private string ErfasstAm { get; set; }
 
         public int _idDesGeradeBearbeitetenDokuments = 0;
        
@@ -75,16 +75,47 @@ namespace WpfAppDMS
                 }
                 if (myNewIndex >= 0)
                 {
+                    
                     DataRowView row = (DataRowView)darstellungDokumente.dgTabelleOriginal.Items[myNewIndex];
-                    //DataRowView row = (DataRowView)tabDaten.dgTabelle.SelectedItem;
+                    
                     if (row != null)
                     {
                         string DokTyp = darstellungDokumente.dgTabelleOriginal.Columns[0].Header.ToString().Replace("xyx", "").Replace("Id", "");
                         int DokTypId = Int32.Parse(row.Row.ItemArray[0].ToString());
+                        StringBuilder sb = new StringBuilder();
+
+                        for (int i = 0; i < row.Row.ItemArray.Count() - 4; i++)
+                        {
+                            if (i > 0) {
+                                sb.Append(row.Row.ItemArray[i] + ";");
+                            }                            
+                        }
+                        string csvFeldtypen = sb.ToString().Substring(0, sb.Length - 1);
+
                         tabsDaten.IsEnabled = true;
+                        if (!txtTitel.Text.Equals("")) {
+                            tabsDaten.tabsMain.Items.Clear();
+                            tabsDaten.Items.Clear();
+                        }
+                        txtBeschreibung.IsEnabled = false;
+                        txtTitel.IsEnabled = false;
+                        dokTree.IsEnabled = false;
+                        txtDropzone.Text = "";
                         if (tabsDaten.Items.Count() == 0) {
-                            tabsDaten.Add(DokTyp, DokTypId);
+                            tabsDaten.Add(DokTyp, DokTypId, csvFeldtypen);
                             tabsDaten.tabsMain.SelectedIndex = 0;
+                            //TODO Events für Dropdowns auslösen
+
+                            foreach (var item in ((EingabeDokumentDaten)((TabItem)tabsDaten.tabsMain.Items[0]).Content).grdMain.Children)
+                            {
+                                if (item.GetType() == typeof(LookupAuswahl)) {
+                                    //((LookupAuswahl)item).cboAuswahl.SelectionChanged?.Invoke(item, new SelectionChangedEventArgs());
+                                    SelectionChangedEventArgs args = (SelectionChangedEventArgs)((LookupAuswahl)item).Tag;
+                                    ((LookupAuswahl)item).cboAuswahl.RaiseEvent(args);
+                                }
+                            } 
+
+                            
                         }
                         
                     }
@@ -99,25 +130,27 @@ namespace WpfAppDMS
 
         private void EingabeDokumentDaten_BtnSpeichern_Click(object sender, RoutedEventArgs e)
         {
-            //Der Datensatz ist schon in die Stammdatentabelle geschrieben
-            //Datensatz eintragen und Id des eingetragenen Datensatzes ermitteln, ist dem Button als Tag hinterlegt
-            int IdEingetragenerDatensatz = Int32.Parse((((Button)sender).Tag.ToString().Split('_')[1]));
+            if (((Button)sender).Content.Equals("Speichern")) {
+                //Der Datensatz ist schon in die Stammdatentabelle geschrieben
+                //Datensatz eintragen und Id des eingetragenen Datensatzes ermitteln, ist dem Button als Tag hinterlegt
+                int IdEingetragenerDatensatz = Int32.Parse((((Button)sender).Tag.ToString().Split('_')[1]));
 
-            //Als nächstes Checken, ob das Dokument schon eingetragen wurde
-            if (_idDesGeradeBearbeitetenDokuments == 0) {
-                //Der Datensatz wurde noch nicht eingetragen
-                _idDesGeradeBearbeitetenDokuments = databaseFilePut(Dateipfad);
-            }
+                //Als nächstes Checken, ob das Dokument schon eingetragen wurde
+                if (_idDesGeradeBearbeitetenDokuments == 0)
+                {
+                    //Der Datensatz wurde noch nicht eingetragen
+                    _idDesGeradeBearbeitetenDokuments = databaseFilePut(Dateipfad);
+                }
 
-            //Wenn wir hier angekommen sind, dann klappt auch das Eintragen der Datei in die DB
-            //Wir haben jetzt eigentlich alles für die Tabelle Dokumentendaten
-            //Todo --> Dokumentendaten in DB schreiben
-            string _Tabelle = ((Button)sender).Tag.ToString().Split('_')[3];
-            string _IdDokumentenTyp = ((Button)sender).Tag.ToString().Split('_')[2];
+                //Wenn wir hier angekommen sind, dann klappt auch das Eintragen der Datei in die DB
+                //Wir haben jetzt eigentlich alles für die Tabelle Dokumentendaten
+                string _Tabelle = ((Button)sender).Tag.ToString().Split('_')[3];
+                string _IdDokumentenTyp = ((Button)sender).Tag.ToString().Split('_')[2];
 
-            string dataTxt = _idDesGeradeBearbeitetenDokuments + ";" + _IdDokumentenTyp + ";" + _Tabelle + ";" + IdEingetragenerDatensatz 
-                + ";" + txtTitel.Text + ";" + txtBeschreibung.Text + ";" + Dateiname + ";" + DateTime.Today.ToString();
-            ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
+                string dataTxt = _idDesGeradeBearbeitetenDokuments + ";" + _IdDokumentenTyp + ";" + _Tabelle + ";" + IdEingetragenerDatensatz
+                    + ";" + txtTitel.Text + ";" + txtBeschreibung.Text + ";" + Dateiname + ";" + DateTime.Today.ToString();
+                ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
+            }          
 
             if (darstellungDokumente.cboTypen.SelectedItem != null)
             {
@@ -164,6 +197,8 @@ namespace WpfAppDMS
             Dateiname = txtDropzone.Text = txtArray[txtArray.Length - 1];
             DateiTitel = "";
             DateiBeschreibung = "";
+            tabsDaten.tabsMain.Items.Clear();
+            tabsDaten.Items.Clear();
         }
 
         private void Connect(string vorherigeEingabe = "")

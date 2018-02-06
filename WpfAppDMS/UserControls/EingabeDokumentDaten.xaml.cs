@@ -26,7 +26,7 @@ namespace WpfAppDMS
         public string _csvTabFeldnamen { get; set; }
         public string _csvTabFeldtypen { get; set; }
         public string _csvTabFeldwerte { get; set; }
-        private int _idAktuellerDatensatz { get; set; }
+        public int _idAktuellerDatensatz { get; set; }
         private int _aktuelleDokumentenTypId { get; set; }
         private string _aktuellerTabName { get; set; }
 
@@ -36,7 +36,8 @@ namespace WpfAppDMS
         }
 
         #region zeichenGrid
-        public void zeichneGrid(string dokumentenTyp, int dokumentenTypId) {
+        public void zeichneGrid(string dokumentenTyp, int dokumentenTypId, string csvTabFeldwerte = "") {
+
             _aktuelleDokumentenTypId = dokumentenTypId;
             btnAbbruch.Tag = dokumentenTyp;
             btnSpeichern.Tag = dokumentenTyp;
@@ -58,7 +59,16 @@ namespace WpfAppDMS
                     csvFelder = tuple.Item3;
                 }
             }
-            zeichneGrid(tabName, csvFelder, csvTypen);
+
+
+            if (csvTabFeldwerte.Equals(""))
+            {
+                zeichneGrid(tabName, csvFelder, csvTypen);
+            }
+            else {
+                zeichneGrid(tabName, csvFelder, csvTypen, csvTabFeldwerte);
+            }
+            
         }
 
         public void zeichneGrid(string tabName, string csvTabFeldnamen, string csvTabFeldtypen)
@@ -284,7 +294,6 @@ namespace WpfAppDMS
                     tb.cboAuswahl.Name = csvFeldnamen.ElementAt(i);
                     tb.cboAuswahl.SelectionChanged += CboAuswahl_SelectionChanged;
                     tb.Fill(csvFeldnamen.ElementAt(i));
-                    //TODO COmboBOx vorbelegen
                     Tuple<List<int>, List<object>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(csvFeldnamen.ElementAt(i).Split('_')[3], csvFeldnamen.ElementAt(i).Split('_')[4]);
                     if (!csvFeldwerte.ElementAt(i).ToString().Equals(""))
                     {
@@ -381,6 +390,7 @@ namespace WpfAppDMS
         {
             ComboBox cbo = (ComboBox)sender;
             LookupAuswahl auswahl = (LookupAuswahl)cbo.Tag;
+            auswahl.Tag = e;
             string _TabellenFeldBezogeneTabelle = "";
             string _TabellenFeldBezogeneTabelleString = "";
             string xxx = "";
@@ -538,7 +548,6 @@ namespace WpfAppDMS
             StringBuilder _csv = new StringBuilder();
 
             string keepValueForDic = "";
-            //TODO Datensatz in DB eintragen
             int counter = 0; //wird benötigt, um erstes Element zu kennzeichnen
             foreach (var item in grdMain.Children)
             {

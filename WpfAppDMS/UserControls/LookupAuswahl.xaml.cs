@@ -65,5 +65,10 @@ namespace WpfAppDMS
                 cboAuswahl.Items.Add(cbi);
             }
         }
+
+        private void cboAuswahl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Hier nichts tun
+        }
     }
 }
