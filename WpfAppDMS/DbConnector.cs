@@ -224,10 +224,10 @@ namespace WpfAppDMS
         /// GIbt die Daten nur anders aus....
         /// </summary>
         /// <returns></returns>
-        public Tuple<Dictionary<int,string>, Dictionary<int, string>, List<string>, List<int>, Dictionary<int, OkoDokTypTabellenfeldtypen>>  ReadAllDataDarstellungDokumente()
+        public Tuple<Dictionary<int,string>, List<OkoDokumententyp>, List<string>, List<int>, Dictionary<int, OkoDokTypTabellenfeldtypen>>  ReadAllDataDarstellungDokumente()
         {
             Dictionary<int, string> dicGruppen = new Dictionary<int, string>();
-            Dictionary<int, string> dicTypen = new Dictionary<int, string>();
+            List<OkoDokumententyp> dicTypen = new List<OkoDokumententyp>();
             List<string> AlleDokumententypenBezeichnungen = new List<string>();
             List<int> AlleDokumententypenIds = new List<int>();
             Dictionary<int, OkoDokTypTabellenfeldtypen> okoDOkTypTabellenfeldtypen = new Dictionary<int, OkoDokTypTabellenfeldtypen>();
@@ -249,7 +249,7 @@ namespace WpfAppDMS
                     dicGruppen.Add(row.Field<int>(0), row.Field<string>(1));
                 }
             }
-            foreach (KeyValuePair<int, string> kvp in dicGruppen.OrderBy(kvp => kvp.Value)) ;
+            foreach (KeyValuePair<int, string> kvp in dicGruppen.OrderBy(kvp => kvp.Value));
 
             using (SqlCommand cmd = new SqlCommand())
             {
@@ -262,14 +262,13 @@ namespace WpfAppDMS
                 da.Fill(dt);
 
                 foreach (DataRow row in dt.Rows)
-                {
-                    //Wir nehmen hier als Id die GruppenId, um das Ding in der Anzeige filtern zu können
-                    dicTypen.Add(row.Field<int>(3), row.Field<string>(1));
+                {                    
+                    dicTypen.Add(new OkoDokumententyp { OkoDokumententypId = row.Field<int>(0), Bezeichnung = row.Field<string>(1), Beschreibung = row.Field<string>(2), OkoDokumentengruppenId = row.Field<int>(3) });
                     AlleDokumententypenBezeichnungen.Add(row.Field<string>(1));
                     AlleDokumententypenIds.Add(row.Field<int>(0));
                 }
             }
-            foreach (KeyValuePair<int, string> kvp in dicTypen.OrderBy(kvp => kvp.Value)) ;
+            foreach (OkoDokumententyp kvp in dicTypen.OrderBy(kvp => kvp.Bezeichnung)) ;
 
             //Nun noch die Daten zu den einzelnen DOkumententypen einsammeln
             using (SqlCommand cmd = new SqlCommand())
@@ -564,8 +563,27 @@ namespace WpfAppDMS
         }
 
 
+        public Tuple<DataTable, DataTable> ReadDoksFuerDokgruppe(int dokGruppenId) {
+            DataTable tableOriginal = new DataTable();
+            DataTable tableDarstellung = new DataTable();
 
+            DataTable dt = new DataTable();
+            string query = "Select * from OkoDokumententyp Where OkoDokumentengruppenId = " + dokGruppenId;
+            SqlCommand cmd = new SqlCommand(query, _con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            da.Dispose();
 
+            foreach (DataRow row in dt.Rows) {
+                string tab = "xyx" + row.Field<string>(1);
+                DataTable ztOrg = ReadTableData(tab); ;
+                DataTable ztDarst = ReadTableDataWerteErsetztFuerDarstellung(tab);
+                tableOriginal.Merge(ztOrg);
+                tableDarstellung.Merge(ztDarst);
+
+            }
+            return Tuple.Create(tableOriginal, tableDarstellung);
+        }
 
         public Tuple<List<string>, List<string>> ReadDataSuchfelder(string tabellenname)
         {

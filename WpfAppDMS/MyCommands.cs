@@ -47,4 +47,10 @@ namespace WpfAppDMS
                       );
     }
 
+    public class OkoDokumententyp{
+        public int OkoDokumententypId { get; set; }
+        public string Bezeichnung { get; set; }
+        public string Beschreibung { get; set; }
+        public int OkoDokumentengruppenId { get; set; }
+    }
 }

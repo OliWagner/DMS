@@ -604,8 +604,6 @@ namespace WpfAppDMS
                 int tagWert = ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt, true);
 
                 btnSpeichern.Tag = btnSpeichern.Tag.ToString() + "_" + tagWert + "_" + _aktuelleDokumentenTypId + "_" + _aktuellerTabName;
-
-                //zeichneGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
             }
             else if (btnSpeichern.Content.Equals("Sichern"))
             {

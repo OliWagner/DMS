@@ -32,7 +32,7 @@ namespace WpfAppDMS
         //Dictionary aller Dokumentengruppen
         Dictionary<int, string> AlleDokumentengruppen;
         //Dictionary aller Dokumententypen
-        Dictionary<int, string> AlleDokumententypen;
+        List<OkoDokumententyp> AlleDokumententypen;
         public List<string> AlleDokumententypenBezeichnungen;
         public List<int> AlleDokumententypenIds;
         Dictionary<int, OkoDokTypTabellenfeldtypen> okoDokTypTabellenfeldtypen;
@@ -45,7 +45,7 @@ namespace WpfAppDMS
 
         public void ZeichneGrid() {
             //Alle aktuellen Daten sammeln
-            Tuple<Dictionary<int, string>, Dictionary<int, string>, List<string>, List<int>, Dictionary<int, OkoDokTypTabellenfeldtypen>> data = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDataDarstellungDokumente();
+            Tuple<Dictionary<int, string>, List<OkoDokumententyp>, List<string>, List<int>, Dictionary<int, OkoDokTypTabellenfeldtypen>> data = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDataDarstellungDokumente();
             AlleDokumentengruppen = data.Item1;
             AlleDokumententypen = data.Item2;
             AlleDokumententypenBezeichnungen = data.Item3;
@@ -62,7 +62,14 @@ namespace WpfAppDMS
         {
             ComboBox cbo = (ComboBox)sender;
             KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
-            cboTypen.ItemsSource = AlleDokumententypen.Where(p => p.Key == kvp.Key).ToDictionary(p => p.Key, p => p.Value);
+            //TOdo Hier muss ich mir etwas anderes überlegen, wie ich an die DOkumententypen zu der Gruppe komme
+            cboTypen.ItemsSource = AlleDokumententypen.Where(p => p.OkoDokumentengruppenId == kvp.Key).ToDictionary(p => p.OkoDokumententypId, p => p.Bezeichnung);
+
+            int dokGruppenId = kvp.Key;
+
+            //TODO Die Dokumente zur DOkGruppe darstellen
+            ZeichneDataGridDokGruppe(dokGruppenId);
+
         }
 
         private void cboTypen_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -87,13 +94,27 @@ namespace WpfAppDMS
         }
 
         public void ZeichneDatagrid(int idInTabelle)
+        {            
+                OkoDokTypTabellenfeldtypen typ = (from KeyValuePair<int, OkoDokTypTabellenfeldtypen> kvp in okoDokTypTabellenfeldtypen where kvp.Key == idInTabelle select kvp.Value).FirstOrDefault();
+                dgDokumente.Columns.Clear();
+                ZeichneDatagrid(typ.Tabellenname);
+                suchfelder.grdMain.Children.Clear();
+                suchfelder.Fill(typ.Tabellenname);
+        }
+
+
+        public void ZeichneDataGridDokGruppe(int idDokgruppe)
         {
-            OkoDokTypTabellenfeldtypen typ = (from KeyValuePair<int, OkoDokTypTabellenfeldtypen> kvp in okoDokTypTabellenfeldtypen where kvp.Key == idInTabelle select kvp.Value).FirstOrDefault();
             dgDokumente.ItemsSource = null;
             dgDokumente.Columns.Clear();
-            ZeichneDatagrid(typ.Tabellenname);
+
+            DataTable dtOriginal = new DataTable();
+            DataTable dt = new DataTable();
+           
+            Tuple<DataTable, DataTable> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDoksFuerDokgruppe(idDokgruppe);
+            dgDokumente.ItemsSource = tuple.Item2.DefaultView;
+            dgTabelleOriginal.ItemsSource = tuple.Item1.DefaultView;
             suchfelder.grdMain.Children.Clear();
-            suchfelder.Fill(typ.Tabellenname);
         }
 
 
