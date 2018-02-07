@@ -563,27 +563,45 @@ namespace WpfAppDMS
         }
 
         public bool IdCHecker = true;
-        public Tuple<DataTable, DataTable> ReadDoksFuerDokgruppe(int dokGruppenId) {
+        public DataTable ReadDoksFuerDokgruppe(int dokGruppenId) {
             IdCHecker = true;
-            DataTable tableOriginal = new DataTable();
-            DataTable tableDarstellung = new DataTable();
+            DataTable table = new DataTable();
+            
+
+            //ich muss zuerst eine Liste der DokumententypIds der Gruppe erstellen
+            DataTable dt0 = new DataTable();
+            string query0 = "Select OkoDokumententypId from OkoDokumententyp Where OkoDokumentengruppenId = " + dokGruppenId;
+            SqlCommand cmd0 = new SqlCommand(query0, _con);
+            SqlDataAdapter da0 = new SqlDataAdapter(cmd0);
+            da0.Fill(dt0);
+            da0.Dispose();
+            List<int> lstOkoDokumentenTypIds = new List<int>();
+            foreach (DataRow row in dt0.Rows)
+            {
+                lstOkoDokumentenTypIds.Add(row.Field<int>(0));
+            }
+
 
             DataTable dt = new DataTable();
-            string query = "Select * from OkoDokumententyp Where OkoDokumentengruppenId = " + dokGruppenId;
-            SqlCommand cmd = new SqlCommand(query, _con);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(dt);
-            da.Dispose();
-
+            dt = ReadTableDataWerteErsetztFuerDarstellung("OkoDokumenteDaten");
+            
+            table.Rows.Clear();
+            int counter = 0;
+            DataTable dtb = dt.Copy();
             foreach (DataRow row in dt.Rows) {
-                string tab = "xyx" + row.Field<string>(1);
-                DataTable ztOrg = ReadTableData(tab); ;
-                DataTable ztDarst = ReadTableDataWerteErsetztFuerDarstellung(tab);
-                tableOriginal.Merge(ztOrg);
-                tableDarstellung.Merge(ztDarst);
+                if (lstOkoDokumentenTypIds.Contains(row.Field<int>(0))) {
+                   
+                    dtb.Rows.Clear();
+                    var a = dtb.NewRow();
 
+                    a.ItemArray = row.ItemArray;
+                    dtb.Rows.Add(a);
+                    table.Merge(dtb);
+
+                }
+                counter++;
             }
-            return Tuple.Create(tableOriginal, tableDarstellung);
+            return table;
         }
 
         public Tuple<List<string>, List<string>> ReadDataSuchfelder(string tabellenname)
@@ -669,6 +687,11 @@ namespace WpfAppDMS
                 _namen = "Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
                 _typen = "txt;int;txt;txt;txt;dat";
             }
+            else if (tabellenname.Equals("OkoDokumenteDaten"))
+            {
+                _namen = "OkoDokumentenTypId;Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
+                _typen = "int;txt;int;txt;txt;txt;dat";
+            }
             else
             {
                 List<Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields(true);
@@ -717,6 +740,13 @@ namespace WpfAppDMS
             {
                 query = "Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
             }
+            else if (tabellenname.Equals("OkoDokumenteDaten"))
+            {
+                query = "Select OkoDokumentenTypId, Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
+            }
+
+
+
             else
             {
                 query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle ='" + tabellenname + "'";

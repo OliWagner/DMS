@@ -113,9 +113,8 @@ namespace WpfAppDMS
             DataTable dtOriginal = new DataTable();
             DataTable dt = new DataTable();
            
-            Tuple<DataTable, DataTable> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDoksFuerDokgruppe(idDokgruppe);
-            dgDokumente.ItemsSource = tuple.Item2.DefaultView;
-            dgTabelleOriginal.ItemsSource = tuple.Item1.DefaultView;
+            DataTable table = ((DbConnector)App.Current.Properties["Connector"]).ReadDoksFuerDokgruppe(idDokgruppe);
+            dgDokumente.ItemsSource = table.DefaultView;
             suchfelder.grdMain.Children.Clear();
         }
 
