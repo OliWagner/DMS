@@ -110,7 +110,7 @@ namespace WpfAppDMS
                             {
                                 if (item.GetType() == typeof(LookupAuswahl)) {
                                     //((LookupAuswahl)item).cboAuswahl.SelectionChanged?.Invoke(item, new SelectionChangedEventArgs());
-                                    SelectionChangedEventArgs args = (SelectionChangedEventArgs)((LookupAuswahl)item).Tag;
+                                    SelectionChangedEventArgs args = (SelectionChangedEventArgs)((LookupAuswahl)item).selectionChangedEventArgs;
                                     ((LookupAuswahl)item).cboAuswahl.RaiseEvent(args);
                                 }
                             } 
@@ -130,7 +130,8 @@ namespace WpfAppDMS
 
         private void EingabeDokumentDaten_BtnSpeichern_Click(object sender, RoutedEventArgs e)
         {
-            if (((Button)sender).Content.Equals("Speichern")) {
+            if (((Button)sender).Content.Equals("Speichern"))
+            {
                 //Der Datensatz ist schon in die Stammdatentabelle geschrieben
                 //Datensatz eintragen und Id des eingetragenen Datensatzes ermitteln, ist dem Button als Tag hinterlegt
                 int IdEingetragenerDatensatz = Int32.Parse((((Button)sender).Tag.ToString().Split('_')[1]));
@@ -150,7 +151,11 @@ namespace WpfAppDMS
                 string dataTxt = _idDesGeradeBearbeitetenDokuments + ";" + _IdDokumentenTyp + ";" + _Tabelle + ";" + IdEingetragenerDatensatz
                     + ";" + txtTitel.Text + ";" + txtBeschreibung.Text + ";" + Dateiname + ";" + DateTime.Today.ToString();
                 ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
-            }          
+            }
+            else {
+                tabsDaten.tabsMain.Items.Clear();
+                tabsDaten.Items.Clear();
+            }        
 
             if (darstellungDokumente.cboTypen.SelectedItem != null)
             {

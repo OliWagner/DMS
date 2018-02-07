@@ -369,7 +369,7 @@ namespace WpfAppDMS
             string[] arrayAbgleich = csvWerteTypen.Split(';');
 
 
-            sb.Append("UPDATE " + tabellenname + " SET ");
+            sb.Append("UPDATE xyx" + tabellenname + " SET ");
             int counter = 0;
             foreach (var item in werte)
             {
@@ -423,7 +423,7 @@ namespace WpfAppDMS
             string txt = sbInner.ToString();
             txt = txt.Substring(0, txt.Length - 1);
             sb.Append(txt);
-            sb.Append(" WHERE " + tabellenname + "Id = " + datensatzId);
+            sb.Append(" WHERE xyx" + tabellenname + "Id = " + datensatzId);
 
             string sql = sb.ToString();
             SqlCommand command = _con.CreateCommand();

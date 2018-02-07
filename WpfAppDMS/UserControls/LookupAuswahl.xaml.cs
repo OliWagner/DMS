@@ -23,6 +23,7 @@ namespace WpfAppDMS
         public string TabelleDesDokTyps { get; set; }
         public string[] CsvTabFeldnamenDokTyp { get; set; }
         public string[] CsvTabFeldtypenDokTyp { get; set; }
+        public SelectionChangedEventArgs selectionChangedEventArgs { get; set; }
 
         public List<string> StammdatenTabelle = new List<string>();
         public List<string> StammdatenCsvFeldnamen = new List<string>();
@@ -46,7 +47,7 @@ namespace WpfAppDMS
         }
 
         Tuple<List<int>, List<object>> tuple;
-        public void Fill(string _feld, int Id = 0, string WhereClauseFeld = "")
+        public void Fill(string _feld, int Id = 0, string WhereClauseFeld = "", ComboBoxItem comboBoxItem = null)
         {
             cboAuswahl.Items.Clear();
             if (Id > 0)
@@ -64,6 +65,18 @@ namespace WpfAppDMS
                 cbi.Content = tuple.Item2.ElementAt(i);
                 cboAuswahl.Items.Add(cbi);
             }
+            if (comboBoxItem != null) {
+                int index = 0;
+                foreach (ComboBoxItem item in cboAuswahl.Items)
+                {
+                    if (item.ToString().Equals(comboBoxItem.ToString())) {
+                        cboAuswahl.SelectedIndex = index;
+                    }
+                    index++;
+                }   
+            }
+
+
         }
 
         private void cboAuswahl_SelectionChanged(object sender, SelectionChangedEventArgs e)

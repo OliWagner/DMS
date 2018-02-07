@@ -234,7 +234,7 @@ namespace WpfAppDMS
             TextBlock txtBlock1 = new TextBlock();
             txtBlock1.FontSize = 14;
             txtBlock1.FontWeight = FontWeights.Bold;
-            txtBlock1.Text = tabName;
+            txtBlock1.Text = tabName.Contains("xyx") ? tabName.Replace("xyx","") : tabName;
             txtBlock1.Margin = new Thickness(5, 0, 0, 0);
             txtBlock1.Foreground = new SolidColorBrush(Colors.Black);
             txtBlock1.VerticalAlignment = VerticalAlignment.Top;
@@ -390,7 +390,7 @@ namespace WpfAppDMS
         {
             ComboBox cbo = (ComboBox)sender;
             LookupAuswahl auswahl = (LookupAuswahl)cbo.Tag;
-            auswahl.Tag = e;
+            auswahl.selectionChangedEventArgs = e;
             string _TabellenFeldBezogeneTabelle = "";
             string _TabellenFeldBezogeneTabelleString = "";
             string xxx = "";
@@ -442,7 +442,16 @@ namespace WpfAppDMS
                     {
                         if (((LookupAuswahl)child).Tag.ToString().Equals(_TabellenFeldBezogeneTabelle))
                         {
-                            ((LookupAuswahl)child).Fill(_TabellenFeldBezogeneTabelleString, IdFuerWhereClause, WhereClauseFeld);
+                            //TODO --> cbi ist falsch, ich brauche das Item aus der COmboBOx, die dann geändert wird!!!
+                            ComboBoxItem cbi = (ComboBoxItem)((LookupAuswahl)child).cboAuswahl.SelectedItem;
+                            if (cbi == null)
+                            {
+                                ((LookupAuswahl)child).Fill(_TabellenFeldBezogeneTabelleString, IdFuerWhereClause, WhereClauseFeld);
+                            }
+                            else {
+                                ((LookupAuswahl)child).Fill(_TabellenFeldBezogeneTabelleString, IdFuerWhereClause, WhereClauseFeld, cbi);
+                            }
+                            
                         }
                     }
                 }
