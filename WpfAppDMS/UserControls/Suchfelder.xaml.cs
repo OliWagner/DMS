@@ -30,6 +30,8 @@ namespace WpfAppDMS
             //Daten werden wie beim Join vom Grid sortiert, da COde übernehmen
             //Danach vielleicht direkt auf der DataTable filtern? Dann wäre man fertig
             Tuple<List<string>, List<string>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDataSuchfelder(_tabelle);
+            grdMain.Children.Clear();
+            grdMain.ColumnDefinitions.Clear();
             int counter = 0;
             for (int i = 0; i < tuple.Item1.Count; i++)
             {
