@@ -50,16 +50,16 @@ namespace WpfAppDMS
                 
                     grdMain.Children.Add(label);
                     //TODO --> Formularfeld schreiben
-
-
-
-
-
-
-
-
-
-
+                    //Ich brauche eine Textbox für alle Felder auch Nachschlagefeldern
+                    //Die Felder müssen Infos zur bezogenen Column haben --> Name des Feldes ColumnName, Tag des Feldes
+                    TextBox tb = new TextBox();
+                    tb.Width = 90;
+                    tb.Name = label.Content.ToString();
+                    tb.VerticalAlignment = VerticalAlignment.Center;
+                    tb.HorizontalAlignment = HorizontalAlignment.Center;
+                    Grid.SetColumn(tb, counter);
+                    Grid.SetRow(tb, 1);
+                    grdMain.Children.Add(tb);
                     counter++;
                 }
                 
