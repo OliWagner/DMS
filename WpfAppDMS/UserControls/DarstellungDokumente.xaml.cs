@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -40,8 +41,38 @@ namespace WpfAppDMS
         public DarstellungDokumente()
         {
             InitializeComponent();
+            suchfelder.ItemAdded += AddHandlerToTextBoxSuchfeld;
             ZeichneGrid();
         }
+
+        private void AddHandlerToTextBoxSuchfeld(object sender, SuchfeldAddedEventArgs e)
+        {
+            e.textbox.TextChanged += SuchfelderTextBoxTextChanged;
+        }
+
+        private void SuchfelderTextBoxTextChanged(object sender, TextChangedEventArgs e)
+        {
+            DgFilter(((TextBox)sender).Name, ((TextBox)sender).Text);
+        }
+
+        private void DgFilter(string Feldname, string wert)
+        {
+            var rows = DataGridHelper.GetDataGridRows(dgDokumente);
+            foreach (DataGridRow r in rows)
+            {
+                DataRowView rv = (DataRowView)r.Item;
+                foreach (DataGridColumn column in dgDokumente.Columns)
+                {
+                    if (column.Header.Equals(Feldname) && column.GetCellContent(r) is TextBlock)
+                    {
+                        TextBlock cellContent = column.GetCellContent(r) as TextBlock;
+                        MessageBox.Show(cellContent.Text);
+                    }
+                }
+
+            }
+        }
+        
 
         public void ZeichneGrid() {
             //Alle aktuellen Daten sammeln

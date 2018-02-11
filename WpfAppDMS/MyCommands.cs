@@ -1,4 +1,7 @@
-﻿using System.Windows.Input;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace WpfAppDMS
 {
@@ -52,5 +55,18 @@ namespace WpfAppDMS
         public string Bezeichnung { get; set; }
         public string Beschreibung { get; set; }
         public int OkoDokumentengruppenId { get; set; }
+    }
+
+    public static class DataGridHelper {
+        public static IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)
+        {
+            var itemsSource = grid.ItemsSource as IEnumerable;
+            if (null == itemsSource) yield return null;
+            foreach (var item in itemsSource)
+            {
+                var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (null != row) yield return row;
+            }
+        }
     }
 }

@@ -15,11 +15,16 @@ using System.Windows.Shapes;
 
 namespace WpfAppDMS
 {
+    public class SuchfeldAddedEventArgs : EventArgs
+    {
+        public TextBox textbox { get; set; }
+    }
     /// <summary>
     /// Interaktionslogik für Suchfelder.xaml
     /// </summary>
     public partial class Suchfelder : UserControl
     {
+        public event EventHandler<SuchfeldAddedEventArgs> ItemAdded;
         public Suchfelder()
         {
             InitializeComponent();
@@ -63,6 +68,7 @@ namespace WpfAppDMS
                     Grid.SetColumn(tb, counter);
                     Grid.SetRow(tb, 1);
                     grdMain.Children.Add(tb);
+                    ItemAdded?.Invoke(this, new SuchfeldAddedEventArgs() { textbox = tb });
                     counter++;
                 }
                 
@@ -78,20 +84,10 @@ namespace WpfAppDMS
         //FOlgenede FUnktionen müssen in Darstellung DOkumente
         private void Tb_TextChanged(object sender, TextChangedEventArgs e)
         {
-            DgFilter(((TextBox)sender).Name, ((TextBox)sender).Text);
+            //Wird ausserhalb behandelt --> DarstellungDOkumente
         }
 
-        private void DgFilter(string Feldname, string wert) {
-            //DataGrid dgFiltered = new DataGrid();
-            
-            //foreach(ColumnDefinition column in dgD)
-            //{
-            //    dgFiltered.Columns.Add(column.);
-
-            //}
-
-
-        }
+        
 
     }
 }
