@@ -249,6 +249,7 @@ namespace WpfAppDMS
                     if (!tabsDaten.Items.Contains(header))
                     {
                         tabsDaten.Add(header, id);
+                        tabsDaten.tabsMain.SelectedIndex = tabsDaten.tabsMain.Items.Count - 1;
                     }
                 }
 

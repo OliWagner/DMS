@@ -49,10 +49,13 @@ namespace WpfAppDMS
                     Grid.SetRow(label, 0);
                 
                     grdMain.Children.Add(label);
+                    
+                    
                     //TODO --> Formularfeld schreiben
                     //Ich brauche eine Textbox für alle Felder auch Nachschlagefeldern
                     //Die Felder müssen Infos zur bezogenen Column haben --> Name des Feldes ColumnName, Tag des Feldes
                     TextBox tb = new TextBox();
+                    tb.TextChanged += Tb_TextChanged;
                     tb.Width = 90;
                     tb.Name = label.Content.ToString();
                     tb.VerticalAlignment = VerticalAlignment.Center;
@@ -71,6 +74,24 @@ namespace WpfAppDMS
 
         }
 
+
+        //FOlgenede FUnktionen müssen in Darstellung DOkumente
+        private void Tb_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            DgFilter(((TextBox)sender).Name, ((TextBox)sender).Text);
+        }
+
+        private void DgFilter(string Feldname, string wert) {
+            //DataGrid dgFiltered = new DataGrid();
+            
+            //foreach(ColumnDefinition column in dgD)
+            //{
+            //    dgFiltered.Columns.Add(column.);
+
+            //}
+
+
+        }
 
     }
 }
