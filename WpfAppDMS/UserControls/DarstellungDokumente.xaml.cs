@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +12,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace WpfAppDMS
 {
@@ -50,29 +54,67 @@ namespace WpfAppDMS
             e.textbox.TextChanged += SuchfelderTextBoxTextChanged;
         }
 
+
+        #region filter datagrid
         private void SuchfelderTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
+            dataTableForDataGrid.Rows.Clear();
             DgFilter(((TextBox)sender).Name, ((TextBox)sender).Text);
+
         }
 
+        private DataTable dataTableForDataGrid = new DataTable();
         private void DgFilter(string Feldname, string wert)
         {
+
+            List<DataGridRow> rowsList = new List<DataGridRow>();
             var rows = DataGridHelper.GetDataGridRows(dgDokumente);
+
             foreach (DataGridRow r in rows)
             {
-                DataRowView rv = (DataRowView)r.Item;
+                bool merkeRow = true;
                 foreach (DataGridColumn column in dgDokumente.Columns)
                 {
+                    if (!dataTableForDataGrid.Columns.Contains(column.Header.ToString())) {
+                        dataTableForDataGrid.Columns.Add(new DataColumn() { ColumnName = column.Header.ToString() });
+                    }
+
                     if (column.Header.Equals(Feldname) && column.GetCellContent(r) is TextBlock)
                     {
                         TextBlock cellContent = column.GetCellContent(r) as TextBlock;
-                        MessageBox.Show(cellContent.Text);
+                        //Stimmt der Eintrag nicht mit dem Feld überein, merker auf false setzen, damit dir Row nicht in das Ergebnis einfließt
+                        if (!cellContent.Text.Contains(wert)) {
+                            //An dieser Stelle muss die Zeile aus dem DataGrid der DataTable hinzugefügt werden
+                            merkeRow = false;   
+                        }
                     }
                 }
-
+                //Row ist zu Ende geschrieben und vor allen DIngen auch die COlumns der Tabelle
+                if (merkeRow) {
+                    //Aus der DataGridRow eine DataROw machen:
+                    dataTableForDataGrid.Rows.Add(CopyDataGridRowToDataRow(dataTableForDataGrid, r));
+                }
+                
             }
+            dgDokumente.ItemsSource = null;
+            dgDokumente.ItemsSource = dataTableForDataGrid.DefaultView;
         }
-        
+
+        private DataRow CopyDataGridRowToDataRow(DataTable table, DataGridRow row) {
+            DataRow drReturner = table.NewRow();
+
+            DataRowView drv = (DataRowView)(row.Item);
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+                var value = drv.Row.ItemArray[i].ToString();
+
+                drReturner[i] = value;
+            }
+
+
+            return drReturner;
+        }
+        #endregion
 
         public void ZeichneGrid() {
             //Alle aktuellen Daten sammeln
@@ -163,6 +205,7 @@ namespace WpfAppDMS
             //DataGrid füllen
             //dgDokumente.AutoGenerateColumns = true;
             dgDokumente.ItemsSource = dt.DefaultView;
+            dgDokumente2.ItemsSource = dt.DefaultView;
             dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
         }
 
@@ -186,11 +229,13 @@ namespace WpfAppDMS
         {
             DataGrid dg = (DataGrid)sender;
             if (dg.Items.Count > 0) {
-                string header = dg.Columns[0].Header.ToString();
-                if (header.Substring(header.Length - 2, 2).Equals("Id"))
-                {
-                    dg.Columns[0].Visibility = Visibility.Hidden;
-                }
+                if (dg.Columns.Count > 0) {
+                    string header = dg.Columns[0].Header.ToString();
+                    if (header.Substring(header.Length - 2, 2).Equals("Id"))
+                    {
+                        dg.Columns[0].Visibility = Visibility.Hidden;
+                    }
+                }               
             }
         }
     }

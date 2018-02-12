@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="Werte festlegen" Height="320" Width="360">
+        Title="Werte festlegen" Height="320" Width="360" WindowStyle="None">
     <Window.Resources>
         <Style TargetType="TextBox">
             <Setter Property="Foreground" Value="Black" />

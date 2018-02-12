@@ -29,5 +29,8 @@
             </ScrollViewer>
             <DataGrid IsReadOnly="True" x:Name="dgTabelleOriginal" Visibility="Hidden" />
         </Grid>
+        <DataGrid x:Name="dgDokumente2" Visibility="Hidden" />
+
     </Grid>
+    
 </UserControl>
