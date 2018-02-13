@@ -30,10 +30,10 @@ namespace WpfAppDMS
             InitializeComponent();
         }
 
-        public void Fill(string _tabelle) {
-            //Neue DBConnector-Funktion, die alle Felder und deren Feldtypen zurück gibt
-            //Daten werden wie beim Join vom Grid sortiert, da COde übernehmen
-            //Danach vielleicht direkt auf der DataTable filtern? Dann wäre man fertig
+        public void Fill(string _tabelle, out Dictionary<string, TextBox> dicBezeichnungFeldUndTextBox) {
+            dicBezeichnungFeldUndTextBox = new Dictionary<string, TextBox>();
+            //Dictionary<string, TextBox> DicBezeichnungFeldUndTextBox = dicBezeichnungFeldUndTextBox;
+
             Tuple<List<string>, List<string>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDataSuchfelder(_tabelle);
             grdMain.Children.Clear();
             grdMain.ColumnDefinitions.Clear();
@@ -69,6 +69,8 @@ namespace WpfAppDMS
                     Grid.SetRow(tb, 1);
                     grdMain.Children.Add(tb);
                     ItemAdded?.Invoke(this, new SuchfeldAddedEventArgs() { textbox = tb });
+
+                    dicBezeichnungFeldUndTextBox.Add(label.Content.ToString(), tb);
                     counter++;
                 }
                 

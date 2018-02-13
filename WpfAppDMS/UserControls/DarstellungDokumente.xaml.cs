@@ -59,8 +59,8 @@ namespace WpfAppDMS
         private void SuchfelderTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             dataTableForDataGrid.Rows.Clear();
-            DgFilter(((TextBox)sender).Name, ((TextBox)sender).Text);
-
+            //DgFilter(((TextBox)sender).Name, ((TextBox)sender).Text);
+            DgFilter();
         }
 
         private DataTable dataTableForDataGrid = new DataTable();
@@ -99,6 +99,54 @@ namespace WpfAppDMS
             dgDokumente.ItemsSource = null;
             dgDokumente.ItemsSource = dataTableForDataGrid.DefaultView;
         }
+
+
+        private void DgFilter()
+        {
+
+            List<DataGridRow> rowsList = new List<DataGridRow>();
+            var rows = DataGridHelper.GetDataGridRows(dgDokumente2);
+
+            foreach (DataGridRow r in rows)
+            {
+                bool merkeRow = true;
+                foreach (DataGridColumn column in dgDokumente.Columns)
+                {
+                    if (!dataTableForDataGrid.Columns.Contains(column.Header.ToString()))
+                    {
+                        dataTableForDataGrid.Columns.Add(new DataColumn() { ColumnName = column.Header.ToString() });
+                    }
+
+                    if (column.GetCellContent(r) is TextBlock)
+                    {
+                        string header = column.Header.ToString();
+                        KeyValuePair<string, TextBox> kvpAktuelleBox = dicBezeichnungFeldUndTextBox.Where(x => x.Key.Equals(header)).FirstOrDefault();
+                        if (kvpAktuelleBox.Value != null) { 
+                            TextBox txtBox = kvpAktuelleBox.Value;
+                            TextBlock cellContent = column.GetCellContent(r) as TextBlock;
+                            //Stimmt der Eintrag nicht mit dem Feld überein, merker auf false setzen, damit dir Row nicht in das Ergebnis einfließt
+                            if (!cellContent.Text.Contains(txtBox.Text))
+                            {
+                                //An dieser Stelle muss die Zeile aus dem DataGrid der DataTable hinzugefügt werden
+                                merkeRow = false;
+                            }
+                        }
+                    }
+                }
+                //Row ist zu Ende geschrieben und vor allen DIngen auch die COlumns der Tabelle
+                if (merkeRow)
+                {
+                    //Aus der DataGridRow eine DataROw machen:
+                    dataTableForDataGrid.Rows.Add(CopyDataGridRowToDataRow(dataTableForDataGrid, r));
+                }
+
+            }
+            dgDokumente.ItemsSource = null;
+            dgDokumente.ItemsSource = dataTableForDataGrid.DefaultView;
+        }
+
+
+
 
         private DataRow CopyDataGridRowToDataRow(DataTable table, DataGridRow row) {
             DataRow drReturner = table.NewRow();
@@ -166,13 +214,17 @@ namespace WpfAppDMS
                 (e.Column as DataGridTextColumn).Binding.StringFormat = "F2";
         }
 
+        /// <summary>
+        /// Das Feld beinhaltet bei Auswahl eines Datentyps die Feldbezeichnungen und Textfelder der Filterfelder, damit später über alle Felder gefiltert werden kann
+        /// </summary>
+        Dictionary<string, TextBox> dicBezeichnungFeldUndTextBox = new Dictionary<string, TextBox>();
         public void ZeichneDatagrid(int idInTabelle)
         {            
                 OkoDokTypTabellenfeldtypen typ = (from KeyValuePair<int, OkoDokTypTabellenfeldtypen> kvp in okoDokTypTabellenfeldtypen where kvp.Key == idInTabelle select kvp.Value).FirstOrDefault();
                 dgDokumente.Columns.Clear();
                 ZeichneDatagrid(typ.Tabellenname);
                 suchfelder.grdMain.Children.Clear();
-                suchfelder.Fill(typ.Tabellenname);
+                suchfelder.Fill(typ.Tabellenname, out dicBezeichnungFeldUndTextBox);
         }
 
 
