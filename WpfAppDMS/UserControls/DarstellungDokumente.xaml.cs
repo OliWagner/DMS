@@ -68,7 +68,7 @@ namespace WpfAppDMS
         {
 
             List<DataGridRow> rowsList = new List<DataGridRow>();
-            var rows = DataGridHelper.GetDataGridRows(dgDokumente);
+            var rows = DataGridHelper.GetDataGridRows(dgDokumente2);
 
             foreach (DataGridRow r in rows)
             {
