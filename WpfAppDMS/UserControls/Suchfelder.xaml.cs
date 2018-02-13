@@ -41,7 +41,7 @@ namespace WpfAppDMS
             for (int i = 0; i < tuple.Item1.Count; i++)
             {
                 //Titelzeile schreiben
-                if (!tuple.Item2.ElementAt(i).Contains("date"))
+                if (!tuple.Item2.ElementAt(i).Contains("date") && !tuple.Item2.ElementAt(i).Contains("bol"))
                 {
                     Label label = new Label();
                     label.Content = tuple.Item1.ElementAt(i).Contains("_x_") ? tuple.Item1.ElementAt(i).Split('_')[2] : tuple.Item1.ElementAt(i);
