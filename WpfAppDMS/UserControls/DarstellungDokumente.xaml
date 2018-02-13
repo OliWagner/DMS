@@ -6,6 +6,14 @@
              xmlns:local="clr-namespace:WpfAppDMS"
              mc:Ignorable="d" 
              MinHeight="600" MinWidth="1000">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
+        <CommandBinding Command="Copy" 
+                  CanExecute="Copy_CanExecute"
+                  Executed="Copy_Executed" />
+    </UserControl.CommandBindings>
     <Grid x:Name="grdContainer" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="600">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -14,11 +22,10 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="40" Background="AliceBlue">
             <ComboBox SelectionChanged="cboGruppen_SelectionChanged" x:Name="cboGruppen" Text="Dokumentengruppe wählen" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="200"/>
-            <!--<TextBlock Margin="10,13,0,0" Visibility="{Binding SelectedItem, ElementName=cboGruppen}" IsHitTestVisible="True" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Dokumentengruppe wählen" />-->
             <ComboBox SelectionChanged="cboTypen_SelectionChanged" x:Name="cboTypen" Text="Dokumententyp wählen" HorizontalAlignment="Left" Margin="215,10,0,0" VerticalAlignment="Top" Width="200"/>
-            <!--<TextBlock Margin="220,13,0,0" Visibility="{Binding SelectedItem, ElementName=cboTypen}" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Dokumententyp wählen" />-->
-            <Label HorizontalAlignment="Left" Margin="430,9,0,0" ToolTip="Suche in Titel und Beschreibung" Content="Volltextsuche:" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Height="23" ToolTip="Suche in Titel und Beschreibung" Margin="520,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200"/>
+            <Button x:Name="btnDokAnzeigen" Command="Save" CommandTarget="{Binding ElementName=dgDokumente}" Grid.Row="0" HorizontalAlignment="Left"  Margin="425,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Dokument anzeigen"/>
+            <Button x:Name="btnZumExportHinzu" Command="Save" CommandTarget="{Binding ElementName=dgDokumente}" Grid.Row="0" HorizontalAlignment="Left"  Margin="710,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Zum Export hinzufügen"/>
+            <Button x:Name="btnExportdialog" Command="Copy" CommandTarget="{Binding ElementName=dgDokumente}" Grid.Row="0" HorizontalAlignment="Left"  Margin="855,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Exportdialog"/>
         </Grid>
         <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Margin="0,0,0,0" Height="60" Background="LightBlue">
             <local:Suchfelder x:Name="suchfelder" IsEnabled="True" Margin="0,0,0,0" />

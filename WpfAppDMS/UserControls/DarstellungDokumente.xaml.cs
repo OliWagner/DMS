@@ -290,5 +290,22 @@ namespace WpfAppDMS
                 }               
             }
         }
+
+        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Nix
+        }
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+        private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Nix
+        }
+        private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = false;
+        }
     }
 }
