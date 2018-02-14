@@ -699,8 +699,8 @@ namespace WpfAppDMS
                 {
                     if (item.Item1.Equals(tabellenname))
                     {
-                        _namen = tabellenname + "Id;" + item.Item3 + ";Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
-                        _typen = "int;" + item.Item2 + ";txt;int;txt;txt;txt;dat";
+                        _namen = tabellenname + "Id;" + item.Item3 + ";OkoDokumenteDatenId;Tabelle;IdInTabelle;Dateiname;Beschreibung;Titel;ErfasstAm";
+                        _typen = "int;" + item.Item2 + ";int;txt;int;txt;txt;txt;dat";
                     }
                 }
             }
@@ -744,13 +744,11 @@ namespace WpfAppDMS
             {
                 query = "Select OkoDokumentenTypId, Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten";
             }
-
-
-
             else
             {
-                query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle ='" + tabellenname + "'";
+                query = "select * from " + tabellenname + " tab1 LEFT JOIN (Select OkoDokumenteDatenId, Tabelle, IdInTabelle, Dateiname, Beschreibung, Titel, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle AND tab2.Tabelle ='" + tabellenname + "'";
             }
+
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -813,18 +811,19 @@ namespace WpfAppDMS
             List<DataColumn> zuLoeschen = new List<DataColumn>();
             foreach (DataColumn column in dtCopy.Columns)
             {
-                if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle") ||(column.ColumnName.Equals(tabellenname + "Id") && IdCHecker))
+                //if (column.ColumnName.Equals("IdInTabelle") || column.ColumnName.Equals("Tabelle") || (column.ColumnName.Equals(tabellenname + "Id") && IdCHecker))
+                //{
+                //    zuLoeschen.Add(column);
+                //}
+                if (column.ColumnName.Contains("xyx"))
                 {
-                    zuLoeschen.Add(column);
-                }
-                if (column.ColumnName.Contains("xyx")) {
-                    column.ColumnName = column.ColumnName.Replace("xyx","");
+                    column.ColumnName = column.ColumnName.Replace("xyx", "");
                 }
             }
-            foreach (DataColumn item in zuLoeschen)
-            {
-                dtCopy.Columns.Remove(item);
-            }
+            //foreach (DataColumn item in zuLoeschen)
+            //{
+            //    dtCopy.Columns.Remove(item);
+            //}
 
             return dtCopy;
         }
