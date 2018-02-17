@@ -1,0 +1,28 @@
+﻿<Window x:Class="WpfAppDMS.Dialogs.AnwendungsauswahlDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppDMS.Dialogs"
+        mc:Ignorable="d"
+        Title="Anwendungsauswahl" Height="300" Width="470">
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <TextBox x:Name="txtEndung" Grid.Row="0" HorizontalAlignment="Left" Height="20" Margin="10,17,0,0" TextWrapping="NoWrap" Text="." VerticalAlignment="Top" Width="47" />
+        <Button x:Name="btnAuswahl" Click="btnAuswahl_Click" Grid.Row="0" Content="Anwendung auswählen" HorizontalAlignment="Left" Margin="67,16,0,0" VerticalAlignment="Top" Width="141"/>
+        <Button x:Name="btnSpeichern" Command="Save" CommandTarget="{Binding ElementName=grdMain}" Click="btnSpeichern_Click" Grid.Row="0" Content="Speichern" HorizontalAlignment="Left" Margin="220,16,0,0" VerticalAlignment="Top" Width="60"/>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Hidden">
+            <Grid x:Name="grdMain" Grid.Row="1"></Grid>
+        </ScrollViewer>
+        <Button x:Name="btnOk" Width="100" Height="20" Click="btnOk_Click" Content="Schließen" Grid.Row="2" />
+    </Grid>
+</Window>

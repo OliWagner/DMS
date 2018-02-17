@@ -34,7 +34,8 @@ namespace WpfAppDMS
     /// </summary>
     public partial class DarstellungDokumente : UserControl
     {
-        //Was brauche ich alles?
+        //Ordnet Dateiendungen der richtigen ANwendung zu beim ANzeigen
+        public List<Tuple<int, string, string>> Anwendungen { get; set; }
 
         //Dictionary aller Dokumentengruppen
         Dictionary<int, string> AlleDokumentengruppen;
@@ -47,6 +48,7 @@ namespace WpfAppDMS
         public DarstellungDokumente()
         {
             InitializeComponent();
+            Anwendungen = ((DbConnector)App.Current.Properties["Connector"]).ReadAnwendungen();
             suchfelder.ItemAdded += AddHandlerToTextBoxSuchfeld;
             ZeichneGrid();
         }
@@ -175,9 +177,14 @@ namespace WpfAppDMS
             AlleDokumententypenIds = data.Item4;
             okoDokTypTabellenfeldtypen = data.Item5;
 
+            Dictionary<int, string> dic = new Dictionary<int, string>();
+            foreach (var item in AlleDokumententypen)
+            {
+                dic.Add(item.OkoDokumententypId, item.Bezeichnung);
+            }
             //Checkboxen
             cboGruppen.ItemsSource = AlleDokumentengruppen;
-            cboTypen.ItemsSource = AlleDokumententypen;
+            cboTypen.ItemsSource = dic;
             ZeichneDatagrid();
         }
 
@@ -346,7 +353,7 @@ namespace WpfAppDMS
 
         private void btnDokAnzeigen_Click(object sender, RoutedEventArgs e)
         {
-
+            //Wird in MainWIndow behandelt
         }
 
         private List<int> DoksFuerExport = new List<int>();

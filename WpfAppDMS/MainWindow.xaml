@@ -25,7 +25,8 @@
             <TextBox x:Name="txtTitel" TextChanged="txtTitel_TextChanged" IsEnabled="False" HorizontalAlignment="Left" Height="23" Margin="10,114,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="190"/>
             <TextBox x:Name="txtBeschreibung" TextChanged="txtBeschreibung_TextChanged" IsEnabled="False" HorizontalAlignment="Left" Height="83" Margin="10,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
 
-            <Button x:Name="btnNeueDb" Click="btnNeueDb_Click" IsEnabled="True" HorizontalAlignment="Left" Content="Datenbank wechseln" Height="20" Margin="10,234,0,0" VerticalAlignment="Top" Width="190"/>
+            <Button x:Name="btnNeueDb" Click="btnNeueDb_Click" IsEnabled="True" HorizontalAlignment="Left" Content="DB wechseln" Height="20" Margin="10,234,0,0" VerticalAlignment="Top" Width="90"/>
+            <Button x:Name="btnAnwendungen" Click="btnAnwendungen_Click" IsEnabled="True" HorizontalAlignment="Left" Content="Anwendungen" Height="20" Margin="110,234,0,0" VerticalAlignment="Top" Width="90"/>
         </Grid>
 
         <local:DokTree x:Name="dokTree" IsEnabled="False" Grid.Row="0" Grid.Column="1" />

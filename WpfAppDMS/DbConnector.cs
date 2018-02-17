@@ -220,6 +220,82 @@ namespace WpfAppDMS
             }
         }
 
+        public void DeleteAnwendung(int datensatzId)
+        {
+            string sql = "Delete from OkoAnwendungen Where OkoAnwendungenId =" + datensatzId;
+
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            command.CommandText = sql;
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
+
+        public List<Tuple<int, string, string>> ReadAnwendungen()
+        {
+            List<Tuple<int, string, string>> list = new List<Tuple<int, string, string>>();
+            DataTable dt = new DataTable();
+            
+            string query = "Select * from OkoAnwendungen";
+
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(Tuple.Create(row.Field<int>(0), row.Field<string>(1), row.Field<string>(2)));
+            }
+           
+            return list;
+        }
+
+        public void AnwendungEintragen(string _endung, string _dateiname)
+        {
+            
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = "Insert into OkoAnwendungen (Dateiendung, Anwendung) VALUES ('" + _endung + "', '" + _dateiname + "')";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Console.WriteLine("An exception of type " + ex.GetType() +
+                            " was encountered while attempting to roll back the transaction.");
+                    }
+                }
+                Console.WriteLine("An exception of type " + e.GetType() +
+                    " was encountered while inserting the data.");
+                Console.WriteLine("Neither record was written to database.");
+            }
+        }
+
         /// <summary>
         /// GIbt die Daten nur anders aus....
         /// </summary>

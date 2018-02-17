@@ -54,6 +54,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\AnwendungsauswahlDialog.xaml.cs">
+      <DependentUpon>AnwendungsauswahlDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ConnectionDialog.xaml.cs">
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
@@ -77,6 +80,10 @@
       <DependentUpon>TabsDaten.xaml</DependentUpon>
     </Compile>
     <Compile Include="VigenereQuadrath.cs" />
+    <Page Include="Dialogs\AnwendungsauswahlDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\ConnectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
