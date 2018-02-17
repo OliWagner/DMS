@@ -51,7 +51,6 @@ namespace WpfAppDMS
         private void darstellungDokumente_BtnAnzeigen_Click(object sender, RoutedEventArgs e)
         {
             //TODO Die echte Datei aufrufen
-            //TODO die richtige ANwendung auswählen
             databaseFileReadToMemoryStream("24", "Csv.csv");
         }
 
@@ -295,6 +294,17 @@ namespace WpfAppDMS
         //public MemoryStream databaseFileReadToMemoryStream(string varID, string dateiname)
         public void databaseFileReadToMemoryStream(string varID, string dateiname)
         {
+            string _anwendungspath = "";
+            if (dateiname.Contains(".")) {
+                string _endung = "."+dateiname.Split('.')[1];
+                foreach (Tuple<int, string, string> item in darstellungDokumente.Anwendungen)
+                {
+                    if (item.Item2.Equals(_endung)) {
+                        _anwendungspath = item.Item3;
+                    }
+                }
+            }
+
             MemoryStream memoryStream = new MemoryStream();
             using (var sqlQuery = new SqlCommand(@"SELECT [Dokument] FROM [OkoDokumente] WHERE [OkoDokumenteId] = @varID", ((DbConnector)App.Current.Properties["Connector"])._con))
             {
@@ -315,7 +325,15 @@ namespace WpfAppDMS
             {
                 memoryStream.WriteTo(fileStream);
             }
-            Process.Start(dateiname);
+            if (_anwendungspath.Equals("")) {
+                Process.Start(dateiname);
+            } else {
+                ProcessStartInfo info = new ProcessStartInfo();
+                info.FileName = _anwendungspath;
+                info.Arguments = dateiname;
+                Process.Start(info);
+            }
+            
         }
 
         private int databaseFilePut(string varFilePath)
