@@ -376,8 +376,11 @@ namespace WpfAppDMS
         }
 
         private void btnExportdialog_Click(object sender, RoutedEventArgs e)
-        {
+        {                        
+            ExportDialog dialog = new ExportDialog(DoksFuerExport);
+            if (dialog.ShowDialog() == true) {
 
+            }
         }
 
 
