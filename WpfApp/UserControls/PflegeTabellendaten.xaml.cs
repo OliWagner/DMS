@@ -244,7 +244,7 @@ namespace WpfApp
                 {
                     LookupAuswahl tb = new LookupAuswahl();
                     tb.Fill(csvFeldnamen.ElementAt(i));
-                    //TODO COmboBOx vorbelegen
+                    //COmboBOx vorbelegen
                     Tuple<List<int>, List<object>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(csvFeldnamen.ElementAt(i).Split('_')[3], csvFeldnamen.ElementAt(i).Split('_')[4]);
                     if (!csvFeldwerte.ElementAt(i).ToString().Equals("")) {
                         int position = tuple.Item1.IndexOf(Int32.Parse(csvFeldwerte.ElementAt(i).ToString()));                  
@@ -429,7 +429,7 @@ namespace WpfApp
                 StringBuilder _csv = new StringBuilder();
 
                 string keepValueForDic = "";
-                //TODO Datensatz in DB eintragen
+                //Datensatz in DB eintragen
                 int counter = 0; //wird benötigt, um erstes Element zu kennzeichnen
                 foreach (var item in grdMain.Children)
                 {

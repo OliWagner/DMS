@@ -93,7 +93,7 @@ namespace WpfApp
             AendernTabelleDialog dialog = new AendernTabelleDialog(((TreeViewItem)tvMain.SelectedItem).Header.ToString());
             if (dialog.ShowDialog() == true)
             {
-                //TOdo,Ergebnisse des DIalogs verarbeiten
+                //Ergebnisse des DIalogs verarbeiten
                 string Tabelle = dialog.Tabelle;
                 List<string> FelderLoeschen = dialog.FelderLoeschen;
                 List<EingabeTabellenfelder> FelderHinzufuegen = dialog.FelderHinzufuegen;

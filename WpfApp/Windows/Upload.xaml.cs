@@ -228,21 +228,6 @@ namespace WpfApp
                 Binding = new System.Windows.Data.Binding("[" + grdTabFelder.Children.Count + "]"),
                 IsReadOnly = false
             });
-
-            //TODO --> an stringArrayListe ein Feld anhängen
-            
-            //List<string[]> stringArrayListeNeu = new List<string[]>();
-            ////Dazu den Array to List
-            //foreach (string[] item in stringArrayListe) {
-            //    List<string> liste = new List<string>();
-            //    foreach (string elem in item) {
-            //        liste.Add(elem);
-            //    }
-            //    liste.Add("");
-            //    stringArrayListeNeu.Add(liste.ToArray());
-            //}
-            //stringArrayListe = stringArrayListeNeu;
-            //dgDaten.ItemsSource = stringArrayListe;
         }
 
         private void Clear() {

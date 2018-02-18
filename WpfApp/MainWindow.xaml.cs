@@ -158,7 +158,6 @@ namespace WpfApp
 
         private void BtnSpeichern_Click(object sender, RoutedEventArgs e)
         {
-            //TODO eingabeTabelle.ClearGrid();
             uebersichtTabellen.zeichneGrid();
             eingabeTabelleAktiv = false;
         }

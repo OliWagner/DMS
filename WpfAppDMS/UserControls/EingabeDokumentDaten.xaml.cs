@@ -442,7 +442,7 @@ namespace WpfAppDMS
                     {
                         if (((LookupAuswahl)child).Tag.ToString().Equals(_TabellenFeldBezogeneTabelle))
                         {
-                            //TODO --> cbi ist falsch, ich brauche das Item aus der COmboBOx, die dann geändert wird!!!
+                            //cbi ist falsch, ich brauche das Item aus der COmboBOx, die dann geändert wird!!!
                             ComboBoxItem cbi = (ComboBoxItem)((LookupAuswahl)child).cboAuswahl.SelectedItem;
                             if (cbi == null)
                             {

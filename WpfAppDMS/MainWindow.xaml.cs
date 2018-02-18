@@ -50,8 +50,21 @@ namespace WpfAppDMS
 
         private void darstellungDokumente_BtnAnzeigen_Click(object sender, RoutedEventArgs e)
         {
-            //TODO Die echte Datei aufrufen
-            databaseFileReadToMemoryStream("24", "Csv.csv");
+            DataRowView drv = (DataRowView)darstellungDokumente.dgDokumente.SelectedItem;
+            int counter = 0;
+            string IdInTabelle = "";
+            string Tabelle = "";
+            string Dateiname = "";
+            foreach (DataGridColumn item in darstellungDokumente.dgDokumente.Columns)
+            {
+                if (item.Header.Equals("IdInTabelle")) { IdInTabelle = drv.Row.ItemArray[counter].ToString(); }
+                if (item.Header.Equals("Tabelle")) { Tabelle = drv.Row.ItemArray[counter].ToString(); }
+                if (item.Header.Equals("Dateiname")) { Dateiname = drv.Row.ItemArray[counter].ToString(); }
+
+                counter++;
+            }
+            int Id = ((DbConnector)App.Current.Properties["Connector"]).ReadIdDokument(IdInTabelle, Tabelle, Dateiname);
+            databaseFileReadToMemoryStream(Id.ToString(), Dateiname);
         }
 
         private void AddHandlerToEingabeDokumentenDatenInstanz(object sender, EingabeDokumentDatenEventArgs e)
@@ -224,12 +237,10 @@ namespace WpfAppDMS
                         if (tabsDaten.Items.Count() == 0) {
                             tabsDaten.Add(DokTyp, DokTypId, csvFeldtypen);
                             tabsDaten.tabsMain.SelectedIndex = 0;
-                            //TODO Events für Dropdowns auslösen
 
                             foreach (var item in ((EingabeDokumentDaten)((TabItem)tabsDaten.tabsMain.Items[0]).Content).grdMain.Children)
                             {
                                 if (item.GetType() == typeof(LookupAuswahl)) {
-                                    //((LookupAuswahl)item).cboAuswahl.SelectionChanged?.Invoke(item, new SelectionChangedEventArgs());
                                     SelectionChangedEventArgs args = (SelectionChangedEventArgs)((LookupAuswahl)item).selectionChangedEventArgs;
                                     ((LookupAuswahl)item).cboAuswahl.RaiseEvent(args);
                                 }

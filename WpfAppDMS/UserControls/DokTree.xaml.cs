@@ -75,7 +75,7 @@ namespace WpfAppDMS
                 TreeViewItem item = new TreeViewItem();
                 item.Header = kvp.Value;
                 item.ToolTip = alleDokGruppenBeschreibungen.ElementAt(alleDokGruppenIds.IndexOf(kvp.Key));
-                //TODO Die UnterItems auflisten
+                //Die UnterItems auflisten
                 List<string> lstItems = (from KeyValuePair<string, int> typ in dicTypen where typ.Value == kvp.Key orderby typ.Key select typ.Key).ToList();
 
                 foreach (string tvUnterItem in lstItems)

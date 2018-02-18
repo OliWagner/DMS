@@ -57,7 +57,7 @@ namespace WpfApp
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
 
-            //TODO Es dürfen nur Buchstaben und Nummern als Bezeichner verwendet werden
+            //Es dürfen nur Buchstaben und Nummern als Bezeichner verwendet werden
             string AllowedChars = @"^[a-zA-Z0-9]+$";
             
 

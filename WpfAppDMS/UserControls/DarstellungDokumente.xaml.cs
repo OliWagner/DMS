@@ -193,12 +193,12 @@ namespace WpfAppDMS
             ComboBox cbo = (ComboBox)sender;
             ((DbConnector)App.Current.Properties["Connector"]).IdCHecker = true;
             KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
-            //TOdo Hier muss ich mir etwas anderes überlegen, wie ich an die DOkumententypen zu der Gruppe komme
+            
             cboTypen.ItemsSource = AlleDokumententypen.Where(p => p.OkoDokumentengruppenId == kvp.Key).ToDictionary(p => p.OkoDokumententypId, p => p.Bezeichnung);
 
             int dokGruppenId = kvp.Key;
 
-            //TODO Die Dokumente zur DOkGruppe darstellen
+            //Die Dokumente zur DOkGruppe darstellen
             ZeichneDataGridDokGruppe(dokGruppenId);
 
         }

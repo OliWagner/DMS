@@ -258,6 +258,22 @@ namespace WpfAppDMS
             return list;
         }
 
+        public int ReadIdDokument(string idInTabelle, string tabelle, string dateiname)
+        {
+            
+            DataTable dt = new DataTable();
+
+            string query = "Select OkoDokumenteId from OkoDokumenteDaten where IdInTabelle = " + idInTabelle + " and Tabelle = '" + tabelle + "' and Dateiname = '" + dateiname + "'";
+
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            return dt.Rows[0].Field<int>(0);
+        }
+
         public void AnwendungEintragen(string _endung, string _dateiname)
         {
             
@@ -860,7 +876,6 @@ namespace WpfAppDMS
                             rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i);
                             break;
                         case "loo":
-                            //TODO Referentwert ersetzen
                             //Ich brauche eine Liste der Felder und Ids
                             Tuple<List<int>, List<object>> tuple = _nachschlageFelderWerte.ElementAt(_nachschlageZaehler);
                             //Index ermitteln
