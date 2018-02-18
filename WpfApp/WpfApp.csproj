@@ -89,6 +89,9 @@
     <Compile Include="Windows\EingabeDokTypFelder.xaml.cs">
       <DependentUpon>EingabeDokTypFelder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ErrorAnzeigen.xaml.cs">
+      <DependentUpon>ErrorAnzeigen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Upload.xaml.cs">
       <DependentUpon>Upload.xaml</DependentUpon>
     </Compile>
@@ -160,6 +163,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UebersichtTabellen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ErrorAnzeigen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

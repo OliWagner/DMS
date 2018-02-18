@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{978E809B-1EAD-4AD6-ABCE-1AB6A587160F}</ProjectGuid>
+    <ProjectGuid>{31BF02BC-685A-4440-9BEA-B587EF0C18CB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>WpfAppDMS</RootNamespace>
-    <AssemblyName>WpfAppDMS</AssemblyName>
+    <RootNamespace>FehlerbehandlungAnzeige</RootNamespace>
+    <AssemblyName>FehlerbehandlungAnzeige</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -54,47 +54,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Dialogs\AnwendungsauswahlDialog.xaml.cs">
-      <DependentUpon>AnwendungsauswahlDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ConnectionDialog.xaml.cs">
-      <DependentUpon>ConnectionDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ErrorAnzeigen.xaml.cs">
-      <DependentUpon>ErrorAnzeigen.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyCommands.cs" />
-    <Compile Include="UserControls\DarstellungDokumente.xaml.cs">
-      <DependentUpon>DarstellungDokumente.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\DokTree.xaml.cs">
-      <DependentUpon>DokTree.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\EingabeDokumentDaten.xaml.cs">
-      <DependentUpon>EingabeDokumentDaten.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\LookupAuswahl.xaml.cs">
-      <DependentUpon>LookupAuswahl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Suchfelder.xaml.cs">
-      <DependentUpon>Suchfelder.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\TabsDaten.xaml.cs">
-      <DependentUpon>TabsDaten.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="VigenereQuadrath.cs" />
-    <Page Include="Dialogs\AnwendungsauswahlDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\ConnectionDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\ErrorAnzeigen.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -103,35 +62,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DbConnector.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControls\DarstellungDokumente.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\DokTree.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\EingabeDokumentDaten.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\LookupAuswahl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\Suchfelder.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\TabsDaten.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -159,6 +93,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

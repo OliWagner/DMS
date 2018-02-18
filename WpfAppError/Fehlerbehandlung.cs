@@ -15,7 +15,7 @@ namespace WpfAppError
             get; set;
         }
 
-        public static void Error(string innerException, string message, string ownCode) {
+        public static void Error(string stackTrace, string message, string ownCode) {
 
             FileInfo fi = new FileInfo(Assembly.GetEntryAssembly().Location);
             _path = fi.DirectoryName + "\\Errors.txt";
@@ -24,7 +24,7 @@ namespace WpfAppError
                 //An FIle anhängen
                 using (StreamWriter streamWriter = new StreamWriter(_path, true))
                 {
-                    streamWriter.Write(DateTime.Now + "\r\n" + innerException + "\r\n" + message + Environment.NewLine + ownCode + "\r\n\r\n");
+                    streamWriter.Write(DateTime.Now + "\r\n" + stackTrace + "\r\n" + message + Environment.NewLine + ownCode + "\r\n\r\n");
                 }
             }
             else
@@ -33,7 +33,7 @@ namespace WpfAppError
                 using (var x = File.Create(_path)) { }
                 using (StreamWriter sw = new StreamWriter(_path))
                 {
-                    sw.Write(DateTime.Now + "\n" + innerException + "\n" + message + "\n" + ownCode + "\n\n");
+                    sw.Write(DateTime.Now + "\n" + stackTrace + "\n" + message + "\n" + ownCode + "\n\n");
                 }
             }
         }
