@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppDMS"
         mc:Ignorable="d"
-        Title="Export" Height="300" Width="500">
+        Title="Export" Height="300" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -16,8 +16,8 @@
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Grid.Row="1">
             <Grid x:Name="grdMain" Grid.Row="1" Margin="0,0,0,0"></Grid>
         </ScrollViewer>
-        <Button Width="100" x:Name="btnAlleLoeschen" Height="20" Margin="370,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="alle löschen" Grid.Row="2" />
-        <Button Width="100" x:Name="btnSchliessen" Height="20" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Exportieren" Grid.Row="2" />
-        <Button Width="100" x:Name="btnExportieren" Height="20" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Schließen" Grid.Row="2" />
+        <Button Width="100" x:Name="btnAlleLoeschen" Click="btnAlleLoeschen_Click" Height="20" Margin="670,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="alle löschen" Grid.Row="2" />
+        <Button Width="100" x:Name="btnSchliessen" Click="btnSchliessen_Click" Height="20" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Schließen" Grid.Row="2" />
+        <Button Width="100" x:Name="btnExportieren" Click="btnExportieren_Click" Height="20" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Exportieren" Grid.Row="2" />
     </Grid>
 </Window>

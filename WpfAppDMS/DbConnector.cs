@@ -274,6 +274,49 @@ namespace WpfAppDMS
             return dt.Rows[0].Field<int>(0);
         }
 
+        public List<Exportdaten> ReadExportDaten(List<int> OkoDokumenteDatenIds)
+        {
+            List<Exportdaten> daten = new List<Exportdaten>();
+            DataTable dt = new DataTable();
+            StringBuilder sb = new StringBuilder();
+            int counter = 0;
+            foreach (var id in OkoDokumenteDatenIds)
+            {
+                if (counter == 0) {
+                    sb.Append("tabDaten.OkoDokumenteDatenId = " + id);
+                } else {
+                    sb.Append(" OR tabDaten.OkoDokumenteDatenId = " + id);
+                }
+                
+                counter++;
+            }
+            string query = "select tabDaten.OkoDokumenteId, tabDaten.Dateiname, tabDaten.Titel, tabDaten.ErfasstAm, tabDaten.IdInTabelle, tabDaten.Tabelle, tabTypen.Bezeichnung, tabDaten.OkoDokumenteDatenId" +
+                    " from OkoDokumenteDaten tabDaten INNER JOIN OkoDokumententyp tabTypen ON tabDaten.OkoDokumententypId = " +
+                    "tabTypen.OkoDokumententypId AND ("+sb.ToString()+");";
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            foreach (DataRow item in dt.Rows)
+            {
+                daten.Add(new Exportdaten()
+                {
+                    DokumenteId = item.Field<int>(0),
+                    Dateiname = item.Field<string>(1),
+                    Titel = item.Field<string>(2),
+                    ErfasstAm = item.Field<DateTime>(3),
+                    IdInTabelle = item.Field<int>(4),
+                    Tabelle = item.Field<string>(5),
+                    DokumentenTyp = item.Field<string>(6),
+                    OkoDokumenteDatenId = item.Field<int>(7)
+                });
+            }
+            
+            return daten;
+        }
+
         public void AnwendungEintragen(string _endung, string _dateiname)
         {
             

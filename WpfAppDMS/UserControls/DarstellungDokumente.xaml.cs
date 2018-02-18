@@ -379,10 +379,13 @@ namespace WpfAppDMS
         {                        
             ExportDialog dialog = new ExportDialog(DoksFuerExport);
             if (dialog.ShowDialog() == true) {
-
+                DoksFuerExport.Clear();
+                foreach (Exportdaten item in dialog.lstExport)
+                {
+                    DoksFuerExport.Add(item.OkoDokumenteDatenId);
+                }
             }
         }
-
 
         /// <summary>
         /// Notlösung, da mein COmmand nicht funktioniert wie es soll
