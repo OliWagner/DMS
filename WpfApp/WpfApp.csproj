@@ -197,5 +197,14 @@
   <ItemGroup>
     <Content Include="ReadMe\DataBaseInit.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WpfAppError\WpfAppError.csproj">
+      <Project>{32eea6b7-b194-4fee-ac15-bd5ed0ae57cb}</Project>
+      <Name>WpfAppError</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

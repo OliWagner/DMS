@@ -71,14 +71,6 @@ namespace WpfAppDMS
                     cboConnections.Items.Add(cboItem);
                 }
             }
-            else
-            {
-                txtGuid.Text = "";
-                txtDataSource.Text = "LAPTOP-CTMG3F1D\\SQLEXPRESS";
-                txtInitialCatalog.Text = "OKOrganizer";
-                txtUserName.Text = "sa";
-                txtPassword.Text = "95hjh11!";
-            }
         }
 
         #region Serialization

@@ -8,6 +8,7 @@ using System.Linq;
 using Vigenere;
 using System;
 using System.Windows.Input;
+using WpfAppError;
 
 namespace WpfApp
 {
@@ -53,6 +54,15 @@ namespace WpfApp
 
         public ConnectionDialog()
         {
+            //TODO WIEDER ENTFERNEN WENN FERTIG Fehlerbehandlung testen
+            try {
+
+                Int32.Parse("d");
+            } catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0001xx");
+            }
+
+
             InitializeComponent();
 
             //Verzeichnis der Anwendung ermitteln
@@ -70,14 +80,6 @@ namespace WpfApp
                     cboItem.Content = q.EntschlüssleText(item.InitialCatalog);
                     cboConnections.Items.Add(cboItem);
                 }
-            }
-            else
-            {
-                txtGuid.Text = "";
-                txtDataSource.Text = "LAPTOP-CTMG3F1D\\SQLEXPRESS";
-                txtInitialCatalog.Text = "OKOrganizer";
-                txtUserName.Text = "sa";
-                txtPassword.Text = "95hjh11!";
             }
         }
 
