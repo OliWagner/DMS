@@ -100,9 +100,9 @@ namespace WpfAppDMS
 
         private void btnExportieren_Click(object sender, RoutedEventArgs e)
         {
-            //TODO --> Eigentlicher Export
-            //Nach Export Liste leeren und true zurück
-            lstExport.Clear();
+            //Eigentlicher Export
+            //MainWIndow.ExportDialog_BtnExportieren_Click
+
             DialogResult = true;
         }
     }

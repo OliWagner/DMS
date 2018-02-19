@@ -371,13 +371,15 @@ namespace WpfAppDMS
                 }
                 counter++;
             }
-            ((DataGridRow)dgDokumente.ItemContainerGenerator.ContainerFromIndex(dgDokumente.SelectedIndex)).Background = Brushes.LightBlue;
+            //Folgende Zeile färbt einen markierten Eintrag ein, unnötiges Gespiele
+            //((DataGridRow)dgDokumente.ItemContainerGenerator.ContainerFromIndex(dgDokumente.SelectedIndex)).Background = Brushes.LightBlue;
             btnZumExportHinzu.IsEnabled = false;
         }
 
         private void btnExportdialog_Click(object sender, RoutedEventArgs e)
-        {                        
+        {
             ExportDialog dialog = new ExportDialog(DoksFuerExport);
+            dialog.btnExportieren.Click += ExportDialog_BtnExportieren_Click;
             if (dialog.ShowDialog() == true) {
                 DoksFuerExport.Clear();
                 foreach (Exportdaten item in dialog.lstExport)
@@ -385,6 +387,39 @@ namespace WpfAppDMS
                     DoksFuerExport.Add(item.OkoDokumenteDatenId);
                 }
             }
+        }
+
+        /// <summary>
+        /// Dokumentenexport
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExportDialog_BtnExportieren_Click(object sender, RoutedEventArgs e)
+        {
+            
+
+            //Liste aus Exportdialog aufrufen
+            Grid grid = (Grid)((Button)sender).Parent;
+            ExportDialog dialog = (ExportDialog)grid.Parent;
+            List<Exportdaten> lstExporte = dialog.lstExport;
+
+            //Exportverzeichnis auswählen
+            var FolderChooser = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = FolderChooser.ShowDialog();
+            string path = FolderChooser.SelectedPath;
+            string datetime = "OkoExport_" + DateTime.Now;
+            datetime = datetime.Replace(" ", "").Replace(":", "");
+            string pathString = System.IO.Path.Combine(path, datetime);
+
+            DirectoryInfo info = Directory.CreateDirectory(pathString);
+            //In das neue Verezeichnis exportieren
+            //TODO
+
+
+
+            //Nach Export Listen leeren
+            dialog.lstExport.Clear();
+            DoksFuerExport.Clear();
         }
 
         /// <summary>
