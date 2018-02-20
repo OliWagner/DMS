@@ -282,25 +282,25 @@ namespace WpfAppDMS
 
 
         #region Filestreaming Database
-        public void databaseFileReadToDisk(string varID, string dateiname)
-        {
-            FileInfo fi = new FileInfo(Assembly.GetEntryAssembly().Location);
-            string _path = fi.DirectoryName + "\\" + dateiname;
+        //public void databaseFileReadToDisk(string varID, string dateiname)
+        //{
+        //    FileInfo fi = new FileInfo(Assembly.GetEntryAssembly().Location);
+        //    string _path = fi.DirectoryName + "\\" + dateiname;
 
-            using (var sqlQuery = new SqlCommand(@"SELECT [Dokument] FROM [dbo].[Dokumente] WHERE [DokumenteId] = @varID", _con))
-            {
-                sqlQuery.Parameters.AddWithValue("@varID", varID);
-                using (var sqlQueryResult = sqlQuery.ExecuteReader())
-                    if (sqlQueryResult != null)
-                    {
-                        sqlQueryResult.Read();
-                        var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
-                        sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
-                        using (var fs = new FileStream(_path, FileMode.Create, FileAccess.Write))
-                            fs.Write(blob, 0, blob.Length);
-                    }
-            }
-        }
+        //    using (var sqlQuery = new SqlCommand(@"SELECT [Dokument] FROM [dbo].[Dokumente] WHERE [DokumenteId] = @varID", _con))
+        //    {
+        //        sqlQuery.Parameters.AddWithValue("@varID", varID);
+        //        using (var sqlQueryResult = sqlQuery.ExecuteReader())
+        //            if (sqlQueryResult != null)
+        //            {
+        //                sqlQueryResult.Read();
+        //                var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
+        //                sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
+        //                using (var fs = new FileStream(_path, FileMode.Create, FileAccess.Write))
+        //                    fs.Write(blob, 0, blob.Length);
+        //            }
+        //    }
+        //}
 
         //public MemoryStream databaseFileReadToMemoryStream(string varID, string dateiname)
         public void databaseFileReadToMemoryStream(string varID, string dateiname)

@@ -428,10 +428,6 @@ namespace WpfAppDMS
                     
                 }
             }
-
-
-
-
             return Tuple.Create(dicGruppen, dicTypen, AlleDokumententypenBezeichnungen, AlleDokumententypenIds, okoDOkTypTabellenfeldtypen);
         }
 
@@ -660,7 +656,36 @@ namespace WpfAppDMS
         }
 
 
+        public DataTable ReadExportDataTable(string tabellenname, int id)
+        {
+            DataTable dt = new DataTable();
+            string query = "";
+            
+                query = "select * from " + tabellenname + " Where " + tabellenname + "Id =" +id;
+            
 
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            //Nicht benötigte Columns entfernen
+            List<DataColumn> zuLoeschen = new List<DataColumn>();
+            foreach (DataColumn column in dt.Columns)
+            {
+                if (column.ColumnName.Equals(tabellenname+"Id"))
+                {
+                    zuLoeschen.Add(column);
+                }
+            }
+            foreach (DataColumn item in zuLoeschen)
+            {
+                dt.Columns.Remove(item);
+            }
+
+            return dt;
+        }
 
 
         #region ALter Kram --> Erst löschen wenn alle FUnktionalitäten fertig

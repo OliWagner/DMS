@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,13 +24,32 @@ using System.Xml;
 
 namespace WpfAppDMS
 {
+    public class MyDynamicExport : DynamicObject
+    {
+        Dictionary<string, object> properties = new Dictionary<string, object>();
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            return properties.TryGetValue(binder.Name, out result);
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            properties[binder.Name] = value;
+            return true;
+        }
+
+        public Dictionary<string, object> GetProperties()
+        {
+            return properties;
+        }
+    }
+
     public class OkoDokTypTabellenfeldtypen {
         public string Tabellenname { get; set; }
         public string CsvWertetypen { get; set; }
         public string CsvFeldnamen { get; set; }
-
     }
-
 
     /// <summary>
     /// Interaktionslogik für DarstellungDokumente.xaml
@@ -396,12 +418,9 @@ namespace WpfAppDMS
         /// <param name="e"></param>
         private void ExportDialog_BtnExportieren_Click(object sender, RoutedEventArgs e)
         {
-            
-
             //Liste aus Exportdialog aufrufen
             Grid grid = (Grid)((Button)sender).Parent;
             ExportDialog dialog = (ExportDialog)grid.Parent;
-            List<Exportdaten> lstExporte = dialog.lstExport;
 
             //Exportverzeichnis auswählen
             var FolderChooser = new System.Windows.Forms.FolderBrowserDialog();
@@ -412,14 +431,121 @@ namespace WpfAppDMS
             string pathString = System.IO.Path.Combine(path, datetime);
 
             DirectoryInfo info = Directory.CreateDirectory(pathString);
-            //In das neue Verezeichnis exportieren
+            //In das neue Verzeichnis exportieren
             //TODO
+            //Es müsste reichen, sich den originalen Namen des DOkuments mit DokId und neuem Namen zu merken...
+            List<int> _gemerkteDokIds = new List<int>();
+            List<string> _gemerkteAlteDateinamen = new List<string>();
+            List<string> _gemerkteNeueDateinamen = new List<string>();
+            
+            //Wenn Eintrag schon vorhanden --> einfach XML raus schreiben
+            //Wenn nicht, EIntrag hinzufügen + XML schreiben
+            foreach (Exportdaten ed in dialog.lstExport)
+            {
+                string alterName = ed.Dateiname;
+                string neuerName = "";
+                int idDesDoks = ed.DokumenteId;
 
+                if (!_gemerkteDokIds.Contains(ed.DokumenteId))
+                {
+                    
+
+                    //Achtung: Listeneinträge immer für ALLE Listen setzen, um den Zugriff per Index gewährleisten zu können
+                    //Die DOkId ist noch nicht exportiert
+                    //Gibt es den Dateinamen schon in den Originalnamen?  
+                    if (_gemerkteAlteDateinamen.Contains(ed.Dateiname)) {
+                        //Beim Umbenennen feststellen, ob der neue Name schon existiert
+                        bool prozessBeendet = false;
+                        int counter = 0;
+                        while (!prozessBeendet) {
+                            counter++;
+                            string[] arrDateiname = ed.Dateiname.Split('.');
+                            neuerName = arrDateiname[0] + "(" + counter + ")."+ arrDateiname[1];
+                            if (!_gemerkteNeueDateinamen.Contains(neuerName)) {
+                                prozessBeendet = true;
+
+                            } 
+                        }
+                        _gemerkteAlteDateinamen.Add(alterName);
+                        _gemerkteNeueDateinamen.Add(neuerName);
+                        _gemerkteDokIds.Add(idDesDoks);
+                    } else {
+                        //Nein --> Originalnamen in beide Listen schreiben, Id in IdListe
+                        _gemerkteAlteDateinamen.Add(alterName);
+                        _gemerkteNeueDateinamen.Add(alterName);
+                        _gemerkteDokIds.Add(idDesDoks);
+                    }
+                    //--> Datei Export
+                    string exportDateiNameFile = neuerName.Equals("") ? alterName : neuerName;
+                    ExportFileToDisk(ed.DokumenteId.ToString(), pathString, exportDateiNameFile);
+                    //CSV Export
+                    DataTable TableFuerDynamischeKlasse = ((DbConnector)App.Current.Properties["Connector"]).ReadExportDataTable(ed.Tabelle, ed.IdInTabelle);
+                    //dynamic Export = new MyDynamicExport();
+                    int dynCounter = 0;
+                    StringBuilder sbHeaders = new StringBuilder();
+                    StringBuilder sbValues = new StringBuilder();
+                    foreach (DataColumn col in TableFuerDynamischeKlasse.Columns)
+                    {
+                        //Mal schauen, ob das so geht....
+                        sbHeaders.Append(col.ColumnName + ";");
+                        sbValues.Append(TableFuerDynamischeKlasse.Rows[0].ItemArray[dynCounter].ToString()+ ";");
+                       
+                        dynCounter++;
+                    }
+                    string csv = sbHeaders.ToString().Substring(0, sbHeaders.Length - 1) + Environment.NewLine + sbValues.ToString().Substring(0, sbValues.Length - 1);
+                    string neuerNameOderNicht = neuerName.Equals("") ? alterName : neuerName;
+                    var dateinameExportCsv = neuerNameOderNicht.Split('.')[0] + "_" + ed.DokumentenTyp + "_" + ed.IdInTabelle + ".csv";
+                    string newPathString = System.IO.Path.Combine(pathString, dateinameExportCsv);
+                    System.IO.File.WriteAllText(newPathString, csv);
+                }
+                else {
+                    //Die DOkId ist schon exportiert 
+                    //--> Nur CSV wegschreiben mit neuem Dateinamen --> Nach Index aus den Listen wählen (Alter.IndexOf ..> Neue.ElementAt
+                    int index = _gemerkteDokIds.IndexOf(ed.DokumenteId);
+                    neuerName = _gemerkteNeueDateinamen.ElementAt(index);
+
+                    DataTable TableFuerDynamischeKlasse = ((DbConnector)App.Current.Properties["Connector"]).ReadExportDataTable(ed.Tabelle, ed.IdInTabelle);
+                    //dynamic Export = new MyDynamicExport();
+                    int dynCounter = 0;
+                    StringBuilder sbHeaders = new StringBuilder();
+                    StringBuilder sbValues = new StringBuilder();
+                    foreach (DataColumn col in TableFuerDynamischeKlasse.Columns)
+                    {
+                        //Mal schauen, ob das so geht....
+                        sbHeaders.Append(col.ColumnName + ";");
+                        sbValues.Append(TableFuerDynamischeKlasse.Rows[0].ItemArray[dynCounter].ToString() + ";");
+
+                        dynCounter++;
+                    }
+                    string csv = sbHeaders.ToString().Substring(0, sbHeaders.Length - 1) + Environment.NewLine + sbValues.ToString().Substring(0, sbValues.Length - 1);
+                    var dateinameExportCsv = neuerName.Split('.')[0] + "_" + ed.DokumentenTyp + "_" + ed.IdInTabelle + ".csv";
+                    pathString = System.IO.Path.Combine(pathString, dateinameExportCsv);
+                    System.IO.File.WriteAllText(pathString, csv);
+                }
+            }
 
 
             //Nach Export Listen leeren
             dialog.lstExport.Clear();
             DoksFuerExport.Clear();
+        }
+
+        public void ExportFileToDisk(string varID, string path, string dateiname)
+        {
+            string _path = System.IO.Path.Combine(path, dateiname); 
+            using (var sqlQuery = new SqlCommand(@"SELECT [Dokument] FROM [dbo].[OkoDokumente] WHERE [OkoDokumenteId] = @varID", ((DbConnector)App.Current.Properties["Connector"])._con))
+            {
+                sqlQuery.Parameters.AddWithValue("@varID", varID);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        sqlQueryResult.Read();
+                        var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
+                        sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
+                        using (var fs = new FileStream(_path, FileMode.Create, FileAccess.Write))
+                            fs.Write(blob, 0, blob.Length);
+                    }
+            }
         }
 
         /// <summary>
