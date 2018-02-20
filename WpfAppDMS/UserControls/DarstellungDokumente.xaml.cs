@@ -487,7 +487,7 @@ namespace WpfAppDMS
                     foreach (DataColumn col in TableFuerDynamischeKlasse.Columns)
                     {
                         //Mal schauen, ob das so geht....
-                        sbHeaders.Append(col.ColumnName + ";");
+                        sbHeaders.Append(col.ColumnName.Contains("_x_")? col.ColumnName.Split('_')[2] + ";" : col.ColumnName + ";");
                         sbValues.Append(TableFuerDynamischeKlasse.Rows[0].ItemArray[dynCounter].ToString()+ ";");
                        
                         dynCounter++;
@@ -511,16 +511,16 @@ namespace WpfAppDMS
                     StringBuilder sbValues = new StringBuilder();
                     foreach (DataColumn col in TableFuerDynamischeKlasse.Columns)
                     {
-                        //Mal schauen, ob das so geht....
-                        sbHeaders.Append(col.ColumnName + ";");
+                        //Stringbuilder füllen
+                        sbHeaders.Append(col.ColumnName.Contains("_x_") ? col.ColumnName.Split('_')[2] + ";" : col.ColumnName + ";");
                         sbValues.Append(TableFuerDynamischeKlasse.Rows[0].ItemArray[dynCounter].ToString() + ";");
 
                         dynCounter++;
                     }
                     string csv = sbHeaders.ToString().Substring(0, sbHeaders.Length - 1) + Environment.NewLine + sbValues.ToString().Substring(0, sbValues.Length - 1);
                     var dateinameExportCsv = neuerName.Split('.')[0] + "_" + ed.DokumentenTyp + "_" + ed.IdInTabelle + ".csv";
-                    pathString = System.IO.Path.Combine(pathString, dateinameExportCsv);
-                    System.IO.File.WriteAllText(pathString, csv);
+                    string newPathString = System.IO.Path.Combine(pathString, dateinameExportCsv);
+                    System.IO.File.WriteAllText(newPathString, csv);
                 }
             }
 

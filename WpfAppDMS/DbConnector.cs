@@ -658,11 +658,59 @@ namespace WpfAppDMS
 
         public DataTable ReadExportDataTable(string tabellenname, int id)
         {
+            string[] _csvWerteFeldnamen = { };
+            string[] _csvWerteFeldnamenOriginal = { };
+            string[] _csvWerteFeldTypen = { };
+            List<Tuple<List<int>, List<object>>> _nachschlageFelderWerte = new List<Tuple<List<int>, List<object>>>();
+
+            //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
+
+            string _namen = "";
+            string _typen = "";
+
+           
+                List<Tuple<string, string, string>> Werte = ReadTableNamesTypesAndFields(true);
+                foreach (var item in Werte)
+                {
+                    if (item.Item1.Equals(tabellenname))
+                    {
+                        _namen = tabellenname + "Id;" + item.Item3;
+                        _typen = "int;" + item.Item2;
+                    }
+                }
+            
+            _csvWerteFeldnamen = _namen.Split(';');
+            _csvWerteFeldnamenOriginal = _namen.Split(';');
+            _csvWerteFeldTypen = _typen.Split(';');
+
+            //Originaldaten einlesen
             DataTable dt = new DataTable();
-            string query = "";
-            
-                query = "select * from " + tabellenname + " Where " + tabellenname + "Id =" +id;
-            
+            DataTable dtCopy = new DataTable();
+            //Die Header und DataTypes für die Kopie festlegen;
+            for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
+            {
+                string txt = _csvWerteFeldnamen[i];
+                if (_csvWerteFeldnamen[i].Contains("_x_"))
+                {
+                    //Nachschlagefelder für die spätere Vearbeitung in dieser Methdode merken                    
+                    _nachschlageFelderWerte.Add(ReadComboboxItems(_csvWerteFeldnamen[i].Split('_')[3], _csvWerteFeldnamen[i].Split('_')[4]));
+                    txt = txt.Split('_')[2];
+                    _csvWerteFeldnamen[i] = txt;
+                }
+                DataColumn column = new DataColumn(txt);
+                switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                {
+                    case "int": column.DataType = typeof(int); break;
+                    case "dat": column.DataType = typeof(DateTime); break;
+                    case "dec": column.DataType = typeof(decimal); break;
+                    case "bol": column.DataType = typeof(bool); break;
+                    case "loo": column.DataType = typeof(string); break;
+                    case "txt": column.DataType = typeof(string); break;
+                }
+                dtCopy.Columns.Add(column);
+            }
+
+            string query = "select * from " + tabellenname + " Where " + tabellenname + "Id =" + id;
 
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
@@ -670,21 +718,71 @@ namespace WpfAppDMS
             // this will query your database and return the result to your datatable
             da.Fill(dt);
             da.Dispose();
+            //Reihe für Reihe
+            //int counter = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                DataRow rowCopy = dtCopy.NewRow();
+                //Spalte für Spalte
+                int _nachschlageZaehler = 0;
+                for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
+                {
+                    switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                    {
+                        case "int":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i) != null ? row.Field<int?>(i) : 0; break;
+                        case "dat":
+                            if (row.Field<DateTime?>(i) != null)
+                            {
+                                rowCopy[_csvWerteFeldnamen[i]] = row.Field<DateTime?>(i);
+                            }
+                            else
+                            {
+                                rowCopy[_csvWerteFeldnamen[i]] = DBNull.Value;
+                            }
+                            break;
+                        case "dec":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<decimal?>(i) != null ? row.Field<decimal?>(i) : 0; break;
+                        case "bol":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i);
+                            break;
+                        case "loo":
+                            //Ich brauche eine Liste der Felder und Ids
+                            Tuple<List<int>, List<object>> tuple = _nachschlageFelderWerte.ElementAt(_nachschlageZaehler);
+                            //Index ermitteln
+                            if (row.Field<int?>(i) != null)
+                            {
+                                int index = tuple.Item1.IndexOf(row.Field<int>(i));
+                                string wert = tuple.Item2.ElementAt(index).ToString();
+                                rowCopy[_csvWerteFeldnamen[i]] = wert;
+                            }
+                            else
+                            {
+                                rowCopy[_csvWerteFeldnamen[i]] = "";
+                            }
+                            _nachschlageZaehler++;
+                            break;
+                        case "txt":
+                            rowCopy[_csvWerteFeldnamen[i]] = row.Field<string>(i); break;
+                    }
+                }
+                dtCopy.Rows.Add(rowCopy);
+            }
             //Nicht benötigte Columns entfernen
             List<DataColumn> zuLoeschen = new List<DataColumn>();
-            foreach (DataColumn column in dt.Columns)
+            foreach (DataColumn column in dtCopy.Columns)
             {
-                if (column.ColumnName.Equals(tabellenname+"Id"))
+                if (column.ColumnName.Equals(tabellenname + "Id"))
                 {
                     zuLoeschen.Add(column);
                 }
+
             }
             foreach (DataColumn item in zuLoeschen)
             {
-                dt.Columns.Remove(item);
+                dtCopy.Columns.Remove(item);
             }
-
-            return dt;
+            return dtCopy;
         }
 
 
