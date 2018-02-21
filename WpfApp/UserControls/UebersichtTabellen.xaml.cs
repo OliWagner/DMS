@@ -22,14 +22,16 @@ namespace WpfApp
     {
         List<Tuple<string, string, string>> alleTabellennamen = new List<Tuple<string, string, string>>();
         public Tuple<string, string, string> WerteDerAuswahl { get; set; }
-
+        List<string> AlleInDokumententypenReferenzierteTabellen = new List<string>();
 
         public UebersichtTabellen()
         {
             InitializeComponent();
+            
         }
 
         public void zeichneGrid() {
+            AlleInDokumententypenReferenzierteTabellen = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDokTypenTabellenNamen();
             tvMain.Items.Clear();
             tvMain.SelectedItemChanged += TvMain_SelectedItemChanged;
             alleTabellennamen = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();

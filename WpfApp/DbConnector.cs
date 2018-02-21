@@ -347,6 +347,54 @@ namespace WpfApp
         }
 
         /// <summary>
+        /// Dient dazu, eine Liste der Tabellennamen in den in den Dokumententypen referenzierten Tabellen zu erstellen
+        /// </summary>
+        /// <param name="tabellenname"></param>
+        /// <returns></returns>
+        public List<string> ReadAllDokTypenTabellenNamen()
+        {
+            List<string> returner = new List<string>();
+            DataTable dt = new DataTable();
+
+            string query = "SELECT * FROM   INFORMATION_SCHEMA.TABLES WHERE  TABLE_TYPE = 'BASE TABLE'";
+            SqlCommand cmd = new SqlCommand(query, _con);
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            List<string> _dokTyenTabellenNamen = new List<string>();
+            foreach (DataRow drv in dt.Rows) {
+                if (drv.ItemArray[2].ToString().Substring(0,3).Equals("xyx")) {
+                    _dokTyenTabellenNamen.Add(drv.ItemArray[2].ToString());
+                }
+            }
+            //Jetzt durch die Felder aller Reftabellen
+            foreach (string tabName in _dokTyenTabellenNamen)
+            {
+                DataTable dt2 = new DataTable();
+                //Für jede Tabelle alle Felder lesen und die Tabellennamen der _x_ Felder in Returner speichern
+                string query2 = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME ='" + tabName + "'";
+                SqlCommand cmd2 = new SqlCommand(query2, _con);
+                // create data adapter
+                SqlDataAdapter da2 = new SqlDataAdapter(cmd2);
+                // this will query your database and return the result to your datatable
+                da2.Fill(dt2);
+                da2.Dispose();
+      
+                foreach (DataRow drv in dt2.Rows)
+                {
+                    if (drv.ItemArray[0].ToString().Substring(0, 3).Equals("_x_"))
+                    {
+                        returner.Add(drv.ItemArray[0].ToString().Split('_')[2]);
+                    }
+                }
+            }
+            returner = returner.Distinct().ToList();
+            return returner;
+        }
+
+        /// <summary>
         /// Liest die Daten der Tabelle ein und ersetzt Referenzen zu anderen Tabellen mit den entsprechenden Werten für die Darstellung in Datagrid. Die Spaltenheader werden auch korrigiert
         /// </summary>
         /// <param name="tabellenname">Die einzulesende Tabelle</param>
@@ -901,8 +949,6 @@ namespace WpfApp
             SqlTransaction transaction;
             // Start a local transaction.
             transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            // Must assign both transaction object and connection
-            // to Command object for a pending local transaction
             command.Connection = _con;
             command.Transaction = transaction;
             try

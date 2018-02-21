@@ -23,10 +23,12 @@ namespace WpfApp
     {
         DataTable dtOriginal;
         DataTable dt;
+        List<string> AlleInDokumententypenReferenzierteTabellen = new List<string>();
         //string[] arrTxt = new string[5];
         public Tabellendaten()
         {
             InitializeComponent();
+            
         }
 
         public void Clear()
@@ -38,7 +40,7 @@ namespace WpfApp
         }
 
         public void zeichneTabelle(string tabelle) {
-
+            AlleInDokumententypenReferenzierteTabellen = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDokTypenTabellenNamen();
             dtOriginal = new DataTable();
             dt = new DataTable();
             dtOriginal = ((DbConnector)App.Current.Properties["Connector"]).ReadTableData(tabelle);
