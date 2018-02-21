@@ -28,6 +28,21 @@ namespace WpfAppDMS
             ZeichneGrid(lstExport);
         }
 
+        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Nix
+        }
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (grdMain.Children.Count == 0)
+            {
+                e.CanExecute = false;
+            }
+            else {
+                e.CanExecute = true;
+            }
+        }
+
         private void ZeichneGrid(List<Exportdaten> lstExport) {
             int counter = 0;
             grdMain.Children.Clear();

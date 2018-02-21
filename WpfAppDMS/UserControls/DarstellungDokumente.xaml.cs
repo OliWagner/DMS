@@ -600,7 +600,8 @@ namespace WpfAppDMS
                     }
                 counter++;
             }
-            ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(index);
+            string tab = ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(index);
+            ZeichneDatagrid(tab);
         }
     }
 }

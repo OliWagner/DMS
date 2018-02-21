@@ -6,6 +6,11 @@
         xmlns:local="clr-namespace:WpfAppDMS"
         mc:Ignorable="d"
         Title="Export" Height="300" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -18,6 +23,6 @@
         </ScrollViewer>
         <Button Width="100" x:Name="btnAlleLoeschen" Click="btnAlleLoeschen_Click" Height="20" Margin="670,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="alle löschen" Grid.Row="2" />
         <Button Width="100" x:Name="btnSchliessen" Click="btnSchliessen_Click" Height="20" Margin="130,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Schließen" Grid.Row="2" />
-        <Button Width="100" x:Name="btnExportieren" Click="btnExportieren_Click" Height="20" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Exportieren" Grid.Row="2" />
+        <Button Width="100" x:Name="btnExportieren" Command="Save" CommandTarget="{Binding ElementName=grdMain}" Click="btnExportieren_Click" Height="20" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Exportieren" Grid.Row="2" />
     </Grid>
 </Window>

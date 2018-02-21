@@ -237,7 +237,7 @@ namespace WpfAppDMS
             transaction.Commit();
         }
 
-        public void DeleteDokumentendatensatz(int dokumenteDatenId)
+        public string DeleteDokumentendatensatz(int dokumenteDatenId)
         {
             //Aus DokumenteDaten die DOkumenteId ermitteln
             DataTable dt = new DataTable();
@@ -259,7 +259,7 @@ namespace WpfAppDMS
             da2.Dispose();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("Delete from OkoAnwendungen Where OkoDokumenteDatenId =" + dokumenteDatenId + ";");
+            sb.Append("Delete from OkoDokumenteDaten Where OkoDokumenteDatenId =" + dokumenteDatenId + ";");
             sb.Append("Delete from " + aktuelleTabelle + " Where " + aktuelleTabelle + "Id =" + aktuelleIdInTabelle + ";");
 
             if (dt2.Rows.Count == 1)
@@ -280,6 +280,7 @@ namespace WpfAppDMS
             command.CommandText = sql;
             command.ExecuteNonQuery();
             transaction.Commit();
+            return aktuelleTabelle;
         }
 
         public List<Tuple<int, string, string>> ReadAnwendungen()
