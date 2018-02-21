@@ -16,6 +16,9 @@
         <CommandBinding Command="New" 
                   CanExecute="New_CanExecute"
                   Executed="New_Executed" />
+        <CommandBinding Command="Paste" 
+                  CanExecute="Paste_CanExecute"
+                  Executed="Paste_Executed" />
     </UserControl.CommandBindings>
     <Grid x:Name="grdContainer" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="600">
         <Grid.RowDefinitions>
@@ -26,7 +29,8 @@
         <Grid Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="1000" Height="40" Background="AliceBlue">
             <ComboBox SelectionChanged="cboGruppen_SelectionChanged" x:Name="cboGruppen" Text="Dokumentengruppe wählen" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top" Width="200"/>
             <ComboBox SelectionChanged="cboTypen_SelectionChanged" x:Name="cboTypen" Text="Dokumententyp wählen" HorizontalAlignment="Left" Margin="215,10,0,0" VerticalAlignment="Top" Width="200"/>
-            <Button x:Name="btnDokAnzeigen" Click="btnDokAnzeigen_Click" Command="Save" CommandTarget="{Binding ElementName=grdContainer}" Grid.Row="0" HorizontalAlignment="Left"  Margin="425,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Dokument anzeigen"/>
+            <Button x:Name="btnDokAnzeigen" Click="btnDokAnzeigen_Click" Command="Save" CommandTarget="{Binding ElementName=grdContainer}" Grid.Row="0" HorizontalAlignment="Left"  Margin="420,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Dokument anzeigen"/>
+            <Button x:Name="btnDokLoeschen" Click="btnDokLoeschen_Click" Command="Paste" CommandTarget="{Binding ElementName=grdContainer}" Grid.Row="0" HorizontalAlignment="Left"  Margin="565,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Eintrag entfernen"/>
             <Button x:Name="btnZumExportHinzu" Click="btnZumExportHinzu_Click" Command="Copy" CommandTarget="{Binding ElementName=dgDokumente}" Grid.Row="0" HorizontalAlignment="Left"  Margin="710,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Zum Export hinzufügen"/>
             <Button x:Name="btnExportdialog" Click="btnExportdialog_Click" Command="New" CommandTarget="{Binding ElementName=grdContainer}" Grid.Row="0" HorizontalAlignment="Left"  Margin="855,10,0,0" VerticalAlignment="Top" Width="140" Height="22" Content="Exportdialog"/>
         </Grid>

@@ -237,6 +237,51 @@ namespace WpfAppDMS
             transaction.Commit();
         }
 
+        public void DeleteDokumentendatensatz(int dokumenteDatenId)
+        {
+            //Aus DokumenteDaten die DOkumenteId ermitteln
+            DataTable dt = new DataTable();
+            string query = "Select OkoDokumenteId, Tabelle, IdInTabelle from OkoDokumenteDaten where OkoDokumenteDatenId = " + dokumenteDatenId;
+            SqlCommand cmd = new SqlCommand(query, _con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+            int aktuelleDokumenteId =  dt.Rows[0].Field<int>(0);
+            string aktuelleTabelle = dt.Rows[0].Field<string>(1);
+            int aktuelleIdInTabelle = dt.Rows[0].Field<int>(2);
+            //Nachschauen, ob noch weitere Referenzen auf das Dokument vorhanden sind
+            DataTable dt2 = new DataTable();
+            string query2 = "Select * from OkoDokumenteDaten where OkoDokumenteId = " + aktuelleDokumenteId;
+            SqlCommand cmd2 = new SqlCommand(query2, _con);
+            SqlDataAdapter da2 = new SqlDataAdapter(cmd2);
+            da2.Fill(dt2);
+            da2.Dispose();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Delete from OkoAnwendungen Where OkoDokumenteDatenId =" + dokumenteDatenId + ";");
+            sb.Append("Delete from " + aktuelleTabelle + " Where " + aktuelleTabelle + "Id =" + aktuelleIdInTabelle + ";");
+
+            if (dt2.Rows.Count == 1)
+            {
+                //Es ist kein weiterer Eintrag vorhanden, Dokument kann gelöscht werden
+                sb.Append("Delete from OkoDokumente Where OkoDokumenteId =" + aktuelleDokumenteId + ";");
+            }
+
+            string sql = sb.ToString();
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            command.CommandText = sql;
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
+
         public List<Tuple<int, string, string>> ReadAnwendungen()
         {
             List<Tuple<int, string, string>> list = new List<Tuple<int, string, string>>();

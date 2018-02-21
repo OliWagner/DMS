@@ -354,7 +354,17 @@ namespace WpfAppDMS
             if (dgDokumente != null) {
                 if (suchfelder.grdMain.Children.Count > 0 && dgDokumente.SelectedItem != null) { e.CanExecute = true; } else { e.CanExecute = false; }
             }
-
+        }
+        private void Paste_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Nix
+        }
+        private void Paste_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (dgDokumente != null)
+            {
+                if (suchfelder.grdMain.Children.Count > 0 && dgDokumente.SelectedItem != null && DoksFuerExport.Count == 0) { e.CanExecute = true; } else { e.CanExecute = false; }
+            }
         }
         private void New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -576,6 +586,21 @@ namespace WpfAppDMS
             }
 
             if (DoksFuerExport.Contains(OkoDokumentendatenId) || OkoDokumentendatenId == 0) { btnZumExportHinzu.IsEnabled = false; } else { btnZumExportHinzu.IsEnabled = true; }
+        }
+
+        private void btnDokLoeschen_Click(object sender, RoutedEventArgs e)
+        {
+            int index = 0;
+            object[] itemArray = ((DataRowView)dgDokumente.SelectedItem).Row.ItemArray;
+            int counter = 0;
+            foreach (var col in dgDokumente.Columns)
+            {
+                if (col.Header.Equals("OkoDokumenteDatenId")) {
+                    index = Int32.Parse(itemArray[counter].ToString());
+                    }
+                counter++;
+            }
+            ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(index);
         }
     }
 }
