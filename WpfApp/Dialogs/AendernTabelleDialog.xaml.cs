@@ -36,6 +36,7 @@ namespace WpfApp
             zeichneGrid();
         }
 
+
         private void zeichneGrid() {
             FelderStart = new List<string>();
             _anzahlFelderDisabled = 0;
