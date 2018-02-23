@@ -47,6 +47,7 @@ namespace WpfApp
             dt = ((DbConnector)App.Current.Properties["Connector"]).ReadTableDataWerteErsetztFuerDarstellung(tabelle);
             //DataGrid füllen
             dgTabelle.ItemsSource = dt.DefaultView;
+            dgTabelle.Tag = tabelle;
             dgTabelleOriginal.ItemsSource = dtOriginal.DefaultView;
         }
 
@@ -79,14 +80,19 @@ namespace WpfApp
         {
             if (dgTabelle.Items != null)
             {
-                foreach (DataRowView item in dgTabelle.SelectedItems)
-                {
-                    if (item != null)
+                if (dgTabelle.Tag != null && AlleInDokumententypenReferenzierteTabellen.Contains(dgTabelle.Tag.ToString())) {
+                    e.CanExecute = false;
+                } else {
+                    foreach (DataRowView item in dgTabelle.SelectedItems)
                     {
-                        e.CanExecute = true;
-                        return;
+                        if (item != null)
+                        {
+                            e.CanExecute = true;
+                            return;
+                        }
                     }
                 }
+  
             }
             e.CanExecute = false;
         }

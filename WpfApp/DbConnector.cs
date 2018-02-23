@@ -386,7 +386,7 @@ namespace WpfApp
                 {
                     if (drv.ItemArray[0].ToString().Substring(0, 3).Equals("_x_"))
                     {
-                        returner.Add(drv.ItemArray[0].ToString().Split('_')[2]);
+                        returner.Add(drv.ItemArray[0].ToString().Split('_')[3]);
                     }
                 }
             }
