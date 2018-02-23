@@ -26,9 +26,11 @@ namespace WpfApp
         private List<string> FelderStart = new List<string>();
         public List<string> FelderLoeschen = new List<string>();
         public List<EingabeTabellenfelder> FelderHinzufuegen = new List<EingabeTabellenfelder>();
+        private bool IstBereitsReferenziert { get; set; }
 
-        public AendernTabelleDialog(string tabelle)
+        public AendernTabelleDialog(string tabelle, bool istBereitsReferenziert)
         {
+            IstBereitsReferenziert = istBereitsReferenziert;
             InitializeComponent();
             Tabelle = tabelle;
             zeichneGrid();
@@ -70,7 +72,7 @@ namespace WpfApp
                 lbl2.HorizontalAlignment = HorizontalAlignment.Left;
                 lbl2.FontSize = 14;
                 TextBlock lbl3 = new TextBlock();
-                if (Checkloeschen(feldnamen[i]))
+                if (Checkloeschen(feldnamen[i]) && !IstBereitsReferenziert)
                 {
                     //Schon zum Löschen markiert?
                     if (!FelderLoeschen.Contains(feldnamen[i])) {

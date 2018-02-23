@@ -92,7 +92,14 @@ namespace WpfApp
         {
             //DIalog öffnen, um Tabellenfelder zur Tabelle hinzuzufügen, oder zu löschen.
             //Es können keine Bezeichnungen geändert werden
-            AendernTabelleDialog dialog = new AendernTabelleDialog(((TreeViewItem)tvMain.SelectedItem).Header.ToString());
+            TreeViewItem tviTabelle = (TreeViewItem)tvMain.SelectedItem;
+            bool tabelleIstReferenziert = false;
+            if (tviTabelle != null && tviTabelle.Header != null && AlleInDokumententypenReferenzierteTabellen.Contains(tviTabelle.Header.ToString()))
+            {
+                tabelleIstReferenziert = true;
+            }
+
+            AendernTabelleDialog dialog = new AendernTabelleDialog(((TreeViewItem)tvMain.SelectedItem).Header.ToString(), tabelleIstReferenziert);
             if (dialog.ShowDialog() == true)
             {
                 //Ergebnisse des DIalogs verarbeiten
@@ -107,12 +114,20 @@ namespace WpfApp
         #region Commands
         private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            
             //Tabelle darf nicht gelöscht werden, wenn eine andere Tabelle ein Nachschlagefeld auf diese Tabelle referenziert
             TreeViewItem tviTabelle = (TreeViewItem)tvMain.SelectedItem;
 
             if (tviTabelle != null)
             {
+                //Tabelle darf nicht gelöscht werden wenn sie in einem Dokumententypen referenziert ist
+                if (tviTabelle.Header != null && AlleInDokumententypenReferenzierteTabellen.Contains(tviTabelle.Header.ToString()))
+                {
+                    e.CanExecute = false;
+                    return;
+                }
+
+
+
                 string txtTabelle = tviTabelle.Header.ToString();
                 foreach (Tuple<string, string, string> item in alleTabellennamen)
                 {
@@ -141,10 +156,30 @@ namespace WpfApp
             //Do nothing
         }
 
+        private void New_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //DO nothing
+        }
 
         private void Delete_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //DO nothing
+        }
+
+        private void New_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (tvMain.Items != null)
+            {
+                foreach (TreeViewItem item in tvMain.Items)
+                {
+                    if ((bool)item.IsSelected)
+                    {                       
+                            e.CanExecute = true;
+                            return;
+                    }
+                }
+            }
+            e.CanExecute = false;
         }
 
         private void LeerenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -155,8 +190,16 @@ namespace WpfApp
                 {
                     if ((bool)item.IsSelected)
                     {
-                        e.CanExecute = true;
-                        return;
+                        if (item.Header != null && AlleInDokumententypenReferenzierteTabellen.Contains(item.Header.ToString()))
+                        {
+                            e.CanExecute = false;
+                            return;
+                        }
+                        else
+                        {
+                            e.CanExecute = true;
+                            return;
+                        }
                     }
                 }
             }

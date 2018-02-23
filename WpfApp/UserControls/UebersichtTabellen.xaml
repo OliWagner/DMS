@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="200" Background="White">
     <UserControl.CommandBindings>
+        <CommandBinding Command="New" CanExecute="New_CanExecute" Executed="New_Executed" />
         <CommandBinding Command="Delete" CanExecute="Delete_CanExecute" Executed="Delete_Executed" />
         <CommandBinding Command="local:MyCommands.Leeren" CanExecute="LeerenCommand_CanExecute" Executed="LeerenCommand_Executed" />
     </UserControl.CommandBindings>
@@ -19,7 +20,7 @@
         <Grid Grid.Row="1" MinWidth="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0">
             <Button Command="ApplicationCommands.Delete" HorizontalAlignment="Left" Click="btnLoeschen_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnLoeschen" Content="Löschen" Margin="5,0,0,0" Width="60" VerticalAlignment="Top" />
             <Button Command="local:MyCommands.Leeren" HorizontalAlignment="Left" Click="btnLeeren_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnLeeren" Content="Leeren" Width="60" Margin="70,0,0,0" VerticalAlignment="Top" />
-            <Button Command="local:MyCommands.Leeren" HorizontalAlignment="Left" Click="btnAendern_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnAendern" Content="Ändern" Width="60" Margin="135,0,0,0" VerticalAlignment="Top" />
+            <Button Command="ApplicationCommands.New" HorizontalAlignment="Left" Click="btnAendern_Click" CommandTarget="{Binding ElementName=tvMain}" x:Name="btnAendern" Content="Ändern" Width="60" Margin="135,0,0,0" VerticalAlignment="Top" />
         </Grid>
     </Grid>
 
