@@ -8,6 +8,7 @@ using System.Linq;
 using Vigenere;
 using System;
 using System.Windows.Input;
+using WpfAppError;
 
 namespace WpfAppDMS
 {

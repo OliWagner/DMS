@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WpfAppError;
 
 namespace WpfAppDMS
 {
@@ -29,7 +30,11 @@ namespace WpfAppDMS
             }
             catch (Exception ex)
             {
-                //FehlerMessage = ex.InnerException.Message;
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0021xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0021xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
                 return false;
             }
         }

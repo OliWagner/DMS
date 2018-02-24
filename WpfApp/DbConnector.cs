@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WpfAppError;
 
 namespace WpfApp
 {
@@ -29,7 +30,11 @@ namespace WpfApp
             }
             catch (Exception ex)
             {
-                //FehlerMessage = ex.InnerException.Message;
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0001xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0001xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
                 return false;
             }
         }
@@ -86,13 +91,18 @@ namespace WpfApp
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0003xx");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0003xx");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0002xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0002xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
             return false;
         }
@@ -138,22 +148,32 @@ namespace WpfApp
         /// </summary>
         /// <returns>Tuple of Strings. Tuple aus Tabellenname, csvFeldtyp, csvFeldnamen</returns>
         public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields() {
+            
             List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
-            using (SqlCommand cmd = new SqlCommand())
-            {
-                cmd.Connection = _con;
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT * FROM OkoTabellenfeldtypen";
-             
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                foreach (DataRow row in dt.Rows)
+            try { 
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    var myT = Tuple.Create<string, string, string>(row.Field<string>(1), row.Field<string>(2), row.Field<string>(3));
+                    cmd.Connection = _con;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT * FROM OkoTabellenfeldtypen";
+             
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
 
-                    liste.Add(myT);
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var myT = Tuple.Create<string, string, string>(row.Field<string>(1), row.Field<string>(2), row.Field<string>(3));
+
+                        liste.Add(myT);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0004xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0004xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
                 }
             }
             return liste;
@@ -181,44 +201,53 @@ namespace WpfApp
             List<string> typenBeschreibungen = new List<string>();
             List<int> typenGruppenIds = new List<int>();
             //List<string> typenTabellen = new List<string>();
-
-            using (SqlCommand cmd = new SqlCommand())
-            {
-                cmd.Connection = _con;
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT * FROM OkoDokumentengruppen";
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                foreach (DataRow row in dt.Rows)
+            try { 
+                using (SqlCommand cmd = new SqlCommand())
                 {
-                    gruppen.Add(row.Field<string>(1));
-                    gruppenIds.Add(row.Field<int>(0));
-                    gruppenBeschreibungen.Add(row.Field<string>(2));
+                    cmd.Connection = _con;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT * FROM OkoDokumentengruppen";
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        gruppen.Add(row.Field<string>(1));
+                        gruppenIds.Add(row.Field<int>(0));
+                        gruppenBeschreibungen.Add(row.Field<string>(2));
+                    }
+                }
+
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.Connection = _con;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT * FROM OkoDokumententyp";
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        typen.Add(row.Field<string>(1));
+                        typenIds.Add(row.Field<int>(0));
+                        typenBeschreibungen.Add(row.Field<string>(2));
+                        typenGruppenIds.Add(row.Field<int>(3));
+                    }
+                }
+
+                
+            }
+            catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0005xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0005xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
                 }
             }
-
-            using (SqlCommand cmd = new SqlCommand())
-            {
-                cmd.Connection = _con;
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT * FROM OkoDokumententyp";
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    typen.Add(row.Field<string>(1));
-                    typenIds.Add(row.Field<int>(0));
-                    typenBeschreibungen.Add(row.Field<string>(2));
-                    typenGruppenIds.Add(row.Field<int>(3));
-                }
-            }
-
             gruppenDaten = Tuple.Create(gruppen, gruppenIds, gruppenBeschreibungen);
             typenDaten = Tuple.Create(typen, typenIds, typenBeschreibungen, typenGruppenIds);
             return Tuple.Create(gruppenDaten, typenDaten);
@@ -227,6 +256,7 @@ namespace WpfApp
         public void ChangeTableStructure(string Tabelle, List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen) {
             List<string> csvFeldnamen = new List<string>();
             List<string> csvTypen = new List<string>();
+
             List<Tuple<string, string, string>> alleTabDaten = ReadTableNamesTypesAndFields();
             foreach (var item in alleTabDaten)
             {
@@ -303,6 +333,11 @@ namespace WpfApp
             }
             catch (Exception ex) {
                 transaction.Rollback();
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0006xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0006xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
          }
 
@@ -310,7 +345,7 @@ namespace WpfApp
         {
             List<int> lstInt = new List<int>();
             List<object> lstObject = new List<object>();
-
+            try { 
             DataTable dt = new DataTable();
             string query = "select "+ _tabelle +"Id, "+ _feld + " from " + _tabelle;
             SqlCommand cmd = new SqlCommand(query, _con);
@@ -324,6 +359,14 @@ namespace WpfApp
                 lstInt.Add(row.Field<int>(0));
                 lstObject.Add(row.Field<object>(1));
             }
+            }
+            catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0007xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0007xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return Tuple.Create(lstInt, lstObject);
         }
 
@@ -334,7 +377,7 @@ namespace WpfApp
         /// <returns></returns>
         public DataTable ReadTableData(string tabellenname) {
             DataTable dt = new DataTable();
-
+            try { 
             string query = "select * from " + tabellenname;
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
@@ -342,7 +385,14 @@ namespace WpfApp
             // this will query your database and return the result to your datatable
             da.Fill(dt);
             da.Dispose();
-
+            }
+            catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0008xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0008xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return dt;
         }
 
@@ -354,6 +404,7 @@ namespace WpfApp
         public List<string> ReadAllDokTypenTabellenNamen()
         {
             List<string> returner = new List<string>();
+            try { 
             DataTable dt = new DataTable();
 
             string query = "SELECT * FROM   INFORMATION_SCHEMA.TABLES WHERE  TABLE_TYPE = 'BASE TABLE'";
@@ -391,6 +442,14 @@ namespace WpfApp
                 }
             }
             returner = returner.Distinct().ToList();
+            }
+            catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0009xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0009xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return returner;
         }
 
@@ -421,6 +480,7 @@ namespace WpfApp
             //Originaldaten einlesen
             DataTable dt = new DataTable();
             DataTable dtCopy = new DataTable();
+            try { 
             //Die Header und DataTypes für die Kopie festlegen;
             for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
             {
@@ -504,6 +564,14 @@ namespace WpfApp
                     }
                 }
                 dtCopy.Rows.Add(rowCopy);
+            }
+            }
+            catch (Exception ex) {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0010xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0010xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
             return dtCopy;
         }
@@ -632,13 +700,18 @@ namespace WpfApp
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0011ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0011ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0011xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0011xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
             return neueId;
         }
@@ -739,13 +812,18 @@ namespace WpfApp
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0012ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0012ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0012xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0012xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
         }
 
@@ -820,8 +898,33 @@ namespace WpfApp
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
+            try { 
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0013ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0013ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0013xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0013xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
         public void DeleteTableData(string tabellenname, int datensatzId)
@@ -837,8 +940,33 @@ namespace WpfApp
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
+            try { 
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0014ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0014ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0014xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0014xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
         public void DeleteAllTableData(string tabellenname)
@@ -854,9 +982,34 @@ namespace WpfApp
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
-            command.ExecuteNonQuery();
-            transaction.Commit();
-        }
+            try { 
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (SqlException ex)
+                    {
+                        if (transaction.Connection != null)
+                        {
+                            Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0015ax");
+                            ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0015ax");
+                            if (anzeigen.ShowDialog() == true)
+                            { //Nix machen, Fenster schließt sich einfach 
+                            }
+                        }
+                    }
+                    Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0015xx");
+                    ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0015xx");
+                    if (anzeige.ShowDialog() == true)
+                    { //Nix machen, Fenster schließt sich einfach 
+                    }
+                }
+         }
 
         public void DeleteTable(string tabellenname)
         {
@@ -871,18 +1024,45 @@ namespace WpfApp
             // to Command object for a pending local transaction
 
             SqlCommand command = _con.CreateCommand();
-            
+            SqlCommand command2 = _con.CreateCommand();
+
+
+            try { 
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
             command.ExecuteNonQuery();
 
-            SqlCommand command2 = _con.CreateCommand();          
+                
             command2.Connection = _con;
             command2.Transaction = transaction;
             command2.CommandText = sql2;
             command2.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0016ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0016ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0016xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0016xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
         public void AddDokGruppe(string bezeichnung, string beschreibung) {           
@@ -911,13 +1091,18 @@ namespace WpfApp
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0017ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0017ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0017xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0017xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
 
         }
@@ -937,9 +1122,28 @@ namespace WpfApp
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                transaction.Rollback();
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0018ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0018ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0018xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0018xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
         }
 
@@ -957,9 +1161,28 @@ namespace WpfApp
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                transaction.Rollback();
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0019ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0019ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0019xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0019xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
         }
 
@@ -989,21 +1212,21 @@ namespace WpfApp
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0020ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0020ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0020xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0020xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
 
 
         }
-
-        public void UpdateDokTyp(string bezeichnung) { }
-
-
-
     }
 }

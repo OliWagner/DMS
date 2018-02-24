@@ -54,22 +54,6 @@ namespace WpfApp
 
         public ConnectionDialog()
         {
-            //TODO WIEDER ENTFERNEN WENN FERTIG Fehlerbehandlung testen
-            //Todo --> Auch was hübscher machen
-            //try
-            //{
-            //    Int32.Parse("d");
-            //}
-            //catch (Exception ex)
-            //{
-            //    Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0001xx");
-            //    ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0001xx");
-            //    if (anzeige.ShowDialog() == true) { //Nix machen, Fenster schließt sich einfach 
-            //    }
-            //    //TODO --> Noch schöne Meldung an den User rausgeben
-            //}
-
-
             InitializeComponent();
 
             //Verzeichnis der Anwendung ermitteln
