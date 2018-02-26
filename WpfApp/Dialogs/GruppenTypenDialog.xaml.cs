@@ -146,7 +146,7 @@ namespace WpfApp
         private void SichernDokTypen_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
-            string AllowedChars = @"^[a-zA-Z0-9 .,ÄäÖöÜü()]+$";
+            string AllowedChars = @"^[a-zA-Z0-9.,ÄäÖöÜü()]+$";
             
             if (alleDokTypen != null && (alleDokTypen.Contains(txtTypBezeichnung.Text.Trim()) || DokTypFeldwerte.Count == 0))
             {
