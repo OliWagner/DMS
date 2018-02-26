@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppDMS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1030">
+        Title="Datei-/Dokumentenmanagement" Height="900" Width="1030">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="260" />

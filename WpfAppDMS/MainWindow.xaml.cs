@@ -91,6 +91,8 @@ namespace WpfAppDMS
             //tabsDaten.ItemAdded += AddHandlerToEingabeDokumentenDatenInstanz;
             dokTree.Start();
             dokTree.MouseRightButtonDown += dokTree_MouseRightButtonDown;
+            darstellungDokumente.ZeichneGrid();
+            //darstellungDokumente.suchfelder.Fill();
             tabsDaten.Items.Clear();
             tabsDaten.tabsMain.Items.Clear();
             tabsDaten.ItemAdded += AddHandlerToEingabeDokumentenDatenInstanz;

@@ -198,7 +198,7 @@ namespace WpfAppDMS
             AlleDokumententypenBezeichnungen = data.Item3;
             AlleDokumententypenIds = data.Item4;
             okoDokTypTabellenfeldtypen = data.Item5;
-
+            suchfelder.Fill();
             Dictionary<int, string> dic = new Dictionary<int, string>();
             foreach (var item in AlleDokumententypen)
             {
@@ -213,6 +213,7 @@ namespace WpfAppDMS
         private void cboGruppen_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox cbo = (ComboBox)sender;
+            if (cbo.SelectedItem != null) { 
             ((DbConnector)App.Current.Properties["Connector"]).IdCHecker = true;
             KeyValuePair<int, string> kvp = (KeyValuePair<int, string>)cbo.SelectedItem;
             
@@ -222,6 +223,7 @@ namespace WpfAppDMS
 
             //Die Dokumente zur DOkGruppe darstellen
             ZeichneDataGridDokGruppe(dokGruppenId);
+            }
 
         }
 

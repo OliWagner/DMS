@@ -29,11 +29,17 @@ namespace WpfAppError
             }
             else
             {
+                try { 
                 //File erstellen
                 using (var x = File.Create(_path)) { }
                 using (StreamWriter sw = new StreamWriter(_path))
                 {
                     sw.Write(DateTime.Now + "\n" + stackTrace + "\n" + message + "\n" + ownCode + "\n\n");
+                }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Es konnte keine Datei auf dem Laufwerk angelegt werden. --> " + ex.Message);
                 }
             }
         }

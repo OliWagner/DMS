@@ -30,6 +30,11 @@ namespace WpfAppDMS
             InitializeComponent();
         }
 
+        public void Fill() {
+            grdMain.Children.Clear();
+            grdMain.ColumnDefinitions.Clear();
+        }
+
         public void Fill(string _tabelle, out Dictionary<string, TextBox> dicBezeichnungFeldUndTextBox) {
             dicBezeichnungFeldUndTextBox = new Dictionary<string, TextBox>();
             //Dictionary<string, TextBox> DicBezeichnungFeldUndTextBox = dicBezeichnungFeldUndTextBox;

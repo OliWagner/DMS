@@ -56,6 +56,7 @@ namespace WpfAppDMS
             StringBuilder sbWerte = new StringBuilder();
             int counter = 0;
             var csvArray = csvWerteTypen.Split(';');
+            try { 
             foreach (KeyValuePair<string, object> entry in werte)
             {
                 if (csvArray[counter].Substring(0, 3).Equals("txt"))
@@ -119,6 +120,15 @@ namespace WpfAppDMS
                 }
                 counter++;
             }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0031xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0031xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             string sqlSpalten = sbSpalten.ToString().Substring(0, sbSpalten.Length - 1);
             string sqlWerte = sbWerte.ToString().Substring(0, sbWerte.Length - 1);
             if (IsDokType) {
@@ -126,9 +136,6 @@ namespace WpfAppDMS
             } else {
                 sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
             }
-            
-         
-            
 
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
@@ -154,12 +161,15 @@ namespace WpfAppDMS
                 }
                 catch (Exception innerEx)
                 {
-                    var test = innerEx.InnerException.Message;
+                    Fehlerbehandlung.Error(innerEx.StackTrace.ToString(), innerEx.Message, "xx0022xx");
+                    ErrorAnzeigen anzeige = new ErrorAnzeigen(innerEx.StackTrace.ToString(), innerEx.Message, "xx0022xx");
+                    if (anzeige.ShowDialog() == true)
+                    { //Nix machen, Fenster schließt sich einfach 
+                    }
                 }
 
 
                 transaction.Commit();
-                return neueId;
             }
             catch (Exception e)
             {
@@ -171,13 +181,18 @@ namespace WpfAppDMS
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0023ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0023ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0023xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0023xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
             return neueId;
         }
@@ -215,13 +230,18 @@ namespace WpfAppDMS
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0024ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0024ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0024xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0024xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
         }
 
@@ -238,13 +258,41 @@ namespace WpfAppDMS
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
+            try { 
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0025ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0025ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0025xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0025xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
         public string DeleteDokumentendatensatz(int dokumenteDatenId)
         {
             //Aus DokumenteDaten die DOkumenteId ermitteln
+            StringBuilder sb = new StringBuilder();
+
+
             DataTable dt = new DataTable();
             string query = "Select OkoDokumenteId, Tabelle, IdInTabelle from OkoDokumenteDaten where OkoDokumenteDatenId = " + dokumenteDatenId;
             SqlCommand cmd = new SqlCommand(query, _con);
@@ -252,10 +300,12 @@ namespace WpfAppDMS
             // this will query your database and return the result to your datatable
             da.Fill(dt);
             da.Dispose();
+
             int aktuelleDokumenteId =  dt.Rows[0].Field<int>(0);
             string aktuelleTabelle = dt.Rows[0].Field<string>(1);
             int aktuelleIdInTabelle = dt.Rows[0].Field<int>(2);
             //Nachschauen, ob noch weitere Referenzen auf das Dokument vorhanden sind
+
             DataTable dt2 = new DataTable();
             string query2 = "Select * from OkoDokumenteDaten where OkoDokumenteId = " + aktuelleDokumenteId;
             SqlCommand cmd2 = new SqlCommand(query2, _con);
@@ -263,7 +313,6 @@ namespace WpfAppDMS
             da2.Fill(dt2);
             da2.Dispose();
 
-            StringBuilder sb = new StringBuilder();
             sb.Append("Delete from OkoDokumenteDaten Where OkoDokumenteDatenId =" + dokumenteDatenId + ";");
             sb.Append("Delete from " + aktuelleTabelle + " Where " + aktuelleTabelle + "Id =" + aktuelleIdInTabelle + ";");
 
@@ -283,14 +332,40 @@ namespace WpfAppDMS
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
+            try { 
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0026ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0026ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0026xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0026xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return aktuelleTabelle;
         }
 
         public List<Tuple<int, string, string>> ReadAnwendungen()
         {
             List<Tuple<int, string, string>> list = new List<Tuple<int, string, string>>();
+            try { 
             DataTable dt = new DataTable();
             
             string query = "Select * from OkoAnwendungen";
@@ -305,7 +380,15 @@ namespace WpfAppDMS
             {
                 list.Add(Tuple.Create(row.Field<int>(0), row.Field<string>(1), row.Field<string>(2)));
             }
-           
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0033xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0033xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return list;
         }
 
@@ -313,7 +396,7 @@ namespace WpfAppDMS
         {
             
             DataTable dt = new DataTable();
-
+            try { 
             string query = "Select OkoDokumenteId from OkoDokumenteDaten where IdInTabelle = " + idInTabelle + " and Tabelle = '" + tabelle + "' and Dateiname = '" + dateiname + "'";
 
             SqlCommand cmd = new SqlCommand(query, _con);
@@ -322,12 +405,22 @@ namespace WpfAppDMS
             // this will query your database and return the result to your datatable
             da.Fill(dt);
             da.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0034xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0034xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return dt.Rows[0].Field<int>(0);
         }
 
         public List<Exportdaten> ReadExportDaten(List<int> OkoDokumenteDatenIds)
         {
             List<Exportdaten> daten = new List<Exportdaten>();
+            try { 
             DataTable dt = new DataTable();
             StringBuilder sb = new StringBuilder();
             int counter = 0;
@@ -364,7 +457,15 @@ namespace WpfAppDMS
                     OkoDokumenteDatenId = item.Field<int>(7)
                 });
             }
-            
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0035xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0035xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return daten;
         }
 
@@ -396,13 +497,18 @@ namespace WpfAppDMS
                 {
                     if (transaction.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
-                            " was encountered while attempting to roll back the transaction.");
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0027ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0027ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
                     }
                 }
-                Console.WriteLine("An exception of type " + e.GetType() +
-                    " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0027xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0027xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
             }
         }
 
@@ -417,7 +523,7 @@ namespace WpfAppDMS
             List<string> AlleDokumententypenBezeichnungen = new List<string>();
             List<int> AlleDokumententypenIds = new List<int>();
             Dictionary<int, OkoDokTypTabellenfeldtypen> okoDOkTypTabellenfeldtypen = new Dictionary<int, OkoDokTypTabellenfeldtypen>();
-
+            try { 
             Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> data = ReadDoksAndTypesData();
 
             using (SqlCommand cmd = new SqlCommand())
@@ -479,9 +585,17 @@ namespace WpfAppDMS
                     
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0035xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0035xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return Tuple.Create(dicGruppen, dicTypen, AlleDokumententypenBezeichnungen, AlleDokumententypenIds, okoDOkTypTabellenfeldtypen);
         }
-
 
         public Tuple<Tuple<List<string>, List<int>, List<string>>, Tuple<List<string>, List<int>, List<string>, List<int>, List<string>>> ReadDoksAndTypesData()
         {
@@ -497,7 +611,7 @@ namespace WpfAppDMS
             List<string> typenBeschreibungen = new List<string>();
             List<int> typenGruppenIds = new List<int>();
             List<string> typenTabellen = new List<string>();
-
+            try { 
             using (SqlCommand cmd = new SqlCommand())
             {
                 cmd.Connection = _con;
@@ -535,7 +649,15 @@ namespace WpfAppDMS
                     
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0036xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0036xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             gruppenDaten = Tuple.Create(gruppen, gruppenIds, gruppenBeschreibungen);
             typenDaten = Tuple.Create(typen, typenIds, typenBeschreibungen, typenGruppenIds, typenTabellen);
             return Tuple.Create(gruppenDaten, typenDaten);
@@ -611,21 +733,47 @@ namespace WpfAppDMS
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
             // Start a local transaction.
+            
             transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            // Must assign both transaction object and connection
-            // to Command object for a pending local transaction
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+            try { 
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0028ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0028ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0028xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0028xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
         public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld, int idInRefTabelle = 0, string feldIn_tabelle = "")
         {
             List<int> lstInt = new List<int>();
             List<object> lstObject = new List<object>();
-
+            try { 
             string query = "";
             DataTable dt = new DataTable();
             if (idInRefTabelle == 0) {
@@ -646,6 +794,15 @@ namespace WpfAppDMS
                 lstInt.Add(row.Field<int>(0));
                 lstObject.Add(row.Field<object>(1));
             }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0037xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0037xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return Tuple.Create(lstInt, lstObject);
         }
 
@@ -656,6 +813,7 @@ namespace WpfAppDMS
         public List<Tuple<string, string, string>> ReadTableNamesTypesAndFields(bool IsDokumentType = false)
         {
             List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
+            try { 
             using (SqlCommand cmd = new SqlCommand())
             {
                 cmd.Connection = _con;
@@ -682,40 +840,50 @@ namespace WpfAppDMS
                     liste.Add(myT);
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0038xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0038xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return liste;
         }
 
-        public string ReadTableNameByDokId(int id)
-        {
-            List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
-            using (SqlCommand cmd = new SqlCommand())
-            {
-                cmd.Connection = _con;
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT Tabelle FROM OkoDokumententyp where OkoDokumententypId = " + id;
+        //public string ReadTableNameByDokId(int id)
+        //{
+        //    List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
+        //    using (SqlCommand cmd = new SqlCommand())
+        //    {
+        //        cmd.Connection = _con;
+        //        cmd.CommandType = CommandType.Text;
+        //        cmd.CommandText = "SELECT Tabelle FROM OkoDokumententyp where OkoDokumententypId = " + id;
 
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+        //        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        //        DataTable dt = new DataTable();
+        //        da.Fill(dt);
 
-                foreach (DataRow row in dt.Rows)
-                {
-                    return row.Field<string>(0);
-                }
-            }
-            return "";
-        }
-
+        //        foreach (DataRow row in dt.Rows)
+        //        {
+        //            return row.Field<string>(0);
+        //        }
+        //    }
+        //    return "";
+        //}
 
         public DataTable ReadExportDataTable(string tabellenname, int id)
         {
+            DataTable dt = new DataTable();
+            DataTable dtCopy = new DataTable();
+            try { 
             string[] _csvWerteFeldnamen = { };
             string[] _csvWerteFeldnamenOriginal = { };
             string[] _csvWerteFeldTypen = { };
             List<Tuple<List<int>, List<object>>> _nachschlageFelderWerte = new List<Tuple<List<int>, List<object>>>();
 
             //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
-
             string _namen = "";
             string _typen = "";
 
@@ -735,8 +903,7 @@ namespace WpfAppDMS
             _csvWerteFeldTypen = _typen.Split(';');
 
             //Originaldaten einlesen
-            DataTable dt = new DataTable();
-            DataTable dtCopy = new DataTable();
+            
             //Die Header und DataTypes für die Kopie festlegen;
             for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
             {
@@ -833,6 +1000,15 @@ namespace WpfAppDMS
             {
                 dtCopy.Columns.Remove(item);
             }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0040xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0040xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return dtCopy;
         }
 
@@ -875,8 +1051,8 @@ namespace WpfAppDMS
         public DataTable ReadDoksFuerDokgruppe(int dokGruppenId) {
             IdCHecker = true;
             DataTable table = new DataTable();
-            
 
+            try { 
             //ich muss zuerst eine Liste der DokumententypIds der Gruppe erstellen
             DataTable dt0 = new DataTable();
             string query0 = "Select OkoDokumententypId from OkoDokumententyp Where OkoDokumentengruppenId = " + dokGruppenId;
@@ -910,24 +1086,44 @@ namespace WpfAppDMS
                 }
                 counter++;
             }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0041xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0041xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return table;
         }
 
         public Tuple<List<string>, List<string>> ReadDataSuchfelder(string tabellenname)
         {
+
             DataTable dt = new DataTable();
+            try { 
             string query = "Select * from OkoDokTypTabellenfeldtypen Where Tabellenname = '" + tabellenname + "'";
             SqlCommand cmd = new SqlCommand(query, _con);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
             da.Dispose();
-
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0042xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0042xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             string feldnamen = dt.Rows[0].Field<string>(3) + ";Dateiname;Beschreibung;Titel";
             string feldtypen = dt.Rows[0].Field<string>(2) + ";txt;txt;txt";
 
             string[] _feldnamen = feldnamen.Split(';');
             string[] _feldtypen = feldtypen.Split(';');
             return Tuple.Create(_feldnamen.ToList(), _feldtypen.ToList());
+
         }
 
         /// <summary>
@@ -938,6 +1134,7 @@ namespace WpfAppDMS
         public DataTable ReadTableData(string tabellenname = "")
         {
             DataTable dt = new DataTable();
+            try { 
             string query = "";
             if (tabellenname.Equals(""))
             {
@@ -968,7 +1165,15 @@ namespace WpfAppDMS
             {
                 dt.Columns.Remove(item);
             }
-
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0043xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0043xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return dt;
         }
 
@@ -979,8 +1184,9 @@ namespace WpfAppDMS
         /// <returns>Tabellendaten mit referenzierten Nachschlagewerten</returns>
         public DataTable ReadTableDataWerteErsetztFuerDarstellung(string tabellenname = "")
         {
-            
-
+            DataTable dt = new DataTable();
+            DataTable dtCopy = new DataTable();
+            try { 
             string[] _csvWerteFeldnamen = { };
             string[] _csvWerteFeldnamenOriginal = { };
             string[] _csvWerteFeldTypen = { };
@@ -1018,8 +1224,7 @@ namespace WpfAppDMS
             _csvWerteFeldTypen = _typen.Split(';');
 
             //Originaldaten einlesen
-            DataTable dt = new DataTable();
-            DataTable dtCopy = new DataTable();
+            
             //Die Header und DataTypes für die Kopie festlegen;
             for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
             {
@@ -1133,6 +1338,16 @@ namespace WpfAppDMS
             //    dtCopy.Columns.Remove(item);
             //}
 
+            
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0044xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0044xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
             return dtCopy;
         }
 
@@ -1229,8 +1444,33 @@ namespace WpfAppDMS
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
+            try { 
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0029ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0029ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0029xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0029xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
         public void DeleteAllTableData(string tabellenname)
@@ -1246,8 +1486,33 @@ namespace WpfAppDMS
             command.Connection = _con;
             command.Transaction = transaction;
             command.CommandText = sql;
+            try { 
             command.ExecuteNonQuery();
             transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0030ax");
+                        ErrorAnzeigen anzeigen = new ErrorAnzeigen(ex.StackTrace.ToString(), ex.Message, "xx0030ax");
+                        if (anzeigen.ShowDialog() == true)
+                        { //Nix machen, Fenster schließt sich einfach 
+                        }
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0030xx");
+                ErrorAnzeigen anzeige = new ErrorAnzeigen(e.StackTrace.ToString(), e.Message, "xx0030xx");
+                if (anzeige.ShowDialog() == true)
+                { //Nix machen, Fenster schließt sich einfach 
+                }
+            }
         }
 
 
