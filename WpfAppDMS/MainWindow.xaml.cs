@@ -243,8 +243,15 @@ namespace WpfAppDMS
                             foreach (var item in ((EingabeDokumentDaten)((TabItem)tabsDaten.tabsMain.Items[0]).Content).grdMain.Children)
                             {
                                 if (item.GetType() == typeof(LookupAuswahl)) {
-                                    SelectionChangedEventArgs args = (SelectionChangedEventArgs)((LookupAuswahl)item).selectionChangedEventArgs;
-                                    ((LookupAuswahl)item).cboAuswahl.RaiseEvent(args);
+
+                                    if (((LookupAuswahl)item).cboAuswahl.Items.Count > 0)
+                                    {
+                                        SelectionChangedEventArgs args = (SelectionChangedEventArgs)((LookupAuswahl)item).selectionChangedEventArgs;
+                                        ((LookupAuswahl)item).cboAuswahl.RaiseEvent(args);
+                                    }
+                                    else {
+                                        MessageBox.Show("Mindestens ein Nachschlagefeld für den Dokumetentyp hat keine Werte in den Stammdaten hinterlegt!\n\rAbhängigkeiten können so möglicherweise nicht richtig dargestellt werden");
+                                    }                                    
                                 }
                             } 
 

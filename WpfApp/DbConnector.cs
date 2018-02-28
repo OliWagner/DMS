@@ -720,8 +720,7 @@ namespace WpfApp
             
             //Zunächst mal aus den Angaben einen SQL-String bauen
             StringBuilder sb = new StringBuilder();
-            
-            
+                       
             var csvArray = csvWerteTypen.Split(';');
             foreach (Dictionary<string, object> werte in lstWerte)
             {
