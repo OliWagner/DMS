@@ -100,7 +100,7 @@ namespace WpfApp
         {
             GruppenTypenDialog dialog = new GruppenTypenDialog();
             if (dialog.ShowDialog() == true) {
-                var test = 0;
+                //nix machen
             }
         }
 

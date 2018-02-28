@@ -27,7 +27,6 @@ namespace WpfAppDMS
         private List<int> alleDokTypenGruppenIds;
         private List<string> alleDokTypen;
         private List<int> alleDokTypenIds;
-        private List<string> alleDokTypTabellen;
         private List<string> alleTabellenInDb;
 
         public DokTree()

@@ -23,7 +23,6 @@ namespace WpfApp
         private List<string> alleTabellenInDb;
 
         private bool DokumentTypInBearbeitung = false;
-        private bool DokumentGruppeInBearbeitung = false;
 
         //Variable, die entscheidet, ob es sich bei dem Datensatz im Formular um einen neuen EIntrag handelt, oder ob der EIntrag geändert werden soll
         int AktDokGruppenId = 0;
@@ -51,7 +50,6 @@ namespace WpfApp
             AktDokGruppenId = alleDokGruppenIds.ElementAt(index);
             txtGruppeBezeichnung.Text = item.Header.ToString();
             txtGruppeBeschreibung.Text = alleDokGruppenBeschreibungen.ElementAt(index);
-            DokumentGruppeInBearbeitung = true;
         }
 
         private void Unteritem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -177,7 +175,6 @@ namespace WpfApp
             txtGruppeBeschreibung.Text = "";
             txtGruppeBezeichnung.Text = "";
             AktDokGruppenId = 0;
-            DokumentGruppeInBearbeitung = false;
         }
 
         private void btnTypVerwerfen_Click(object sender, RoutedEventArgs e)
@@ -202,7 +199,6 @@ namespace WpfApp
             }
             txtGruppeBeschreibung.Text = "";
             txtGruppeBezeichnung.Text = "";
-            DokumentGruppeInBearbeitung = false;
             LiesListen();
         }
 
