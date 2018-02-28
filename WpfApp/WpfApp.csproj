@@ -236,12 +236,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WpfAppError\WpfAppError.csproj">
-      <Project>{32eea6b7-b194-4fee-ac15-bd5ed0ae57cb}</Project>
-      <Name>WpfAppError</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6.1 %28x86 und x64%29</ProductName>
