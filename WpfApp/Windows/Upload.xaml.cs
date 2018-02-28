@@ -400,6 +400,8 @@ namespace WpfApp
             Dictionary<string, string> werte = new Dictionary<string, string>();
             string tabName = txtTabname.Text;
             //Tabelle merken für hoch bubblemdes event
+            //foreach (DataGridTextColumn item in dgDaten.Columns)
+            alleTabellenFeldNamen.Clear();
             foreach (var item in alleTabellenfelder)
             {
                 var strIn = item.comBoxFeldtyp.Text;
@@ -467,7 +469,7 @@ namespace WpfApp
                         usedChecker = true;
                     }
 
-                        if (!usedChecker)
+                    if (!usedChecker)
                     {
                         _dic.Add(alleTabellenFeldNamen.ElementAt(counter), elem);
                     }
