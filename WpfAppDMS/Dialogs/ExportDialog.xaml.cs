@@ -108,7 +108,7 @@ namespace WpfAppDMS
         private void btnExportieren_Click(object sender, RoutedEventArgs e)
         {
             //Eigentlicher Export
-            //MainWIndow.ExportDialog_BtnExportieren_Click
+            //DarstellungDOkumente.ExportDialog_BtnExportieren_Click
 
             DialogResult = true;
         }
