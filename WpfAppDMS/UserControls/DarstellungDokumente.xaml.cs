@@ -435,13 +435,14 @@ namespace WpfAppDMS
             ExportDialog dialog = (ExportDialog)grid.Parent;
 
             //Exportverzeichnis auswählen
-            var FolderChooser = new System.Windows.Forms.FolderBrowserDialog();
-            System.Windows.Forms.DialogResult result = FolderChooser.ShowDialog();
-            string path = FolderChooser.SelectedPath;
-            string datetime = "OkoExport_" + DateTime.Now;
-            datetime = datetime.Replace(" ", "").Replace(":", "");
-            string pathString = System.IO.Path.Combine(path, datetime);
+            //var FolderChooser = new System.Windows.Forms.FolderBrowserDialog();
+            //System.Windows.Forms.DialogResult result = FolderChooser.ShowDialog();
+            //string path = FolderChooser.SelectedPath;
+            //string datetime = "OkoExport_" + DateTime.Now;
+            //datetime = datetime.Replace(" ", "").Replace(":", "");
+            //string pathString = System.IO.Path.Combine(path, datetime);
 
+            string pathString = dialog.PathString;
             DirectoryInfo info = Directory.CreateDirectory(pathString);
             //In das neue Verzeichnis exportieren
             //TODO

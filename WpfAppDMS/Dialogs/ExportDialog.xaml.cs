@@ -11,6 +11,7 @@ namespace WpfAppDMS
     /// </summary>
     public partial class ExportDialog : Window
     {
+        public string PathString = "";
         public List<Exportdaten> lstExport = new List<Exportdaten>();
         public int test = 123;
         public ExportDialog(List<int> OkoDokumenteDatenIds)
@@ -109,8 +110,22 @@ namespace WpfAppDMS
         {
             //Eigentlicher Export
             //DarstellungDOkumente.ExportDialog_BtnExportieren_Click
+            //Exportverzeichnis auswählen
+            System.Windows.Forms.FolderBrowserDialog FolderChooser = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = FolderChooser.ShowDialog();
+            if (result != System.Windows.Forms.DialogResult.Cancel)
+            {
+                string path = FolderChooser.SelectedPath;
+                string datetime = "OkoExport_" + DateTime.Now;
+                datetime = datetime.Replace(" ", "").Replace(":", "");
+                PathString = System.IO.Path.Combine(path, datetime);
+                DialogResult = true;
+            }
+            else {
+                e.Handled = true;
+            }
+            
 
-            DialogResult = true;
         }
     }
 
