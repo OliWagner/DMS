@@ -33,6 +33,35 @@ CREATE TABLE [dbo].[OkoAnwendungen](
 
 GO
 
+CREATE TABLE [dbo].[OkoOcrImagesDokTypen](
+	[OkoOcrImagesDokTypenId] [int] IDENTITY(1,1) NOT NULL,
+	[ImageDatei] [varbinary](max) NULL,
+	[DokumententypId] [int] NULL,
+ CONSTRAINT [PK_OkoOcrImagesDokTypen] PRIMARY KEY CLUSTERED 
+(
+	[OkoOcrImagesDokTypenId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+CREATE TABLE [dbo].[OkoOcrInformationen](
+	[OkoOcrInformationenId] [int] IDENTITY(1,1) NOT NULL,
+	[RecX] [decimal](18, 0) NULL,
+	[RecY] [decimal](18, 0) NULL,
+	[RecW] [decimal](18, 0) NULL,
+	[RecH] [decimal](18, 0) NULL,
+	[DokumententypId] [int] NULL,
+	[Feld] [varchar](50) NULL,
+ CONSTRAINT [PK_OkoOcrInformationen] PRIMARY KEY CLUSTERED 
+(
+	[OkoOcrInformationenId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
 CREATE TABLE [dbo].[OkoDokumenteDaten](
 	[OkoDokumenteDatenId] [int] IDENTITY(1,1) NOT NULL,
 	[OkoDokumenteId] [int] NOT NULL,
