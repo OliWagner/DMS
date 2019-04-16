@@ -1,0 +1,152 @@
+﻿<RibbonWindow x:Class="DMS_Adminitration.MainWindow"
+                     x:Name="MyMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ribbon="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
+        xmlns:local="clr-namespace:DMS_Adminitration"
+        mc:Ignorable="d"
+        Title="DMS Administration" MinHeight="450" MinWidth="800">
+    
+    <RibbonWindow.CommandBindings>
+        <!-- Neue Tabelle -->
+        <CommandBinding Command="ApplicationCommands.Open" CanExecute="BtnNeueTabelle_CanExecute" Executed="BtnNeueTabelle_Executed" />
+        <!-- Neue Tabelle CSV -->
+        <CommandBinding Command="ApplicationCommands.Delete" CanExecute="BtnNeueTabelleCSV_CanExecute" Executed="BtnNeueTabelleCSV_Executed" />
+        <!-- Tabelle bearbeiten -->
+        <CommandBinding Command="ApplicationCommands.Cut" CanExecute="BtnTabelleBearbeiten_CanExecute" Executed="BtnTabelleBearbeiten_Executed" />
+        <!-- Tabellendaten bearbeiten -->
+        <CommandBinding Command="ApplicationCommands.Copy" CanExecute="BtnTabellendatenBearbeiten_CanExecute" Executed="BtnTabellendatenBearbeiten_Executed" />
+        <!-- Tabelle leeren -->
+        <CommandBinding Command="ApplicationCommands.Paste" CanExecute="BtnTabelleLeeren_CanExecute" Executed="BtnTabelleLeeren_Executed" />
+        <!-- Tabelle löschen -->
+        <CommandBinding Command="ApplicationCommands.New" CanExecute="BtnTabelleLoeschen_CanExecute" Executed="BtnTabelleLoeschen_Executed" />
+        <!-- Gruppe neu -->
+        <CommandBinding Command="ApplicationCommands.Help" CanExecute="BtnGruppeNeu_CanExecute" Executed="BtnGruppeNeu_Executed" />
+        <!-- Gruppe bearbeiten -->
+        <CommandBinding Command="ApplicationCommands.Find" CanExecute="BtnGruppeBearbeiten_CanExecute" Executed="BtnGruppeBearbeiten_Executed" />
+        <!-- Typ neu -->
+        <CommandBinding Command="ApplicationCommands.Redo" CanExecute="BtnTypNeu_CanExecute" Executed="BtnTypNeu_Executed" />
+        <!-- Typ bearbeiten -->
+        <CommandBinding Command="ApplicationCommands.Undo" CanExecute="BtnTypBearbeiten_CanExecute" Executed="BtnTypBearbeiten_Executed" />
+    </RibbonWindow.CommandBindings>
+
+    <!--<Window.InputBindings>
+        <KeyBinding Key="N"
+              Modifiers="Control" 
+              Command="ApplicationCommands.Open" />
+    </Window.InputBindings>-->
+    
+    <DockPanel LastChildFill="True">
+        <Ribbon x:Name="ribbon" SelectionChanged="ribbon_SelectionChanged" DockPanel.Dock="Top">
+            <Ribbon.ApplicationMenu>
+                <RibbonApplicationMenu SmallImageSource="img/options.png">
+                    <RibbonApplicationMenuItem Header="Info"
+                                               ImageSource="img/okIcon.png"/>
+                    <RibbonApplicationMenuItem Header="Datenbearbeitung" Click="BtnDatenbearbeitung_Click"
+                                               ImageSource="img/okIcon.png"/>
+                    <RibbonApplicationMenuItem Header="Beenden" Click="BtnBeenden_Click"
+                                               ImageSource="img/quit.png"/>
+                    <RibbonApplicationMenu.FooterPaneContent>
+                        <RibbonButton Label="Exit"
+                                      SmallImageSource="img/exitt.png"
+                                      HorizontalAlignment="Right"/>
+                    </RibbonApplicationMenu.FooterPaneContent>
+                    <RibbonApplicationMenu.AuxiliaryPaneContent>
+                        <RibbonGallery CanUserFilter="False"
+                                       ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <RibbonGalleryCategory Background="Transparent"
+                                                   MaxColumnCount="1">
+                                <RibbonGalleryItem Content="Wofür ist die Software gedacht?"/>
+                                <RibbonGalleryItem Content="Was sind Stammdaten und wie verwende ich sie?"/>
+                                <RibbonGalleryItem Content="Die Ablagedaten für das DMS"/>
+                                <RibbonGalleryItem Content="Die Ablage im DMS und Recherche"/>
+                            </RibbonGalleryCategory>
+                        </RibbonGallery>
+                    </RibbonApplicationMenu.AuxiliaryPaneContent>
+                </RibbonApplicationMenu>
+            </Ribbon.ApplicationMenu>
+            <Ribbon.HelpPaneContent>
+                <RibbonButton Content="Hilfe"
+                              SmallImageSource="img/help.png"/>
+            </Ribbon.HelpPaneContent>
+            <RibbonTab Header="Stammdaten" Name="RibTabStamm">
+                <RibbonGroup>
+                    <RibbonButton x:Name="BtnNeueTabelle" Label="Neue Tabelle" Command="ApplicationCommands.Open" 
+                                  CommandTarget="{Binding ElementName=BtnNeueTabelle}"
+                                  LargeImageSource="img/newtable.png" Click="BtnNeueTabelle_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnNeueTabelleCSV" Label="Neue Tabelle aus CSV" Command="ApplicationCommands.Delete" 
+                                  CommandTarget="{Binding ElementName=BtnNeueTabelleCSV}"
+                                  LargeImageSource="img/newtablecsv.png" Click="BtnNeueTabelleCSV_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTabelleBearbeiten" Label="Tabelle bearbeiten" Command="ApplicationCommands.Cut" 
+                                  CommandTarget="{Binding ElementName=BtnTabelleBearbeiten}"                                  
+                                  LargeImageSource="img/edittable.png" Click="BtnTabelleBearbeiten_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTabellendatenBearbeiten" Label="Tabellendaten bearbeiten" Command="ApplicationCommands.Copy" 
+                                  CommandTarget="{Binding ElementName=BtnTabellendatenBearbeiten}"
+                                  LargeImageSource="img/edittabledata.png" Click="BtnTabellendatenBearbeiten_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTabelleLeeren" Label="Tabelle leeren" Command="ApplicationCommands.Paste" 
+                                  CommandTarget="{Binding ElementName=BtnTabelleLeeren}"
+                                  LargeImageSource="img/deletetabledata.png" Click="BtnTabelleLeeren_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTabelleLoeschen" Label="Tabelle löschen" Command="ApplicationCommands.New" 
+                                  CommandTarget="{Binding ElementName=BtnTabelleLoeschen}"
+                                  LargeImageSource="img/deletetable.png" Click="BtnTabelleLoeschen_Click">
+                    </RibbonButton>
+                </RibbonGroup>
+            </RibbonTab>
+            <RibbonTab Header="Ablagedaten" Name="RibTabAblage">
+                <RibbonGroup>
+                    <RibbonButton x:Name="BtnGruppeNeue" Label="Neue Gruppe"  Command="ApplicationCommands.Help" 
+                                  CommandTarget="{Binding ElementName=BtnGruppeNeue}"
+                                  LargeImageSource="img/group.png" Click="BtnGruppeNeue_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnGruppeBearbeiten" Label="Gruppe bearbeiten" Command="ApplicationCommands.Find" 
+                                  CommandTarget="{Binding ElementName=BtnGruppeBearbeiten}"
+                                  LargeImageSource="img/editgroup.png" Click="BtnGruppeBearbeiten_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTypNeu" Label="Neuer Typ" Command="ApplicationCommands.Redo" 
+                                  CommandTarget="{Binding ElementName=BtnTypNeu}"
+                                  LargeImageSource="img/type.png" Click="BtnTypNeu_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTypBearbeiten" Label="Typ bearbeiten" Command="ApplicationCommands.Undo" 
+                                  CommandTarget="{Binding ElementName=BtnTypBearbeiten}"
+                                  LargeImageSource="img/edittype.png" Click="BtnTypBearbeiten_Click">
+                    </RibbonButton>
+                </RibbonGroup>
+            </RibbonTab>
+
+            <RibbonTab Header="Dokumentenmanagement" Name="RibTabDms">
+                <RibbonGroup>
+                    
+                </RibbonGroup>
+            </RibbonTab>
+        </Ribbon>
+            
+
+        <Grid x:Name="grdMain">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="400*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="625*" />
+            </Grid.ColumnDefinitions>
+            
+                <local:UebersichtTabellen x:Name="uebersichtTabellen" Grid.Column="0" Grid.Row="0" />
+           
+        </Grid>
+    </DockPanel>
+</RibbonWindow>
