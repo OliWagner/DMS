@@ -4,10 +4,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ribbon="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
         xmlns:local="clr-namespace:DMS_Adminitration"
         mc:Ignorable="d"
-        Title="DMS Administration" MinHeight="450" MinWidth="800">
+        Title="DMS Administration" MinHeight="600" MinWidth="800">
     
     <RibbonWindow.CommandBindings>
         <!-- Neue Tabelle -->
@@ -30,6 +29,15 @@
         <CommandBinding Command="ApplicationCommands.Redo" CanExecute="BtnTypNeu_CanExecute" Executed="BtnTypNeu_Executed" />
         <!-- Typ bearbeiten -->
         <CommandBinding Command="ApplicationCommands.Undo" CanExecute="BtnTypBearbeiten_CanExecute" Executed="BtnTypBearbeiten_Executed" />
+
+        <!-- Zeile hinzu -->
+        <CommandBinding Command="ApplicationCommands.Stop" CanExecute="BtnNeueZeile_CanExecute" Executed="BtnNeueZeile_Executed" />
+        <!-- Zeile entfernen -->
+        <CommandBinding Command="ApplicationCommands.SelectAll" CanExecute="BtnZeileEntfernen_CanExecute" Executed="BtnZeileEntfernen_Executed" />
+        <!-- Tabelle speichern -->
+        <CommandBinding Command="ApplicationCommands.Save" CanExecute="BtnTabSave_CanExecute" Executed="BtnTabSave_Executed" />
+        <!-- Abbrechen -->
+        <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="BtnAbbrechen_CanExecute" Executed="BtnAbbrechen_Executed" />
     </RibbonWindow.CommandBindings>
 
     <!--<Window.InputBindings>
@@ -72,7 +80,7 @@
                               SmallImageSource="img/help.png"/>
             </Ribbon.HelpPaneContent>
             <RibbonTab Header="Stammdaten" Name="RibTabStamm">
-                <RibbonGroup>
+                <RibbonGroup x:Name="rgStammLinks">
                     <RibbonButton x:Name="BtnNeueTabelle" Label="Neue Tabelle" Command="ApplicationCommands.Open" 
                                   CommandTarget="{Binding ElementName=BtnNeueTabelle}"
                                   LargeImageSource="img/newtable.png" Click="BtnNeueTabelle_Click">
@@ -103,6 +111,27 @@
                                   LargeImageSource="img/deletetable.png" Click="BtnTabelleLoeschen_Click">
                     </RibbonButton>
                 </RibbonGroup>
+                <RibbonGroup x:Name="rgStammRechts">
+                    <RibbonButton x:Name="BtnNeueZeile" Label="Hinzu" Command="ApplicationCommands.Stop" 
+                                  CommandTarget="{Binding ElementName=BtnNeueZeile}"
+                                  LargeImageSource="img/newtablerow.png" Click="BtnNeueZeile_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnZeileEntfernen" Label="Entfernen" Command="ApplicationCommands.SelectAll" 
+                                  CommandTarget="{Binding ElementName=BtnZeileEntfernen}"
+                                  LargeImageSource="img/deletetablerow.png" Click="BtnZeileEntfernen_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnAbort" Label="Abbrechen" Command="ApplicationCommands.SaveAs" 
+                                  CommandTarget="{Binding ElementName=BtnAbort}"
+                                  LargeImageSource="img/tableabort.png" Click="BtnAbort_Click">
+                    </RibbonButton>
+
+                    <RibbonButton x:Name="BtnTabSave" Label="Speichern" Command="ApplicationCommands.Save" 
+                                  CommandTarget="{Binding ElementName=BtnTabSave}"
+                                  LargeImageSource="img/tablesave.png" Click="BtnTabSave_Click">
+                    </RibbonButton>
+                </RibbonGroup>
             </RibbonTab>
             <RibbonTab Header="Ablagedaten" Name="RibTabAblage">
                 <RibbonGroup>
@@ -130,23 +159,25 @@
 
             <RibbonTab Header="Dokumentenmanagement" Name="RibTabDms">
                 <RibbonGroup>
-                    
+
                 </RibbonGroup>
             </RibbonTab>
         </Ribbon>
-            
-
         <Grid x:Name="grdMain">
             <Grid.RowDefinitions>
-                <RowDefinition Height="400*"/>
+                <RowDefinition Height="300"/>
+                <RowDefinition Height="300*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="625*" />
+                <ColumnDefinition Width="600*" />
             </Grid.ColumnDefinitions>
-            
-                <local:UebersichtTabellen x:Name="uebersichtTabellen" Grid.Column="0" Grid.Row="0" />
-           
+            <local:UebersichtTabellen x:Name="uebersichtTabellen" Grid.Column="0" Grid.Row="0" />
+            <local:EingabeTabelle x:Name="eingabeTabelle" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
+            <local:Upload x:Name="uploadCsv" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
+            <local:AendernTabelle x:Name="aendernTabellen" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
+            <local:PflegeTabellendaten x:Name="pflegeTabellendaten" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
+            <local:Tabellendaten x:Name="tabellendaten" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Hidden" />
         </Grid>
     </DockPanel>
 </RibbonWindow>

@@ -1,0 +1,41 @@
+﻿<Window x:Class="DMS_Adminitration.CsvDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DMS_Adminitration"
+        mc:Ignorable="d"
+        Title="Werte festlegen" Height="170" Width="300">
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
+    </Window.CommandBindings>
+    <Grid x:Name="grdMain">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Width="180" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Geben Sie das Trennzeichen an:"></Label>
+        <ComboBox x:Name="cboTrenner" Grid.Row="0" Width="35" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="190,5,0,0">
+            <ComboBoxItem Content=";" />
+            <ComboBoxItem Content="," />
+            <ComboBoxItem Content=":" />
+            <ComboBoxItem Content="|" />
+            <ComboBoxItem Content="." />
+        </ComboBox>
+
+        <Label Grid.Row="1" Width="180" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Werte für True/False?"></Label>
+        <ComboBox x:Name="cboBoolean" Grid.Row="1" Width="75" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="190,5,0,0">
+            <ComboBoxItem Content="1/0" />
+            <ComboBoxItem Content="ja/nein" />
+            <ComboBoxItem Content="yes/no" />
+            <ComboBoxItem Content="true/false" />
+            <ComboBoxItem Content="Wert/kein Wert" />
+        </ComboBox>
+
+        <Button x:Name="btnOk" Command="Save" CommandTarget="{Binding ElementName=grdMain}" FontSize="10" Content="Ok" Margin="80,5,80,5" Grid.Row="2" Click="btnOk_Click"/>
+    </Grid>
+</Window>

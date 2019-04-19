@@ -72,22 +72,6 @@ namespace DMS_Adminitration
             
         }
 
-        //private void btnLoeschen_Click(object sender, RoutedEventArgs e)
-        //{
-        //    TreeViewItem tvi = (TreeViewItem)tvMain.SelectedItem;
-        //    string tabName = tvi.Header.ToString();
-        //    ((DbConnector)App.Current.Properties["Connector"]).DeleteTable(tabName);
-        //    zeichneGrid();
-        //}
-
-        //private void btnLeeren_Click(object sender, RoutedEventArgs e)
-        //{
-        //    TreeViewItem tvi = (TreeViewItem)tvMain.SelectedItem;
-        //    string tabName = tvi.Header.ToString();
-        //    ((DbConnector)App.Current.Properties["Connector"]).DeleteAllTableData(tabName);
-        //    zeichneGrid();
-        //}
-
         //private void btnAendern_Click(object sender, RoutedEventArgs e)
         //{
         //    //DIalog öffnen, um Tabellenfelder zur Tabelle hinzuzufügen, oder zu löschen.

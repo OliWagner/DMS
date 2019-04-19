@@ -1,0 +1,26 @@
+﻿<Window x:Class="DMS_Adminitration.LookupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DMS_Adminitration"
+        mc:Ignorable="d"
+        Title="Werte festlegen" Height="170" Width="300">
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" 
+                  CanExecute="Save_CanExecute"
+                  Executed="Save_Executed" />
+    </Window.CommandBindings>
+    <Grid x:Name="grdMain">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Width="80" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Tabelle:"></Label>
+        <ComboBox x:Name="cboTabelle" Grid.Row="0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="90,5,0,0" SelectionChanged="cboTabelle_SelectionChanged" />
+        <Label Grid.Row="1" Width="80" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Feld:"></Label>
+        <ComboBox x:Name="cboFeld" Grid.Row="1" Width="150" IsEnabled="False" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="90,5,0,0" />
+        <Button x:Name="btnOk" Command="Save" CommandTarget="{Binding ElementName=grdMain}" FontSize="10" Content="Ok" Margin="80,5,80,5" Grid.Row="2" Click="btnOk_Click"/>
+    </Grid>
+</Window>

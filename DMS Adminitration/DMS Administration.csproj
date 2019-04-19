@@ -57,14 +57,50 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DbConnector.cs" />
-    <Compile Include="Dialogs\ConnectionDialog.xaml.cs">
-      <DependentUpon>ConnectionDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\CsvDialog.xaml.cs">
+      <DependentUpon>CsvDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\TabNameDialog.xaml.cs">
+      <DependentUpon>TabNameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\LookupDialog.xaml.cs">
+      <DependentUpon>LookupDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers.cs" />
+    <Compile Include="UserControls\AendernTabelle.xaml.cs">
+      <DependentUpon>AendernTabelle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\EingabeTabelle.xaml.cs">
+      <DependentUpon>EingabeTabelle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\EingabeTabellenfelder.xaml.cs">
+      <DependentUpon>EingabeTabellenfelder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LookupAuswahl.xaml.cs">
+      <DependentUpon>LookupAuswahl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\PflegeTabellendaten.xaml.cs">
+      <DependentUpon>PflegeTabellendaten.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Tabellendaten.xaml.cs">
+      <DependentUpon>Tabellendaten.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UebersichtTabellen.xaml.cs">
       <DependentUpon>UebersichtTabellen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Upload.xaml.cs">
+      <DependentUpon>Upload.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VigenereQuadrath.cs" />
-    <Page Include="Dialogs\ConnectionDialog.xaml">
+    <Page Include="Dialogs\CsvDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\TabNameDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\LookupDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -80,7 +116,35 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\AendernTabelle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="UserControls\EingabeTabelle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\EingabeTabellenfelder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\LookupAuswahl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="UserControls\PflegeTabellendaten.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Tabellendaten.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\UebersichtTabellen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Upload.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -145,6 +209,14 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\newtablecsv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\deletetablerow.png" />
+    <Resource Include="img\newtablerow.png" />
+    <Resource Include="img\tablesave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\tableabort.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
