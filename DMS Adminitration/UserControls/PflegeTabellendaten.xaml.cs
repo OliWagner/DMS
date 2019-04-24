@@ -28,6 +28,7 @@ namespace DMS_Adminitration
         public string _csvTabFeldtypen { get; set; }
         public string _csvTabFeldwerte { get; set; }
         public int _idAktuellerDatensatz { get; set; }
+        public bool IstneuerDatensatz { get; set; }
 
         public PflegeTabellendaten()
         {
@@ -35,7 +36,7 @@ namespace DMS_Adminitration
         }
 
         public void zeichenGrid(string tabName, string csvTabFeldnamen, string csvTabFeldtypen) {
-            btnSpeichern.Content = "Speichern";
+            IstneuerDatensatz = true;
             _tabName = tabName;
             _csvTabFeldnamen = csvTabFeldnamen;
             _csvTabFeldtypen = csvTabFeldtypen;
@@ -173,7 +174,7 @@ namespace DMS_Adminitration
 
         public void zeichenGrid(string tabName, string csvTabFeldnamen, string csvTabFeldtypen, string csvTabFeldwerte)
         {
-            btnSpeichern.Content = "Sichern";
+            IstneuerDatensatz = false;
             _tabName = tabName;
             _csvTabFeldnamen = csvTabFeldnamen;
             _csvTabFeldtypen = csvTabFeldtypen;
@@ -331,8 +332,6 @@ namespace DMS_Adminitration
             }
         }
 
-        
-
         private void Tb_TextChangedDec(object sender, TextChangedEventArgs e)
         {          
             Regex r = new Regex("^[0-9]+(?:[\\.\\,]\\d{0,5})?$");
@@ -419,121 +418,5 @@ namespace DMS_Adminitration
         public void Clear() {
             grdMain.Children.Clear();
         }
-
-        private void btnSpeichern_Click(object sender, RoutedEventArgs e)
-        {
-            
-                //Benötigte Werte um InsertTableData aufrufen zu können
-                string _tabellenname = "";
-                Dictionary<string, object> _dic = new Dictionary<string, object>();
-                StringBuilder _csv = new StringBuilder();
-
-                string keepValueForDic = "";
-                //Datensatz in DB eintragen
-                int counter = 0; //wird benötigt, um erstes Element zu kennzeichnen
-                foreach (var item in grdMain.Children)
-                {
-                    //item kann Textbox oder Textblock sein
-
-                    //Textblock kann 'Tabellenname' oder 'Feldname (Typ)' sein
-                    if (item.GetType() == typeof(TextBlock))
-                    {
-                        if (counter == 0)
-                        {
-                            _tabellenname = ((TextBlock)item).Text;
-                        }
-                        else
-                        {
-                            //Tabellenfeldname --> Neues Element für Dictionary, aber erst den Wert merken
-                            //Wert muss gesplittet werden, davon [0] nehmen
-                            keepValueForDic = ((TextBlock)item).Text.Split(' ')[0];
-                            var str = ((TextBlock)item).Text.Split(' ')[1].Replace("(", "").Replace(")", "") + ";";
-                        if (str.Substring(0,3).Equals("loo")) { keepValueForDic = ((TextBlock)item).Tag.ToString(); }
-                            _csv.Append(str);
-                        }
-                    }
-
-                    //Textbox kann nur zu einem Feldnamen gehören, der bereits als Key in die Dictionary einger
-                    if (item.GetType() == typeof(TextBox))
-                    {
-                        //Nun neues Element für Dictionary erzeugen und Werte intragen
-                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((TextBox)item).Text);
-                        _dic.Add(kvp.Key, kvp.Value);
-                    } //Das Gleiche gilt für eine Checkbox bei Boolean-Werten
-                    else if (item.GetType() == typeof(CheckBox)) {
-                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((CheckBox)item).IsChecked);
-                        _dic.Add(kvp.Key, kvp.Value);
-                    }
-                    else if (item.GetType() == typeof(DatePicker))
-                    {
-                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((DatePicker)item).SelectedDate);
-                        _dic.Add(kvp.Key, kvp.Value);
-                    }
-                    else if (item.GetType() == typeof(LookupAuswahl))
-                    {
-                    if ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem != null)
-                    {
-                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((ComboBoxItem)((LookupAuswahl)item).cboAuswahl.SelectedItem).Tag);
-                        _dic.Add(kvp.Key, kvp.Value);
-                    }
-                    else {
-                        var kvp = new KeyValuePair<string, object>(keepValueForDic, null);
-                        _dic.Add(kvp.Key, kvp.Value);
-                    }
-                        
-                    }
-                counter++;
-                }
-                //DBConnector aufrufen
-                string txt = _csv.ToString().Substring(0, _csv.Length - 1);
-                //Für Aktualisierung in MainWindow merken
-                TabNameUebergabe = _tabellenname;
-
-            if (btnSpeichern.Content.Equals("Speichern"))
-            {
-                ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt);
-                zeichenGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
-            }
-            else if (btnSpeichern.Content.Equals("Sichern"))
-            {
-                ((DbConnector)App.Current.Properties["Connector"]).UpdateTableData(_tabellenname, _idAktuellerDatensatz, _dic, txt);
-                StringBuilder sb = new StringBuilder();
-                foreach (var value in _dic.Values)
-                {
-                    sb.Append(value +";");
-                }
-                string txtCsv = sb.ToString();
-                _csvTabFeldwerte = txtCsv.Substring(0, txtCsv.Length - 1);
-                zeichenGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen, _csvTabFeldwerte);
-            }
-        }
-
-        private void btnVerwerfen_Click(object sender, RoutedEventArgs e)
-        {
-            if (btnSpeichern.Content.Equals("Speichern"))
-            {
-                zeichenGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
-            }
-            else if (btnSpeichern.Content.Equals("Sichern"))
-            {
-                zeichenGrid(_tabName, _csvTabFeldnamen, _csvTabFeldtypen, _csvTabFeldwerte);
-            }
-            
-        }
-
-        private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //DO nothing
-        }
-        private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (grdMain.Children.Count > 0)
-            {               
-                        e.CanExecute = true;
-                        return;
-            }
-            e.CanExecute = false;
-        }
-
     }
 }

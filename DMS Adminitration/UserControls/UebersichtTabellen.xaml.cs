@@ -30,6 +30,11 @@ namespace DMS_Adminitration
             
         }
 
+        public void Reset() {
+            InitializeComponent();
+            zeichneGrid();
+        }
+
         public void zeichneGrid() {
             AlleInDokumententypenReferenzierteTabellen = ((DbConnector)App.Current.Properties["Connector"]).ReadAllDokTypenTabellenNamen();
             tvMain.Items.Clear();

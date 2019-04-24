@@ -14,6 +14,5 @@
         <DataGrid AutoGeneratingColumn="OnAutoGeneratingColumn" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False" SelectionChanged="dgTabelle_SelectionChanged" x:Name="dgTabelle" Grid.Row="0" MinWidth="600" Margin="0,0,0,0" VerticalAlignment="Top" />
         <DataGrid IsReadOnly="True" x:Name="dgTabelleOriginal" Visibility="Hidden" />
 
-        <Button  x:Name="btnLoeschen" Width="75" Height="20" Grid.Row="1" Content="Löschen" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,5,5" Click="btnLoeschen_Click" />
-    </Grid>
+        </Grid>
 </UserControl>

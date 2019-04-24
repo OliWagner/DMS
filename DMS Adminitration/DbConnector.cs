@@ -19,6 +19,104 @@ namespace DMS_Adminitration
             _conString = conString;
         }
 
+        #region Anwendungen
+        public List<Tuple<int, string, string>> ReadAnwendungen()
+        {
+            List<Tuple<int, string, string>> list = new List<Tuple<int, string, string>>();
+            try
+            {
+                DataTable dt = new DataTable();
+
+                string query = "Select * from OkoAnwendungen";
+
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(Tuple.Create(row.Field<int>(0), row.Field<string>(1), row.Field<string>(2)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0033xx");
+            }
+            return list;
+        }
+        public void DeleteAnwendung(int datensatzId)
+        {
+            string sql = "Delete from OkoAnwendungen Where OkoAnwendungenId =" + datensatzId;
+
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            command.CommandText = sql;
+            try
+            {
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0025ax");
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0025xx");
+            }
+        }
+        public void AnwendungEintragen(string _endung, string _dateiname)
+        {
+
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = "Insert into OkoAnwendungen (Dateiendung, Anwendung) VALUES ('" + _endung + "', '" + _dateiname + "')";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0027ax");
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0027xx");
+            }
+        }
+        #endregion
+
+
         public bool Connect() {
             try
             {
@@ -163,6 +261,97 @@ namespace DMS_Adminitration
             return liste;
         }
 
+        public void SpeichereDatenbearbeitungEinAus(string einAus) {
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            command.Connection = _con;
+            command.Transaction = transaction;
+            try
+            {
+                command.CommandText = "UPDATE OkoEinstellungen SET DatenbearbeitungEinAus = '" + einAus + "' Where id = 1;";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "aa0219yx");
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0019xx");
+            }
+        }
+
+        /// <summary>
+        /// Prüft, ob zu löschende als Nachschlagefeld Tabelle Referenziert ist
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckReferenzen(string Tabelle)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = _con;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT column_name FROM INFORMATION_SCHEMA.Columns where TABLE_NAME IN (SELECT TABLE_NAME WHERE 'TABLE_TYPE' = 'BASE TABLE' AND TABLE_NAME NOT LIKE 'Oko%'UNION ALL Select 'OkoDokumententyp'); ";
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    if (row.Field<string>(0).Contains("_")) {
+                        if (row.Field<string>(0).Split('_')[3].Equals(Tabelle)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public List<Tuple<string, string, string>> ReadDokTyp()
+        {
+
+            List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.Connection = _con;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT * FROM OkoDokumentenTyp";
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var myT = Tuple.Create<string, string, string>(row.Field<string>(1), row.Field<string>(2), row.Field<string>(3));
+
+                        liste.Add(myT);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0004xx");
+
+            }
+            return liste;
+        }
+
+
         /// <summary>
         /// Liest alle Daten zu Dokumentengruppen und Dokumententypen ein
         /// </summary>
@@ -233,92 +422,205 @@ namespace DMS_Adminitration
             return Tuple.Create(gruppenDaten, typenDaten);
         }
 
-        //public void ChangeTableStructure(string Tabelle, List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen)
-        //{
-        //    List<string> csvFeldnamen = new List<string>();
-        //    List<string> csvTypen = new List<string>();
+        public void ChangeTableStructure(string Tabelle, List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen)
+        {
+            List<string> csvFeldnamen = new List<string>();
+            List<string> csvTypen = new List<string>();
 
-        //    List<Tuple<string, string, string>> alleTabDaten = ReadTableNamesTypesAndFields();
-        //    foreach (var item in alleTabDaten)
-        //    {
-        //        if (item.Item1.Equals(Tabelle))
-        //        {
-        //            csvFeldnamen = item.Item3.Split(';').ToList();
-        //            csvTypen = item.Item2.Split(';').ToList();
-        //        }
-        //    }
+            List<Tuple<string, string, string>> alleTabDaten = ReadTableNamesTypesAndFields();
+            foreach (var item in alleTabDaten)
+            {
+                if (item.Item1.Equals(Tabelle))
+                {
+                    csvFeldnamen = item.Item3.Split(';').ToList();
+                    csvTypen = item.Item2.Split(';').ToList();
+                }
+            }
 
-        //    StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-        //    foreach (var item in FelderLoeschen)
-        //    {
-        //        sb.Append("ALTER TABLE " + Tabelle + " DROP COLUMN " + item + " ;");
-        //        int index = csvFeldnamen.IndexOf(item);
-        //        csvFeldnamen.Remove(item);
-        //        csvTypen.RemoveAt(index);
-        //    }
+            foreach (var item in FelderLoeschen)
+            {
+                sb.Append("ALTER TABLE " + Tabelle + " DROP COLUMN " + item + " ;");
+                int index = csvFeldnamen.IndexOf(item);
+                csvFeldnamen.Remove(item);
+                csvTypen.RemoveAt(index);
+            }
 
-        //    foreach (EingabeTabellenfelder item in FelderHinzufuegen)
-        //    {
-        //        string ersatztext = "";
-        //        string txt = "";
-        //        var strIn = item.comBoxFeldtyp.Text;
-        //        if (strIn.Equals("Nachschlagefeld"))
-        //        {
-        //            string tag = item.txtBezeichnung.Tag.ToString();
-        //            ersatztext = "|x|" + item.txtBezeichnung.Text + "|" + (tag.Replace("_", "|"));
-        //        }
-        //        var strOut = ((ComboBoxItem)item.comBoxFeldtyp.SelectedItem).Tag.ToString();
-        //        if (ersatztext.Equals(""))
-        //        {
-        //            txt = item.txtBezeichnung.Text;
-        //        }
-        //        else
-        //        {
-        //            txt = ersatztext.Replace("|", "_");
-        //            ersatztext = "";
-        //        }
-        //        sb.Append("ALTER TABLE " + Tabelle + " ADD " + txt + " " + GetFieldTypes(strOut) + ";");
-        //        csvFeldnamen.Add(txt);
-        //        csvTypen.Add(strOut);
-        //        txt = "";
-        //    }
+            foreach (EingabeTabellenfelder item in FelderHinzufuegen)
+            {
+                string ersatztext = "";
+                string txt = "";
+                var strIn = item.comBoxFeldtyp.Text;
+                if (strIn.Equals("Nachschlagefeld"))
+                {
+                    string tag = item.txtBezeichnung.Tag.ToString();
+                    ersatztext = "|x|" + item.txtBezeichnung.Text + "|" + (tag.Replace("_", "|"));
+                }
+                var strOut = ((ComboBoxItem)item.comBoxFeldtyp.SelectedItem).Tag.ToString();
+                if (ersatztext.Equals(""))
+                {
+                    txt = item.txtBezeichnung.Text;
+                }
+                else
+                {
+                    txt = ersatztext.Replace("|", "_");
+                    ersatztext = "";
+                }
+                sb.Append("ALTER TABLE " + Tabelle + " ADD " + txt + " " + GetFieldTypes(strOut) + ";");
+                csvFeldnamen.Add(txt);
+                csvTypen.Add(strOut);
+                txt = "";
+            }
 
-        //    StringBuilder sbCsvFelder = new StringBuilder();
-        //    StringBuilder sbCsvTypen = new StringBuilder();
-        //    for (int i = 0; i < csvFeldnamen.Count; i++)
-        //    {
-        //        sbCsvFelder.Append(csvFeldnamen[i] + ";");
-        //        sbCsvTypen.Append(csvTypen[i] + ";");
-        //    }
+            StringBuilder sbCsvFelder = new StringBuilder();
+            StringBuilder sbCsvTypen = new StringBuilder();
+            for (int i = 0; i < csvFeldnamen.Count; i++)
+            {
+                sbCsvFelder.Append(csvFeldnamen[i] + ";");
+                sbCsvTypen.Append(csvTypen[i] + ";");
+            }
 
-        //    string csvFelder = sbCsvFelder.ToString().Substring(0, sbCsvFelder.Length - 1);
-        //    string csvTypes = sbCsvTypen.ToString().Substring(0, sbCsvTypen.Length - 1); ;
+            string csvFelder = sbCsvFelder.ToString().Substring(0, sbCsvFelder.Length - 1);
+            string csvTypes = sbCsvTypen.ToString().Substring(0, sbCsvTypen.Length - 1); ;
 
-        //    sb.Append("UPDATE OkoTabellenfeldtypen SET CsvWertetypen = '" + csvTypes + "', CsvFeldnamen = '" + csvFelder + "' Where Tabellenname = '" + Tabelle + "';");
-        //    //< CsvWertetypen, varchar(max),> ,[CsvFeldnamen] = < CsvFeldnamen, varchar(max),> WHERE < Suchbedingungen,,>);
+            sb.Append("UPDATE OkoTabellenfeldtypen SET CsvWertetypen = '" + csvTypes + "', CsvFeldnamen = '" + csvFelder + "' Where Tabellenname = '" + Tabelle + "';");
+            //< CsvWertetypen, varchar(max),> ,[CsvFeldnamen] = < CsvFeldnamen, varchar(max),> WHERE < Suchbedingungen,,>);
 
-        //    SqlCommand command = _con.CreateCommand();
-        //    SqlTransaction transaction;
-        //    // Start a local transaction.
-        //    transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-        //    // Must assign both transaction object and connection
-        //    // to Command object for a pending local transaction
-        //    command.Connection = _con;
-        //    command.Transaction = transaction;
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
 
-        //    try
-        //    {
-        //        command.CommandText = sb.ToString();
-        //        command.ExecuteNonQuery();
-        //        transaction.Commit();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        transaction.Rollback();
-        //        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0006xx");
-        //    }
-        //}
+            try
+            {
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0006xx");
+            }
+        }
+
+        public Tuple<string, string> ReadDokTypTypesAndFields() {
+            string feldnamen = "";
+            string feldtypen = "";
+            try
+            {
+                DataTable dt = new DataTable();
+                string query = "select CsvFeldnamen, CsvWertetypen from OkoDokTypTabellenfeldtypen where OkoDokTypTabellenfeldtypenId = 1";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+                foreach (DataRow row in dt.Rows)
+                {
+                    feldnamen = row.Field<string>(0);
+                    feldtypen = row.Field<string>(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0007xx");
+            }
+            return Tuple.Create(feldnamen, feldtypen);
+        }
+
+        public void ChangeDokTypStructure(List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen)
+        {
+            List<string> csvFeldnamen = new List<string>();
+            List<string> csvTypen = new List<string>();
+
+            Tuple<string, string> alleTabDaten = ReadDokTypTypesAndFields();
+            if (!alleTabDaten.Item1.Equals("")) {
+                csvFeldnamen = alleTabDaten.Item1.Split(';').ToList();
+                csvTypen = alleTabDaten.Item2.Split(';').ToList();
+            }
+                    
+               
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in FelderLoeschen)
+            {
+                sb.Append("ALTER TABLE OkoDokumentenTyp DROP COLUMN " + item + " ;");
+                int index = csvFeldnamen.IndexOf(item);
+                csvFeldnamen.Remove(item);
+                csvTypen.RemoveAt(index);
+            }
+
+            foreach (EingabeTabellenfelder item in FelderHinzufuegen)
+            {
+                string ersatztext = "";
+                string txt = "";
+                var strIn = item.comBoxFeldtyp.Text;
+                if (strIn.Equals("Nachschlagefeld"))
+                {
+                    string tag = item.txtBezeichnung.Tag.ToString();
+                    ersatztext = "|x|" + item.txtBezeichnung.Text + "|" + (tag.Replace("_", "|"));
+                }
+                var strOut = ((ComboBoxItem)item.comBoxFeldtyp.SelectedItem).Tag.ToString();
+                if (ersatztext.Equals(""))
+                {
+                    txt = item.txtBezeichnung.Text;
+                }
+                else
+                {
+                    txt = ersatztext.Replace("|", "_");
+                    ersatztext = "";
+                }
+                sb.Append("ALTER TABLE OkoDokumentenTyp ADD " + txt + " " + GetFieldTypes(strOut) + ";");
+                csvFeldnamen.Add(txt);
+                csvTypen.Add(strOut);
+                txt = "";
+            }
+
+            StringBuilder sbCsvFelder = new StringBuilder();
+            StringBuilder sbCsvTypen = new StringBuilder();
+            for (int i = 0; i < csvFeldnamen.Count; i++)
+            {
+                    sbCsvFelder.Append(csvFeldnamen[i] + ";");
+                    sbCsvTypen.Append(csvTypen[i] + ";");
+            }
+
+            string csvFelder = "";
+            string csvTypes = "";
+            if (sbCsvFelder.Length > 0) {
+                csvFelder = sbCsvFelder.ToString().Substring(0, sbCsvFelder.Length - 1);
+                csvTypes = sbCsvTypen.ToString().Substring(0, sbCsvTypen.Length - 1); 
+                }
+            sb.Append("UPDATE OkoDokTypTabellenfeldtypen SET CsvWertetypen = '" + csvTypes + "', CsvFeldnamen = '" + csvFelder + "' Where Tabellenname = 'OkoDokumentenTyp';");
+            
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0006xx");
+            }
+        }
 
         public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld)
         {
@@ -344,6 +646,45 @@ namespace DMS_Adminitration
             }
             return Tuple.Create(lstInt, lstObject);
         }
+
+        public Tuple<List<int>, List<object>> ReadComboboxItems(string _tabelle, string _feld, int idInRefTabelle = 0, string feldIn_tabelle = "")
+        {
+            List<int> lstInt = new List<int>();
+            List<object> lstObject = new List<object>();
+            try
+            {
+                string query = "";
+                DataTable dt = new DataTable();
+                if (idInRefTabelle == 0)
+                {
+                    query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle;
+                }
+                else
+                {
+                    query = "select " + _tabelle + "Id, " + _feld + " from " + _tabelle + " WHERE " + feldIn_tabelle + "=" + idInRefTabelle;
+                }
+
+
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+                foreach (DataRow row in dt.Rows)
+                {
+                    lstInt.Add(row.Field<int>(0));
+                    lstObject.Add(row.Field<object>(1));
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xxTT37xx");
+            }
+            return Tuple.Create(lstInt, lstObject);
+        }
+
+
 
         /// <summary>
         /// Liest die Originaldaten der Tabelle ein
@@ -378,7 +719,7 @@ namespace DMS_Adminitration
             try { 
             DataTable dt = new DataTable();
 
-            string query = "SELECT * FROM   INFORMATION_SCHEMA.TABLES WHERE  TABLE_TYPE = 'BASE TABLE'";
+            string query = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE  TABLE_TYPE = 'BASE TABLE'";
             SqlCommand cmd = new SqlCommand(query, _con);
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -671,6 +1012,145 @@ namespace DMS_Adminitration
             return neueId;
         }
 
+        public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen, bool IsDokType = false)
+        {
+            int neueId = 0;
+            //Zunächst mal aus den Angaben einen SQL-String bauen
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbSpalten = new StringBuilder();
+            StringBuilder sbWerte = new StringBuilder();
+            int counter = 0;
+            var csvArray = csvWerteTypen.Split(';');
+            try
+            {
+                foreach (KeyValuePair<string, object> entry in werte)
+                {
+                    if (csvArray[counter].Substring(0, 3).Equals("txt"))
+                    {
+                        sbSpalten.Append(entry.Key + ",");
+                        sbWerte.Append("'" + entry.Value.ToString().Replace("'", "''") + "',");
+                    }
+                    else if (csvArray[counter].Substring(0, 3).Equals("dec"))
+                    {
+                        sbSpalten.Append(entry.Key + ",");
+                        if (entry.Value.ToString().Equals(""))
+                        {
+                            sbWerte.Append("NULL,");
+                        }
+                        else
+                        {
+                            decimal val = Decimal.Parse(entry.Value.ToString());
+                            sbWerte.Append(val.ToString().Replace(",", ".") + ",");
+                        }
+                    }
+                    else if (csvArray[counter].Substring(0, 3).Equals("int"))
+                    {
+                        sbSpalten.Append(entry.Key + ",");
+                        if (entry.Value.ToString().Equals(""))
+                        {
+                            sbWerte.Append("NULL,");
+                        }
+                        else
+                        {
+                            sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
+                        }
+                    }
+                    else if (csvArray[counter].Substring(0, 3).Equals("loo"))
+                    {
+                        sbSpalten.Append(entry.Key + ",");
+                        if (entry.Value == null || entry.Value.ToString().Equals(""))
+                        {
+                            sbWerte.Append("NULL,");
+                        }
+                        else
+                        {
+                            sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
+                        }
+                    }
+                    else if (csvArray[counter].Substring(0, 3).Equals("dat"))
+                    {
+                        sbSpalten.Append(entry.Key + ",");
+                        if (entry.Value == null || entry.Value.ToString().Equals(""))
+                        {
+                            sbWerte.Append("NULL,");
+                        }
+                        else
+                        {
+                            sbWerte.Append("'" + entry.Value.ToString() + "',");
+                        }
+                    }
+                    else if (csvArray[counter].Substring(0, 3).Equals("bol"))
+                    {
+                        sbSpalten.Append(entry.Key + ",");
+                        sbWerte.Append("'" + entry.Value.ToString() + "',");
+                    }
+                    counter++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0031xx");
+            }
+            string sqlSpalten = sbSpalten.ToString().Substring(0, sbSpalten.Length - 1);
+            string sqlWerte = sbWerte.ToString().Substring(0, sbWerte.Length - 1);
+            if (IsDokType)
+            {
+                sb.Append("Insert into xyx" + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
+            }
+            else
+            {
+                sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
+            }
+
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+
+                try
+                {
+                    if (IsDokType)
+                    { command.CommandText = "SELECT ISNULL(MAX(xyx" + tabellenname + "Id), 0) FROM xyx" + tabellenname; }
+                    else { command.CommandText = "SELECT ISNULL(MAX(" + tabellenname + "Id), 0) FROM " + tabellenname; }
+
+                    Int32.TryParse(command.ExecuteScalar().ToString(), out neueId);
+                }
+                catch (Exception innerEx)
+                {
+                    Fehlerbehandlung.Error(innerEx.StackTrace.ToString(), innerEx.Message, "xx0022xx");
+                }
+
+
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0023ax");
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0023xx");
+            }
+            return neueId;
+        }
+
+
         public void InsertCsvData(string tabellenname, List<Dictionary<string, object>> lstWerte, string csvWerteTypen)
         {
             
@@ -827,8 +1307,6 @@ namespace DMS_Adminitration
                     //Ansonsten muss es ein String sein
                     sbInner.Append(item.Key +"='"+ item.Value.ToString().Replace("'","''") + "',");
                 }
-                
-                
                 counter++;
             }
             string txt = sbInner.ToString();
@@ -1113,6 +1591,66 @@ namespace DMS_Adminitration
                 }
                 Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0020xx");
             }
+        }
+
+        public void OrdnerSpeichern(string pfad) {
+            if (!pfad.Equals("")) {
+                SqlCommand command = _con.CreateCommand();
+                SqlTransaction transaction;
+                // Start a local transaction.
+                transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = _con;
+                command.Transaction = transaction;
+                try
+                {
+                    command.CommandText = "UPDATE OkoEinstellungen SET Ordner = '" + pfad + "' Where id = 1;";
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (SqlException ex)
+                    {
+                        if (transaction.Connection != null)
+                        {
+                            Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xy0018bb");
+                        }
+                    }
+                    Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xy0018bb");
+                }
+            }
+        }
+
+        public Tuple<string, string> ReadEinstellungen() {
+            string pfad = "";
+            string dokumentenbearbeitungEinAus = "";
+            try
+            {
+                DataTable dt = new DataTable();
+                string query = "select Ordner, DatenbearbeitungEinAus from OkoEinstellungen where id = 1";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+                foreach (DataRow row in dt.Rows)
+                {
+                    pfad = row.Field<string>(0);
+                    dokumentenbearbeitungEinAus = row.Field<string>(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0007xx");
+            }
+            return Tuple.Create(pfad, dokumentenbearbeitungEinAus);
         }
     }
 }

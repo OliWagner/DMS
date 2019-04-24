@@ -44,8 +44,6 @@ namespace WpfAppDMS
             _con.Dispose();
         }
 
-        
-
         public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen, bool IsDokType = false)
         {
             int neueId = 0;

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMS_Adminitration"
         mc:Ignorable="d"
-        Title="DMS Administration" MinHeight="600" MinWidth="800">
+        Title="Onlinekram Lightweight DMS" MinHeight="600" MinWidth="800">
     
     <RibbonWindow.CommandBindings>
         <!-- Neue Tabelle -->
@@ -22,13 +22,13 @@
         <!-- Tabelle löschen -->
         <CommandBinding Command="ApplicationCommands.New" CanExecute="BtnTabelleLoeschen_CanExecute" Executed="BtnTabelleLoeschen_Executed" />
         <!-- Gruppe neu -->
-        <CommandBinding Command="ApplicationCommands.Help" CanExecute="BtnGruppeNeu_CanExecute" Executed="BtnGruppeNeu_Executed" />
+        <CommandBinding Command="ApplicationCommands.Help" CanExecute="BtnFeldHinzu_CanExecute" Executed="BtnFeldHinzu_Executed" />
         <!-- Gruppe bearbeiten -->
-        <CommandBinding Command="ApplicationCommands.Find" CanExecute="BtnGruppeBearbeiten_CanExecute" Executed="BtnGruppeBearbeiten_Executed" />
+        <CommandBinding Command="ApplicationCommands.Find" CanExecute="BtnFeldEntfernen_CanExecute" Executed="BtnFeldEntfernen_Executed" />
         <!-- Typ neu -->
-        <CommandBinding Command="ApplicationCommands.Redo" CanExecute="BtnTypNeu_CanExecute" Executed="BtnTypNeu_Executed" />
+        <CommandBinding Command="ApplicationCommands.Redo" CanExecute="BtnBearbeitungAbbrechen_CanExecute" Executed="BtnBearbeitungAbbrechen_Executed" />
         <!-- Typ bearbeiten -->
-        <CommandBinding Command="ApplicationCommands.Undo" CanExecute="BtnTypBearbeiten_CanExecute" Executed="BtnTypBearbeiten_Executed" />
+        <CommandBinding Command="ApplicationCommands.Undo" CanExecute="BtnTypSpeichern_CanExecute" Executed="BtnTypSpeichern_Executed" />
 
         <!-- Zeile hinzu -->
         <CommandBinding Command="ApplicationCommands.Stop" CanExecute="BtnNeueZeile_CanExecute" Executed="BtnNeueZeile_Executed" />
@@ -38,6 +38,8 @@
         <CommandBinding Command="ApplicationCommands.Save" CanExecute="BtnTabSave_CanExecute" Executed="BtnTabSave_Executed" />
         <!-- Abbrechen -->
         <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="BtnAbbrechen_CanExecute" Executed="BtnAbbrechen_Executed" />
+        <!-- Ordner speichern -->
+        <CommandBinding Command="ApplicationCommands.CorrectionList" CanExecute="BtnOrdnerSpeichern_CanExecute" Executed="BtnOrdnerSpeichern_Executed" />
     </RibbonWindow.CommandBindings>
 
     <!--<Window.InputBindings>
@@ -50,10 +52,13 @@
         <Ribbon x:Name="ribbon" SelectionChanged="ribbon_SelectionChanged" DockPanel.Dock="Top">
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu SmallImageSource="img/options.png">
-                    <RibbonApplicationMenuItem Header="Info"
-                                               ImageSource="img/okIcon.png"/>
-                    <RibbonApplicationMenuItem Header="Datenbearbeitung" Click="BtnDatenbearbeitung_Click"
-                                               ImageSource="img/okIcon.png"/>
+
+                    <RibbonApplicationMenuItem Header="Anwendungen"  x:Name="BtnAnwendungen" 
+                                  ImageSource="img/anwendung.png" Click="BtnAnwendungen_Click">
+                        </RibbonApplicationMenuItem>
+                    
+                    <RibbonApplicationMenuItem x:Name="ramDbEinAus" Header="Datenbearbeitung" Click="BtnDatenbearbeitung_Click"
+                                               ImageSource="img/ein.png"/>
                     <RibbonApplicationMenuItem Header="Beenden" Click="BtnBeenden_Click"
                                                ImageSource="img/quit.png"/>
                     <RibbonApplicationMenu.FooterPaneContent>
@@ -82,95 +87,134 @@
             <RibbonTab Header="Stammdaten" Name="RibTabStamm">
                 <RibbonGroup x:Name="rgStammLinks">
                     <RibbonButton x:Name="BtnNeueTabelle" Label="Neue Tabelle" Command="ApplicationCommands.Open" 
-                                  CommandTarget="{Binding ElementName=BtnNeueTabelle}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/newtable.png" Click="BtnNeueTabelle_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnNeueTabelleCSV" Label="Neue Tabelle aus CSV" Command="ApplicationCommands.Delete" 
-                                  CommandTarget="{Binding ElementName=BtnNeueTabelleCSV}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/newtablecsv.png" Click="BtnNeueTabelleCSV_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnTabelleBearbeiten" Label="Tabelle bearbeiten" Command="ApplicationCommands.Cut" 
-                                  CommandTarget="{Binding ElementName=BtnTabelleBearbeiten}"                                  
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"                                  
                                   LargeImageSource="img/edittable.png" Click="BtnTabelleBearbeiten_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnTabellendatenBearbeiten" Label="Tabellendaten bearbeiten" Command="ApplicationCommands.Copy" 
-                                  CommandTarget="{Binding ElementName=BtnTabellendatenBearbeiten}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/edittabledata.png" Click="BtnTabellendatenBearbeiten_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnTabelleLeeren" Label="Tabelle leeren" Command="ApplicationCommands.Paste" 
-                                  CommandTarget="{Binding ElementName=BtnTabelleLeeren}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/deletetabledata.png" Click="BtnTabelleLeeren_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnTabelleLoeschen" Label="Tabelle löschen" Command="ApplicationCommands.New" 
-                                  CommandTarget="{Binding ElementName=BtnTabelleLoeschen}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/deletetable.png" Click="BtnTabelleLoeschen_Click">
                     </RibbonButton>
                 </RibbonGroup>
                 <RibbonGroup x:Name="rgStammRechts">
                     <RibbonButton x:Name="BtnNeueZeile" Label="Hinzu" Command="ApplicationCommands.Stop" 
-                                  CommandTarget="{Binding ElementName=BtnNeueZeile}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/newtablerow.png" Click="BtnNeueZeile_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnZeileEntfernen" Label="Entfernen" Command="ApplicationCommands.SelectAll" 
-                                  CommandTarget="{Binding ElementName=BtnZeileEntfernen}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/deletetablerow.png" Click="BtnZeileEntfernen_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnAbort" Label="Abbrechen" Command="ApplicationCommands.SaveAs" 
-                                  CommandTarget="{Binding ElementName=BtnAbort}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/tableabort.png" Click="BtnAbort_Click">
                     </RibbonButton>
 
                     <RibbonButton x:Name="BtnTabSave" Label="Speichern" Command="ApplicationCommands.Save" 
-                                  CommandTarget="{Binding ElementName=BtnTabSave}"
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/tablesave.png" Click="BtnTabSave_Click">
                     </RibbonButton>
                 </RibbonGroup>
             </RibbonTab>
             <RibbonTab Header="Ablagedaten" Name="RibTabAblage">
-                <RibbonGroup>
-                    <RibbonButton x:Name="BtnGruppeNeue" Label="Neue Gruppe"  Command="ApplicationCommands.Help" 
-                                  CommandTarget="{Binding ElementName=BtnGruppeNeue}"
-                                  LargeImageSource="img/group.png" Click="BtnGruppeNeue_Click">
+                <RibbonGroup x:Name="rgAblagedaten" Header="Datenbearbeitung">
+                    <RibbonButton x:Name="BtnFeldHinzu" Label="Hinzu"  Command="ApplicationCommands.Help" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
+                                  LargeImageSource="img/newtablerow.png" Click="BtnFeldHinzu_Click">
                     </RibbonButton>
 
-                    <RibbonButton x:Name="BtnGruppeBearbeiten" Label="Gruppe bearbeiten" Command="ApplicationCommands.Find" 
-                                  CommandTarget="{Binding ElementName=BtnGruppeBearbeiten}"
-                                  LargeImageSource="img/editgroup.png" Click="BtnGruppeBearbeiten_Click">
+                    <RibbonButton x:Name="BtnFeldEntfernen" Label="Entfernen" Command="ApplicationCommands.Find" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
+                                  LargeImageSource="img/deletetablerow.png" Click="BtnFeldEntfernen_Click">
                     </RibbonButton>
 
-                    <RibbonButton x:Name="BtnTypNeu" Label="Neuer Typ" Command="ApplicationCommands.Redo" 
-                                  CommandTarget="{Binding ElementName=BtnTypNeu}"
-                                  LargeImageSource="img/type.png" Click="BtnTypNeu_Click">
+                    <RibbonButton x:Name="BtnBearbeitungAbbrechen" Label="Abbrechen" Command="ApplicationCommands.Redo" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
+                                  LargeImageSource="img/tableabort.png" Click="BtnBearbeitungAbbrechen_Click">
                     </RibbonButton>
 
-                    <RibbonButton x:Name="BtnTypBearbeiten" Label="Typ bearbeiten" Command="ApplicationCommands.Undo" 
-                                  CommandTarget="{Binding ElementName=BtnTypBearbeiten}"
-                                  LargeImageSource="img/edittype.png" Click="BtnTypBearbeiten_Click">
+                    <RibbonButton x:Name="BtnTypSpeichern" Label="Speichern" Command="ApplicationCommands.Undo" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
+                                  LargeImageSource="img/tablesave.png" Click="BtnTypSpeichern_Click">
+                    </RibbonButton>
+                </RibbonGroup>
+                <RibbonGroup Header="Scanordner">
+                    <RibbonButton x:Name="BtnOrdnerFestlegen" Label="Ordner auswählen" 
+                                  LargeImageSource="img/folder.png" Click="BtnOrdnerFestlegen_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnOrdnerSpeichern" Label="Speichern" Command="ApplicationCommands.CorrectionList" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
+                                  LargeImageSource="img/save.png" Click="BtnOrdnerSpeichern_Click">
                     </RibbonButton>
                 </RibbonGroup>
             </RibbonTab>
 
             <RibbonTab Header="Dokumentenmanagement" Name="RibTabDms">
-                <RibbonGroup>
-
+                <RibbonGroup Header="Ablage/Recherche">
+                    <RibbonButton x:Name="BtnRecherche" Label="Recherche" 
+                                  LargeImageSource="img/recherche.png" Click="BtnRecherche_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnAblage" Label="Ablage" 
+                                  LargeImageSource="img/ablage.png" Click="BtnAblage_Click">
+                    </RibbonButton>
+                </RibbonGroup>
+                <RibbonGroup Header="Dokument">
+                    <RibbonButton x:Name="BtnDokShow" Label="anzeigen" 
+                                  LargeImageSource="img/show.png" Click="BtnDokShow_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnDokEdit" Label="Bearbeiten" 
+                                  LargeImageSource="img/edittable.png" Click="BtnDokEdit_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnDokSpeichern" Label="Speichern"
+                                  LargeImageSource="img/newtablecsv.png" Click="BtnDokSpeichern_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnDokDelete" Label="Löschen" 
+                                  LargeImageSource="img/deletetable.png" Click="BtnDokDelete_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnDokAbort" Label="Abbrechen" 
+                                  LargeImageSource="img/tableabort.png" Click="BtnDokAbort_Click">
+                    </RibbonButton>
+                </RibbonGroup>
+                <RibbonGroup Header="Export">
+                    <RibbonButton x:Name="BtnDokExport" Label="hinzufügen" 
+                                  LargeImageSource="img/export.png" Click="BtnDokExport_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnExportDialog" Label="Exportdialog" 
+                                  LargeImageSource="img/exportdialog.png" Click="BtnExportDialog_Click">
+                    </RibbonButton>
                 </RibbonGroup>
             </RibbonTab>
         </Ribbon>
         <Grid x:Name="grdMain">
             <Grid.RowDefinitions>
-                <RowDefinition Height="300"/>
-                <RowDefinition Height="300*"/>
+                <RowDefinition x:Name="rdOben" Height="300*"/>
+                <RowDefinition x:Name="rdUnten" Height="0"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="600*" />
+                <ColumnDefinition x:Name="cdLinks" Width="200" />
+                <ColumnDefinition x:Name="cdRechts" Width="600*" />
             </Grid.ColumnDefinitions>
             <local:UebersichtTabellen x:Name="uebersichtTabellen" Grid.Column="0" Grid.Row="0" />
             <local:EingabeTabelle x:Name="eingabeTabelle" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
@@ -178,6 +222,13 @@
             <local:AendernTabelle x:Name="aendernTabellen" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
             <local:PflegeTabellendaten x:Name="pflegeTabellendaten" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Visibility="Hidden" />
             <local:Tabellendaten x:Name="tabellendaten" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Hidden" />
+
+            <local:AendernDokTyp x:Name="aendernDokTyp" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Hidden" />
+            <local:OrdnerAnzeigen x:Name="ordnerAnzeigen" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Hidden" />
+
+            <local:Dropfeld x:Name="dropfeld" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Visibility="Hidden" />
+            <local:ScanOrdner x:Name="scanOrdner" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Visibility="Hidden" />
+            <local:EingabeDokumentDaten x:Name="eingabeDokumentDaten" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Visibility="Hidden" />
         </Grid>
     </DockPanel>
 </RibbonWindow>

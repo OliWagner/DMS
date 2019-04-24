@@ -8,17 +8,10 @@
     <Grid Margin="10,0,10,10" VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" VerticalAlignment="Top">
             <Grid Grid.Row="0" Margin="0,0,0,0" x:Name="grdMain" VerticalAlignment="Top" />
         </ScrollViewer>
-        <Grid Grid.Row="1" Margin="0,0,0,0" VerticalAlignment="Bottom">
-            <Button x:Name="btnAbbruch"  Margin="330,5,0,0" HorizontalAlignment="Left" Content="Abbrechen" Height="20" VerticalAlignment="Bottom" Width="70" Click="btnAbbruch_Click"/>
-            <Button x:Name="btnSpeichern" Margin="410,5,80,0" HorizontalAlignment="Left" Content="Speichern" Height="20" VerticalAlignment="Bottom" Width="70" Click="btnSpeichern_Click"/>
-            <Button x:Name="btnVerwerfen" Margin="490,5,10,0" HorizontalAlignment="Left" Content="Verwerfen" Height="20" VerticalAlignment="Bottom" Width="70" Click="btnVerwerfen_Click"/>
-        </Grid>
-        
     </Grid>
 
 </UserControl>

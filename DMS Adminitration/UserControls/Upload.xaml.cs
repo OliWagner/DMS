@@ -47,94 +47,6 @@ namespace DMS_Adminitration
             }
         }
 
-        #region COmmands
-
-        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Nix
-        }
-
-        //private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //    //Zuerst schauen, ob alle Spaltendaten korrekt sind
-        //    if (!CheckSpaltenDaten()) {
-        //        e.CanExecute = false;
-        //        return;
-        //    }
-
-        //    //Es dürfen nur Buchstaben und Nummern als Bezeichner verwendet werden
-        //    string AllowedChars = @"^[a-zA-Z0-9]+$";
-
-
-        //    //Variable dient nur dem Test, ob es schon Tabellenfelder gibt, ansonsten darf der Button ja auch nicht aktiv sein
-        //    bool felderChecker = false;
-        //    //Variable, um zu testen, ob Feldnamen doppelt vorhanden sind
-        //    List<string> _feldnamen = new List<string>();
-
-        //    foreach (var item in grdTabFelder.Children)
-        //    {
-        //        if (item.GetType() == typeof(EingabeTabellenfelder))
-        //        {
-        //            felderChecker = true;
-        //            var test = (EingabeTabellenfelder)item;
-        //            if (test.txtBezeichnung.Text.Equals("") || test.comBoxFeldtyp.SelectedItem == null)
-        //            {
-        //                e.CanExecute = false;
-        //                return;
-        //            }
-        //            //CHecken ob EIntrag schon mal vorhanden
-        //            if (_feldnamen.Contains(test.txtBezeichnung.Text))
-        //            {
-        //                e.CanExecute = false;
-        //                return;
-        //            }
-        //            else
-        //            {
-        //                //In den Feldnamen dürfen auch keine SOnderzeichen enthalten sein
-        //                if (!Regex.IsMatch(test.txtBezeichnung.Text, AllowedChars))
-        //                {
-        //                    e.CanExecute = false;
-        //                    return;
-        //                }
-        //                _feldnamen.Add(test.txtBezeichnung.Text);
-        //            }
-        //        }
-        //    }
-
-        //    //Noch testen, ob ein Tabellenname eingegeben wurde + Es dürfen nur Nummer und Ziffern verwendet werden + Es dürfen keine Tabellennamen doppelt sein
-        //    if (txtTabname.Text.Equals("") || !Regex.IsMatch(txtTabname.Text, AllowedChars) || alleTabellenNamen.Contains(txtTabname.Text)) { felderChecker = false; }
-        //    //Wenn Tabellenfelder da, nur dann kann der Button überhaupt aktiv sein
-        //    if (felderChecker) { e.CanExecute = true; } else {
-        //        e.CanExecute = false;
-        //    }
-        //}
-
-        //private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //    if (grdTabFelder.Children.Count > 0)
-        //    {
-        //        e.CanExecute = true;
-        //        return;
-        //    }
-        //    e.CanExecute = false;
-        //}
-        
-        //private void Delete_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //    if (alleTabellenfelder != null)
-        //    {
-        //        foreach (var item in alleTabellenfelder)
-        //        {
-        //            if ((bool)item.chkLoeschen.IsChecked)
-        //            {
-        //                e.CanExecute = true;
-        //                return;
-        //            }
-        //        }
-        //    }
-        //    e.CanExecute = false;
-        //}
-
         private bool CheckSingleValueForType(string type, string value) {
             switch (type) {
                 case "boln":
@@ -218,8 +130,7 @@ namespace DMS_Adminitration
             
             zeichneGrid();
         }
-        #endregion
-
+ 
         #region Handlers
         private void btnHinzu_Click(object sender, RoutedEventArgs e)
         {

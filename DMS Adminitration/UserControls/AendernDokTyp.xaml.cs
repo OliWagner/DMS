@@ -17,7 +17,7 @@ namespace DMS_Adminitration
     /// <summary>
     /// Interaktionslogik für CsvDialog.xaml
     /// </summary>
-    public partial class AendernTabelle : UserControl
+    public partial class AendernDokTyp : UserControl
     {
        
         public string Tabelle { get; set; }
@@ -26,27 +26,16 @@ namespace DMS_Adminitration
         public List<string> FelderStart = new List<string>();
         public List<string> FelderLoeschen = new List<string>();
         public List<EingabeTabellenfelder> FelderHinzufuegen = new List<EingabeTabellenfelder>();
-        private bool IstBereitsReferenziert { get; set; }
-
-        //public AendernTabelle(string tabelle, bool istBereitsReferenziert)
-        //{
-        //    IstBereitsReferenziert = istBereitsReferenziert;
-        //    Tabelle = tabelle;
-        //    zeichneGrid();
-        //}
+        
 
         public void Clear() {
             FelderHinzufuegen = new List<EingabeTabellenfelder>();
+            FelderLoeschen = new List<string>();
         }
 
-        public void Restart(string tabelle, bool istBereitsReferenziert) {
-            IstBereitsReferenziert = istBereitsReferenziert;
-            Tabelle = tabelle;
-            zeichneGrid();
-        }
-
-        public AendernTabelle() {
+        public AendernDokTyp() {
             InitializeComponent();
+            Tabelle = "OkoDokumentenTyp";
         }
 
         public void zeichneGrid() {
@@ -58,17 +47,16 @@ namespace DMS_Adminitration
 
             string[] feldnamen = { };
             string[] feldtypen = { };
-            lblTabName.Content = Tabelle;
+            lblTabName.Content = "Ablagedaten bearbeiten";
             //Tabellendaten ermitteln
-            List<Tuple<string, string, string>> lstTuple = ((DbConnector)App.Current.Properties["Connector"]).ReadTableNamesTypesAndFields();
-            foreach (Tuple<string, string, string> tuple in lstTuple)
-            {
-                if (tuple.Item1.Equals(Tabelle)) {
-                    feldnamen = tuple.Item3.Split(';');
-                    feldtypen = tuple.Item2.Split(';');
-                    _anzahlFelder = feldtypen.Count();
-                }
+            Tuple<string, string> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadDokTypTypesAndFields();
+            if (!tuple.Item1.Equals("")) {
+                feldnamen = tuple.Item1.Split(';');
+                feldtypen = tuple.Item2.Split(';');
+                _anzahlFelder = feldtypen.Count();
             }
+                    
+             
             //Nun die Tabelendaten darstellen
             for (int i = 0; i < feldtypen.Length; i++)
             {
@@ -85,7 +73,7 @@ namespace DMS_Adminitration
                 lbl2.HorizontalAlignment = HorizontalAlignment.Left;
                 lbl2.FontSize = 14;
                 TextBlock lbl3 = new TextBlock();
-                if (Checkloeschen(feldnamen[i]) && !IstBereitsReferenziert)
+                if (Checkloeschen(feldnamen[i]))
                 {
                     //Schon zum Löschen markiert?
                     if (!FelderLoeschen.Contains(feldnamen[i])) {
@@ -199,58 +187,7 @@ namespace DMS_Adminitration
         }
         #endregion
 
-        #region COmmands
-        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-           
-        }
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            List<string> Checkliste = FelderStart;
-
-            e.CanExecute = true;
-            //sollte noch garnichts passiert sein, ist es BLödsinn zu speichern
-            if (FelderLoeschen.Count() == 0 && grdMain.Children.Count == _anzahlFelder) {
-                e.CanExecute = false;
-            }
-
-            //Es dürfen nur Buchstaben und Nummern als Bezeichner verwendet werden
-            string AllowedChars = @"^[a-zA-Z0-9]+$";
-
-            foreach (var item in grdMain.Children)
-            {
-                //Ist die ANzahl der zu löschenden Felder gleich der Anzahl der existierenden Felder, gibt es keine Felder mehr --> false
-                if (FelderLoeschen.Count() == (_anzahlFelder - _anzahlFelderDisabled)) {
-                    e.CanExecute = false;
-                }
-
-                if (item.GetType() == typeof(EingabeTabellenfelder))
-                {
-                    //Es gibt EIngabefelder, also per se erst mal wieder true
-                    e.CanExecute = true;
-                    //Erst mal schauen, ob überhaupt ausgefüllt
-                    EingabeTabellenfelder eingabeTabellenfeld = (EingabeTabellenfelder)item;
-                    if (eingabeTabellenfeld.txtBezeichnung.Text.Equals("") || eingabeTabellenfeld.comBoxFeldtyp.SelectedItem == null) {
-                        e.CanExecute = false;
-                    }
-                    //ob korrekt ausgefüllt
-                    if (!Regex.IsMatch(eingabeTabellenfeld.txtBezeichnung.Text, AllowedChars)) {
-                        e.CanExecute = false;
-                    }
-                    //Dann schauen, ob die Feldnamen schon existieren
-                    if (Checkliste.Contains(eingabeTabellenfeld.txtBezeichnung.Text))
-                    {
-
-                        e.CanExecute = false;
-                    }
-                    //else {
-                    //    //Checkliste.Add(eingabeTabellenfeld.txtBezeichnung.Text);
-                    //TODO --> Es ist noch möglich, zwei mal denselben Namen als Tabellenfeld anzugeben
-                    //}
-                }
-            }
-        }
-        #endregion
+       
 
         
     }

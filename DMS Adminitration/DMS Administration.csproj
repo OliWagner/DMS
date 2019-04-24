@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -57,6 +58,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DbConnector.cs" />
+    <Compile Include="Dialogs\AnwendungsauswahlDialog.xaml.cs">
+      <DependentUpon>AnwendungsauswahlDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\CsvDialog.xaml.cs">
       <DependentUpon>CsvDialog.xaml</DependentUpon>
     </Compile>
@@ -67,6 +71,24 @@
       <DependentUpon>LookupDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
+    <Compile Include="UserControls\EingabeDokumentDaten.xaml.cs">
+      <DependentUpon>EingabeDokumentDaten.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LookupAuswahlDMS.xaml.cs">
+      <DependentUpon>LookupAuswahlDMS.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ScanOrdner.xaml.cs">
+      <DependentUpon>ScanOrdner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Dropfeld.xaml.cs">
+      <DependentUpon>Dropfeld.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\OrdnerAnzeigen.xaml.cs">
+      <DependentUpon>OrdnerAnzeigen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AendernDokTyp.xaml.cs">
+      <DependentUpon>AendernDokTyp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\AendernTabelle.xaml.cs">
       <DependentUpon>AendernTabelle.xaml</DependentUpon>
     </Compile>
@@ -92,6 +114,10 @@
       <DependentUpon>Upload.xaml</DependentUpon>
     </Compile>
     <Compile Include="VigenereQuadrath.cs" />
+    <Page Include="Dialogs\AnwendungsauswahlDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\CsvDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -116,6 +142,30 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\EingabeDokumentDaten.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\LookupAuswahlDMS.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\ScanOrdner.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Dropfeld.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\OrdnerAnzeigen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\AendernDokTyp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\AendernTabelle.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
@@ -217,6 +267,28 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\tableabort.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\aus.png" />
+    <Resource Include="img\ein.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\anwendung.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\ablage.png" />
+    <Resource Include="img\recherche.png" />
+    <Resource Include="img\show.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\export.png" />
+    <Resource Include="img\exportdialog.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
