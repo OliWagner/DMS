@@ -29,7 +29,6 @@
         <CommandBinding Command="ApplicationCommands.Redo" CanExecute="BtnBearbeitungAbbrechen_CanExecute" Executed="BtnBearbeitungAbbrechen_Executed" />
         <!-- Typ bearbeiten -->
         <CommandBinding Command="ApplicationCommands.Undo" CanExecute="BtnTypSpeichern_CanExecute" Executed="BtnTypSpeichern_Executed" />
-
         <!-- Zeile hinzu -->
         <CommandBinding Command="ApplicationCommands.Stop" CanExecute="BtnNeueZeile_CanExecute" Executed="BtnNeueZeile_Executed" />
         <!-- Zeile entfernen -->
@@ -40,6 +39,22 @@
         <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="BtnAbbrechen_CanExecute" Executed="BtnAbbrechen_Executed" />
         <!-- Ordner speichern -->
         <CommandBinding Command="ApplicationCommands.CorrectionList" CanExecute="BtnOrdnerSpeichern_CanExecute" Executed="BtnOrdnerSpeichern_Executed" />
+
+
+        <!-- Dok Anzeigen -->
+        <CommandBinding Command="ApplicationCommands.CancelPrint" CanExecute="BtnDokShow_CanExecute" Executed="BtnDokShow_Executed" />
+        <!-- Dok Bearbeiten -->
+        <CommandBinding Command="ApplicationCommands.Close" CanExecute="BtnDokEdit_CanExecute" Executed="BtnDokEdit_Executed" />
+        <!-- Dok Speichern -->
+        <CommandBinding Command="ApplicationCommands.ContextMenu" CanExecute="BtnDokSpeichern_CanExecute" Executed="BtnDokSpeichern_Executed" />
+        <!-- Dok Löschen -->
+        <CommandBinding Command="ApplicationCommands.NotACommand" CanExecute="BtnDokDelete_CanExecute" Executed="BtnDokDelete_Executed" />
+        <!-- Dok Abbrechen -->
+        <CommandBinding Command="ApplicationCommands.Print" CanExecute="BtnDokAbort_CanExecute" Executed="BtnDokAbort_Executed" />
+        <!-- Dok zum Export hinzu -->
+        <CommandBinding Command="ApplicationCommands.PrintPreview" CanExecute="BtnDokExport_CanExecute" Executed="BtnBtnDokExport_Executed" />
+        <!-- Exportdialog -->
+        <CommandBinding Command="ApplicationCommands.Properties" CanExecute="BtnExportDialog_CanExecute" Executed="BtnExportDialog_Executed" />
     </RibbonWindow.CommandBindings>
 
     <!--<Window.InputBindings>
@@ -181,14 +196,14 @@
                     </RibbonButton>
                 </RibbonGroup>
                 <RibbonGroup Header="Dokument">
-                    <RibbonButton x:Name="BtnDokShow" Label="anzeigen" 
+                    <RibbonButton x:Name="BtnDokShow" Label="Anzeigen" 
                                   LargeImageSource="img/show.png" Click="BtnDokShow_Click">
                     </RibbonButton>
                     <RibbonButton x:Name="BtnDokEdit" Label="Bearbeiten" 
                                   LargeImageSource="img/edittable.png" Click="BtnDokEdit_Click">
                     </RibbonButton>
                     <RibbonButton x:Name="BtnDokSpeichern" Label="Speichern"
-                                  LargeImageSource="img/newtablecsv.png" Click="BtnDokSpeichern_Click">
+                                  LargeImageSource="img/tablesave.png" Click="BtnDokSpeichern_Click">
                     </RibbonButton>
                     <RibbonButton x:Name="BtnDokDelete" Label="Löschen" 
                                   LargeImageSource="img/deletetable.png" Click="BtnDokDelete_Click">
@@ -227,8 +242,13 @@
             <local:OrdnerAnzeigen x:Name="ordnerAnzeigen" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Hidden" />
 
             <local:Dropfeld x:Name="dropfeld" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Visibility="Hidden" />
+            
             <local:ScanOrdner x:Name="scanOrdner" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Visibility="Hidden" />
+
+           
             <local:EingabeDokumentDaten x:Name="eingabeDokumentDaten" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Visibility="Hidden" />
-        </Grid>
+           
+            <local:DarstellungDokumente x:Name="darstellungDokumente" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Hidden" />
+            </Grid>
     </DockPanel>
 </RibbonWindow>

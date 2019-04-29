@@ -44,7 +44,6 @@ namespace DMS_Adminitration
 
         public void ClearGrid() {
             alleDatensaetze = new List<EingabeTabellenfelder>();
-            
             zeichneGrid();
         }
 

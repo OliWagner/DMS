@@ -12,7 +12,7 @@ namespace DMS_Adminitration
 {
     class DbConnector
     {
-        SqlConnection _con;
+        public SqlConnection _con;
         string _conString;
  
         public DbConnector(String conString) {
@@ -229,6 +229,194 @@ namespace DMS_Adminitration
         }
 
         /// <summary>
+        /// Schreibt den Datensatz in die Tabelle
+        /// </summary>
+        /// <param name="daten">Ein csv mit allen Werten in der Reihenfolge der Felder</param>
+        /// <returns></returns>
+        public void InsertDocumentData(string daten)
+        {
+            string[] _daten = daten.Split(';');
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+
+            try
+            {
+                command.CommandText = "Insert into OkoDokumenteDaten (OkoDokumenteId, IdInTabelle, Dateiname, ErfasstAm) VALUES (" + _daten[0] + ", " + _daten[1] + ", '" + _daten[2] + "', '" + _daten[3] + "')";
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0024ax");
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0024xx");
+            }
+        }
+
+        /// <summary>
+        /// Testet, ob die Id des Datensatzes in der Stammdatentabelle als Nachschlagewert in OkoDokumentenTyp referenziert ist
+        /// </summary>
+        /// <param name="tabelle">Stammdatentabelle</param>
+        /// <param name="id">Id der Stammdatentabelle</param>
+        /// <returns>false wenn Datensatz nicht gelöscht werden darf</returns>
+        public bool CheckIfIdLoeschbarStammdaten(string tabelle, int id) {
+            try
+            {
+                DataTable dt0 = new DataTable();
+                string query0 = "Select * from OkoDokumentenTyp;";
+                SqlCommand cmd0 = new SqlCommand(query0, _con);
+                SqlDataAdapter da0 = new SqlDataAdapter(cmd0);
+                da0.Fill(dt0);
+                da0.Dispose();
+
+                DataTable dt = new DataTable();
+                string query = "Select CsvFeldnamen from OkoDokTypTabellenfeldtypen Where OkoDokTypTabellenfeldtypenId = '1';";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                da.Dispose();
+                foreach (DataRow row in dt.Rows)
+                {
+                    string text = row.Field<string>(0);
+                    foreach (var item in text.Split(';'))
+                    {
+                        if (item.Contains("_"))
+                        {
+                            if (item.Split('_')[3].Equals(tabelle))
+                            {
+                                if (dt0.AsEnumerable().Where(x => x.Field<int>(item) == id).Count() > 0) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0042xx");
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// Prüft ob Tabelle als Nachschlagefeld im Dokumententyp referenziert ist
+        /// </summary>
+        /// <param name="tabelle"></param>
+        /// <returns>true wenn Daten gelöscht werden dürfen</returns>
+        public bool CheckTableDeleteDataDokTyp(string tabelle)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                string query = "Select CsvFeldnamen from OkoDokTypTabellenfeldtypen Where OkoDokTypTabellenfeldtypenId = '1';";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                da.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0042xx");
+            }
+            string feldname = dt.Rows[0].Field<string>(0);
+            foreach (var item in feldname.Split(';'))
+            {
+                if (item.Length > 2 && item.Substring(0, 3).Equals("_x_")) {
+                    if (item.Split('_')[3].Equals(tabelle)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public string DeleteDokumentendatensatz(int dokumenteDatenId)
+        {
+            //Aus DokumenteDaten die DOkumenteId ermitteln
+            StringBuilder sb = new StringBuilder();
+
+
+            DataTable dt = new DataTable();
+            string query = "Select OkoDokumenteId, Tabelle, IdInTabelle from OkoDokumenteDaten where OkoDokumenteDatenId = " + dokumenteDatenId;
+            SqlCommand cmd = new SqlCommand(query, _con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dt);
+            da.Dispose();
+
+            int aktuelleDokumenteId = dt.Rows[0].Field<int>(0);
+            string aktuelleTabelle = dt.Rows[0].Field<string>(1);
+            int aktuelleIdInTabelle = dt.Rows[0].Field<int>(2);
+            //Nachschauen, ob noch weitere Referenzen auf das Dokument vorhanden sind
+
+            DataTable dt2 = new DataTable();
+            string query2 = "Select * from OkoDokumenteDaten where OkoDokumenteId = " + aktuelleDokumenteId;
+            SqlCommand cmd2 = new SqlCommand(query2, _con);
+            SqlDataAdapter da2 = new SqlDataAdapter(cmd2);
+            da2.Fill(dt2);
+            da2.Dispose();
+
+            sb.Append("Delete from OkoDokumenteDaten Where OkoDokumenteDatenId =" + dokumenteDatenId + ";");
+            sb.Append("Delete from " + aktuelleTabelle + " Where " + aktuelleTabelle + "Id =" + aktuelleIdInTabelle + ";");
+
+            if (dt2.Rows.Count == 1)
+            {
+                //Es ist kein weiterer Eintrag vorhanden, Dokument kann gelöscht werden
+                sb.Append("Delete from OkoDokumente Where OkoDokumenteId =" + aktuelleDokumenteId + ";");
+            }
+
+            string sql = sb.ToString();
+            SqlCommand command = _con.CreateCommand();
+            SqlTransaction transaction;
+            // Start a local transaction.
+            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
+            // Must assign both transaction object and connection
+            // to Command object for a pending local transaction
+            command.Connection = _con;
+            command.Transaction = transaction;
+            command.CommandText = sql;
+            try
+            {
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (SqlException ex)
+                {
+                    if (transaction.Connection != null)
+                    {
+                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0026ax");
+                    }
+                }
+                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0026xx");
+            }
+            return aktuelleTabelle;
+        }
+
+        /// <summary>
         /// Liest die Tabelle mit den Metainfomationen für die Datenbank ab
         /// </summary>
         /// <returns>Tuple of Strings. Tuple aus Tabellenname, csvFeldtyp, csvFeldnamen</returns>
@@ -292,16 +480,16 @@ namespace DMS_Adminitration
         }
 
         /// <summary>
-        /// Prüft, ob zu löschende als Nachschlagefeld Tabelle Referenziert ist
+        /// Prüft, ob zu löschende STammdatentabelle als Nachschlagefeld in anderer SDT referenziert ist
         /// </summary>
-        /// <returns></returns>
+        /// <returns>true wenn die Tabelle NICHT!!! gelöscht werden darf</returns>
         public bool CheckReferenzen(string Tabelle)
         {
             using (SqlCommand cmd = new SqlCommand())
             {
                 cmd.Connection = _con;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "SELECT column_name FROM INFORMATION_SCHEMA.Columns where TABLE_NAME IN (SELECT TABLE_NAME WHERE 'TABLE_TYPE' = 'BASE TABLE' AND TABLE_NAME NOT LIKE 'Oko%'UNION ALL Select 'OkoDokumententyp'); ";
+                cmd.CommandText = "SELECT CsvFeldnamen FROM OkoTabellenfeldtypen Where Tabellenname IN(SELECT name FROM Dokumentenmanagement.dbo.sysobjects WHERE xtype = 'U' AND NAME NOT LIKE 'Oko%' AND NAME NOT LIKE '"+Tabelle+"' UNION ALL Select 'OkoDokumententyp'); ";
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -309,11 +497,18 @@ namespace DMS_Adminitration
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    if (row.Field<string>(0).Contains("_")) {
-                        if (row.Field<string>(0).Split('_')[3].Equals(Tabelle)) {
-                            return true;
+                    string text = row.Field<string>(0);
+                    foreach (var item in text.Split(';'))
+                    {
+                        if (item.Contains("_"))
+                        {
+                            if (item.Split('_')[3].Equals(Tabelle))
+                            {
+                                return true;
+                            }
                         }
                     }
+                                
                 }
             }
             return false;
@@ -321,7 +516,6 @@ namespace DMS_Adminitration
 
         public List<Tuple<string, string, string>> ReadDokTyp()
         {
-
             List<Tuple<string, string, string>> liste = new List<Tuple<string, string, string>>();
             try
             {
@@ -351,6 +545,33 @@ namespace DMS_Adminitration
             return liste;
         }
 
+        public Tuple<List<string>, List<string>> ReadDataSuchfelder(string tabellenname)
+        {
+
+            DataTable dt = new DataTable();
+            try
+            {
+                string query = "Select * from OkoDokTypTabellenfeldtypen Where OkoDokTypTabellenfeldtypenId = '1';";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                da.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0042xx");
+            }
+            string feldnamen = dt.Rows[0].Field<string>(3);
+            string feldtypen = dt.Rows[0].Field<string>(2);
+
+            feldnamen = feldnamen + ";Dateiname";
+            feldtypen = feldtypen + ";txt50n";
+
+            string[] _feldnamen = feldnamen.Split(';');
+            string[] _feldtypen = feldtypen.Split(';');
+            return Tuple.Create(_feldnamen.ToList(), _feldtypen.ToList());
+
+        }
 
         /// <summary>
         /// Liest alle Daten zu Dokumentengruppen und Dokumententypen ein
@@ -535,6 +756,8 @@ namespace DMS_Adminitration
             return Tuple.Create(feldnamen, feldtypen);
         }
 
+        
+
         public void ChangeDokTypStructure(List<string> FelderLoeschen, List<EingabeTabellenfelder> FelderHinzufuegen)
         {
             List<string> csvFeldnamen = new List<string>();
@@ -684,7 +907,57 @@ namespace DMS_Adminitration
             return Tuple.Create(lstInt, lstObject);
         }
 
+        public List<Exportdaten> ReadExportDaten(List<int> OkoDokumenteDatenIds)
+        {
+            List<Exportdaten> daten = new List<Exportdaten>();
+            try
+            {
+                DataTable dt = new DataTable();
+                StringBuilder sb = new StringBuilder();
+                int counter = 0;
+                foreach (var id in OkoDokumenteDatenIds)
+                {
+                    if (counter == 0)
+                    {
+                        sb.Append("tabDaten.OkoDokumenteDatenId = " + id);
+                    }
+                    else
+                    {
+                        sb.Append(" OR tabDaten.OkoDokumenteDatenId = " + id);
+                    }
 
+                    counter++;
+                }
+                string query = "select tabDaten.OkoDokumenteId, tabDaten.Dateiname, tabDaten.Titel, tabDaten.ErfasstAm, tabDaten.IdInTabelle, tabDaten.Tabelle, tabTypen.Bezeichnung, tabDaten.OkoDokumenteDatenId" +
+                        " from OkoDokumenteDaten tabDaten INNER JOIN OkoDokumententyp tabTypen ON tabDaten.OkoDokumententypId = " +
+                        "tabTypen.OkoDokumententypId AND (" + sb.ToString() + ");";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+                foreach (DataRow item in dt.Rows)
+                {
+                    daten.Add(new Exportdaten()
+                    {
+                        DokumenteId = item.Field<int>(0),
+                        Dateiname = item.Field<string>(1),
+                        Titel = item.Field<string>(2),
+                        ErfasstAm = item.Field<DateTime>(3),
+                        IdInTabelle = item.Field<int>(4),
+                        Tabelle = item.Field<string>(5),
+                        DokumentenTyp = item.Field<string>(6),
+                        OkoDokumenteDatenId = item.Field<int>(7)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0035xx");
+            }
+            return daten;
+        }
 
         /// <summary>
         /// Liest die Originaldaten der Tabelle ein
@@ -693,13 +966,21 @@ namespace DMS_Adminitration
         /// <returns></returns>
         public DataTable ReadTableData(string tabellenname) {
             DataTable dt = new DataTable();
-            try { 
-            string query = "select * from " + tabellenname;
-            SqlCommand cmd = new SqlCommand(query, _con);
-            // create data adapter
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            // this will query your database and return the result to your datatable
-            da.Fill(dt);
+            string query = "";
+            try {
+                if (tabellenname.Equals("OkoDokumentenTyp")) { 
+                query = "select * from " + tabellenname + " tab1 INNER JOIN (Select IdInTabelle, Dateiname, ErfasstAm from OkoDokumenteDaten) as tab2 ON tab1." + tabellenname + "Id = tab2.IdInTabelle";
+
+                //query = "select * from OkoDokumentenTyp tab1 INNER JOIN OkoDokumenteDaten as tab2 ON tab1.OkoDokumentenTypId = tab2.IdInTabelle WHERE tab2.IdInTabelle = 37";
+                } else {
+                    query = "select * from " + tabellenname;
+                }
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.SelectCommand = cmd;
+                da.Fill(dt);
             da.Dispose();
             }
             catch (Exception ex) {
@@ -707,6 +988,7 @@ namespace DMS_Adminitration
             }
             return dt;
         }
+
 
         /// <summary>
         /// Dient dazu, eine Liste der Tabellennamen in den in den Dokumententypen referenzierten Tabellen zu erstellen
@@ -880,6 +1162,144 @@ namespace DMS_Adminitration
             return dtCopy;
         }
 
+        public DataTable ReadTableDataWerteErsetztFuerDarstellungDokTyp()
+        {
+            string tabellenname = "OkoDokumentenTyp";
+            string[] _csvWerteFeldnamen = { };
+            string[] _csvWerteFeldnamenOriginal = { };
+            string[] _csvWerteFeldTypen = { };
+            List<Tuple<List<int>, List<object>>> _nachschlageFelderWerte = new List<Tuple<List<int>, List<object>>>();
+
+            //Zuerst brauche ich die Feldtypen der Tabellenfelder und die Namen der Felder
+            Tuple<string, string> Werte = ReadDokTypTypesAndFields();
+           
+                    string _namen = tabellenname + "Id;" + Werte.Item1 + ";Dateiname";
+                    string _typen = "int;" + Werte.Item2 + ";txt50n";
+                    _csvWerteFeldnamen = _namen.Split(';');
+                    _csvWerteFeldnamenOriginal = _namen.Split(';');
+                    _csvWerteFeldTypen = _typen.Split(';');
+          
+            //Originaldaten einlesen
+            DataTable dt = new DataTable();
+            DataTable dtCopy = new DataTable();
+            try
+            {
+                //Die Header und DataTypes für die Kopie festlegen;
+                for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
+                {
+                    string txt = _csvWerteFeldnamen[i];
+                    if (_csvWerteFeldnamen[i].Contains("_x_"))
+                    {
+                        //Nachschlagefelder für die spätere Vearbeitung in dieser Methdode merken                    
+                        _nachschlageFelderWerte.Add(ReadComboboxItems(_csvWerteFeldnamen[i].Split('_')[3], _csvWerteFeldnamen[i].Split('_')[4]));
+                        txt = txt.Split('_')[2];
+                        _csvWerteFeldnamen[i] = txt;
+                    }
+                    DataColumn column = new DataColumn(txt);
+                    switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                    {
+                        case "int": column.DataType = typeof(int); break;
+                        case "dat": column.DataType = typeof(DateTime); break;
+                        case "dec": column.DataType = typeof(decimal); break;
+                        case "bol": column.DataType = typeof(bool); break;
+                        case "loo": column.DataType = typeof(string); break;
+                        case "txt": column.DataType = typeof(string); break;
+                    }
+                    dtCopy.Columns.Add(column);
+                }
+
+                //string query = "select * from " + tabellenname;
+                string query = "select * from OkoDokumentenTyp tab1 INNER JOIN OkoDokumenteDaten as tab2 ON tab1.OkoDokumentenTypId = tab2.IdInTabelle";
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+                //Die überflüssigen Columns entfernen
+                List<DataColumn> liste = new List<DataColumn>();
+                foreach (DataColumn column in dt.Columns)
+                {
+                    if (column.ColumnName.Equals("IdInTabelle")
+                        || column.ColumnName.Equals("OkoDokumenteDatenId")
+                        || column.ColumnName.Equals("OkoDokumenteId")
+                        || column.ColumnName.Equals("ErfasstAm")
+                        ) {
+                        liste.Add(column);
+                    }
+                }
+                foreach (var item in liste)
+                {
+                    dt.Columns.Remove(item);
+                }
+
+                //Reihe für Reihe
+                //int counter = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    DataRow rowCopy = dtCopy.NewRow();
+                    //Spalte für Spalte
+                    int _nachschlageZaehler = 0;
+                    for (int i = 0; i < _csvWerteFeldTypen.Length; i++)
+                    {
+                        switch (_csvWerteFeldTypen[i].Substring(0, 3))
+                        {
+                            case "int":
+                                rowCopy[_csvWerteFeldnamen[i]] = row.Field<int?>(i) != null ? row.Field<int?>(i) : 0; break;
+                            case "dat":
+                                if (row.Field<DateTime?>(i) != null)
+                                {
+                                    rowCopy[_csvWerteFeldnamen[i]] = row.Field<DateTime?>(i);
+                                }
+                                else
+                                {
+                                    rowCopy[_csvWerteFeldnamen[i]] = DBNull.Value;
+                                }
+                                break;
+                            case "dec":
+                                rowCopy[_csvWerteFeldnamen[i]] = row.Field<decimal?>(i) != null ? row.Field<decimal?>(i) : 0; break;
+                            case "bol":
+                                rowCopy[_csvWerteFeldnamen[i]] = row.Field<bool?>(i);
+                                break;
+                            case "loo":
+                                //Ich brauche eine Liste der Felder und Ids
+                                Tuple<List<int>, List<object>> tuple = _nachschlageFelderWerte.ElementAt(_nachschlageZaehler);
+                                //Index ermitteln
+                                if (row.Field<int?>(i) != null)
+                                {
+                                    int index = tuple.Item1.IndexOf(row.Field<int>(i));
+                                    if (index >= 0)
+                                    {
+                                        string wert = tuple.Item2.ElementAt(index).ToString();
+                                        rowCopy[_csvWerteFeldnamen[i]] = wert;
+                                    }
+                                    else
+                                    {
+                                        rowCopy[_csvWerteFeldnamen[i]] = "";
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    rowCopy[_csvWerteFeldnamen[i]] = "";
+                                }
+                                _nachschlageZaehler++;
+                                break;
+                            case "txt":
+                                rowCopy[_csvWerteFeldnamen[i]] = row.Field<string>(i); break;
+                        }
+                    }
+                    dtCopy.Rows.Add(rowCopy);
+                }
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0010xx");
+            }
+            return dtCopy;
+        }
+
         /// <summary>
         /// Fügt einer Tabelle einen neuen Eintrag hinzu
         /// </summary>
@@ -1025,12 +1445,13 @@ namespace DMS_Adminitration
             {
                 foreach (KeyValuePair<string, object> entry in werte)
                 {
-                    if (csvArray[counter].Substring(0, 3).Equals("txt"))
+                    string txt = csvArray[counter].Substring(0, 3);
+                    if (txt.Equals("txt"))
                     {
                         sbSpalten.Append(entry.Key + ",");
                         sbWerte.Append("'" + entry.Value.ToString().Replace("'", "''") + "',");
                     }
-                    else if (csvArray[counter].Substring(0, 3).Equals("dec"))
+                    else if (txt.Equals("dec"))
                     {
                         sbSpalten.Append(entry.Key + ",");
                         if (entry.Value.ToString().Equals(""))
@@ -1043,7 +1464,7 @@ namespace DMS_Adminitration
                             sbWerte.Append(val.ToString().Replace(",", ".") + ",");
                         }
                     }
-                    else if (csvArray[counter].Substring(0, 3).Equals("int"))
+                    else if (txt.Equals("int"))
                     {
                         sbSpalten.Append(entry.Key + ",");
                         if (entry.Value.ToString().Equals(""))
@@ -1055,7 +1476,7 @@ namespace DMS_Adminitration
                             sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
                         }
                     }
-                    else if (csvArray[counter].Substring(0, 3).Equals("loo"))
+                    else if (txt.Equals("loo"))
                     {
                         sbSpalten.Append(entry.Key + ",");
                         if (entry.Value == null || entry.Value.ToString().Equals(""))
@@ -1067,7 +1488,7 @@ namespace DMS_Adminitration
                             sbWerte.Append(Int32.Parse(entry.Value.ToString()) + ",");
                         }
                     }
-                    else if (csvArray[counter].Substring(0, 3).Equals("dat"))
+                    else if (txt.Equals("dat"))
                     {
                         sbSpalten.Append(entry.Key + ",");
                         if (entry.Value == null || entry.Value.ToString().Equals(""))
@@ -1079,7 +1500,7 @@ namespace DMS_Adminitration
                             sbWerte.Append("'" + entry.Value.ToString() + "',");
                         }
                     }
-                    else if (csvArray[counter].Substring(0, 3).Equals("bol"))
+                    else if (txt.Equals("bol"))
                     {
                         sbSpalten.Append(entry.Key + ",");
                         sbWerte.Append("'" + entry.Value.ToString() + "',");
@@ -1093,14 +1514,8 @@ namespace DMS_Adminitration
             }
             string sqlSpalten = sbSpalten.ToString().Substring(0, sbSpalten.Length - 1);
             string sqlWerte = sbWerte.ToString().Substring(0, sbWerte.Length - 1);
-            if (IsDokType)
-            {
-                sb.Append("Insert into xyx" + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
-            }
-            else
-            {
-                sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
-            }
+            
+            sb.Append("Insert into " + tabellenname + " (" + sqlSpalten + ") VALUES (" + sqlWerte + ")");
 
             SqlCommand command = _con.CreateCommand();
             SqlTransaction transaction;
@@ -1118,9 +1533,7 @@ namespace DMS_Adminitration
 
                 try
                 {
-                    if (IsDokType)
-                    { command.CommandText = "SELECT ISNULL(MAX(xyx" + tabellenname + "Id), 0) FROM xyx" + tabellenname; }
-                    else { command.CommandText = "SELECT ISNULL(MAX(" + tabellenname + "Id), 0) FROM " + tabellenname; }
+                    command.CommandText = "SELECT ISNULL(MAX(" + tabellenname + "Id), 0) FROM " + tabellenname; 
 
                     Int32.TryParse(command.ExecuteScalar().ToString(), out neueId);
                 }
@@ -1149,7 +1562,6 @@ namespace DMS_Adminitration
             }
             return neueId;
         }
-
 
         public void InsertCsvData(string tabellenname, List<Dictionary<string, object>> lstWerte, string csvWerteTypen)
         {
@@ -1305,7 +1717,12 @@ namespace DMS_Adminitration
                 }
                 else {
                     //Ansonsten muss es ein String sein
-                    sbInner.Append(item.Key +"='"+ item.Value.ToString().Replace("'","''") + "',");
+                    if (item.Value != null) {
+                        sbInner.Append(item.Key + "='" + item.Value.ToString().Replace("'", "''") + "',");
+                    } else {
+                        sbInner.Append(item.Key + "='',");
+                    }
+                    
                 }
                 counter++;
             }

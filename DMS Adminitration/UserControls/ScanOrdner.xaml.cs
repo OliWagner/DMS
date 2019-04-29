@@ -51,7 +51,7 @@ namespace DMS_Adminitration
             {
                 Label l = new Label();
                 l.Name = "wert" + i;
-                l.Width = 200;
+                l.Width = 300;
                 l.Height = 30;
                 l.Content = fis[i].Name;
                 l.MouseLeftButtonDown += L_MouseLeftButtonDown;

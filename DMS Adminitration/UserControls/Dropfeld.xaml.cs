@@ -23,8 +23,8 @@ namespace DMS_Adminitration
 
         public Dropfeld() {
             InitializeComponent();
-            txtDropzone.Text = "Datei Droppen";
-            txtDropzone.FontSize = 18;
+            //txtDropzone.Text = "Datei Droppen";
+            //txtDropzone.FontSize = 18;
         }
 
         private void Grid_Drop(object sender, DragEventArgs e)

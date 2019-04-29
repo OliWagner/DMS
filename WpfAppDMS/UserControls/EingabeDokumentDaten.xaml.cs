@@ -29,6 +29,7 @@ namespace WpfAppDMS
         public int _idAktuellerDatensatz { get; set; }
         private int _aktuelleDokumentenTypId { get; set; }
         private string _aktuellerTabName { get; set; }
+        
 
         public EingabeDokumentDaten()
         {            

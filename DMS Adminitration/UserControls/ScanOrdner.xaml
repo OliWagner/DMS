@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMS_Adminitration"
         mc:Ignorable="d">
-
-    <Grid x:Name="grdScanOrdner" Background="LightGray" MinWidth="200">
+    <Grid x:Name="grdScanOrdner" MinWidth="300">
         
     </Grid>
 </UserControl>

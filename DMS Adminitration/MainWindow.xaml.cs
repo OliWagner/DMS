@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -47,8 +48,8 @@ namespace DMS_Adminitration
             Tuple<string, string> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadEinstellungen();
             Einstellungen.Ordnerpfad = tuple.Item1;
             ordnerAnzeigen.Pfad = tuple.Item1;
-            Einstellungen.DatenbearbeitungEnAus = tuple.Item2;
-            if (Einstellungen.DatenbearbeitungEnAus.Equals("aus")) {
+            Einstellungen.DatenbearbeitungEinAus = tuple.Item2;
+            if (Einstellungen.DatenbearbeitungEinAus.Equals("aus")) {
                 ribbon.Items.Remove(RibTabAblage);
                 ribbon.Items.Remove(RibTabStamm);
                 ramDbEinAus.ImageSource = new BitmapImage(new Uri("/img/aus.png", UriKind.Relative));
@@ -131,12 +132,11 @@ namespace DMS_Adminitration
 
         private void TvMain_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var org = (TreeView)sender;
-            if (org.SelectedItem != null)
+            if((TreeViewItem)uebersichtTabellen.tvMain.SelectedItem != null)
             {
-                Tuple<string, string, string> tuple = uebersichtTabellen.WerteDerAuswahl;
-            }
-
+                TreeViewItem tv_header = (TreeViewItem)uebersichtTabellen.tvMain.SelectedItem;
+                pflegeTabellendaten.TabNameUebergabe = tv_header.Header.ToString();
+             }
         }
 
         private void ScanOrdner_SomethingChanged(object sender, MyEventArgs e)
@@ -146,16 +146,28 @@ namespace DMS_Adminitration
         
         private void GrdDropzone_Drop(object sender, DragEventArgs e)
         {
+            eingabeDokumentDaten.Visibility = Visibility.Visible;
+            //grdMain.Children.Add(eingabeDokumentDaten);
+            eingabeDokumentDaten.Dropped = true;
+            eingabeDokumentDaten.Dateiname = dropfeld.Data[0];
             eingabeDokumentDaten.zeichneGrid();
         }
 
         private void ScanOrdner_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            ScanOrdner _sender = (ScanOrdner)sender;
+
+            eingabeDokumentDaten.Dropped = false;
+            eingabeDokumentDaten.Dateiname = _sender.FileName;
+            eingabeDokumentDaten.Visibility = Visibility.Visible;
+            if (eingabeDokumentDaten.grdMain.Children.Contains(eingabeDokumentDaten)) { 
+            eingabeDokumentDaten.grdMain.Children.Add(eingabeDokumentDaten);
+                }
             eingabeDokumentDaten.zeichneGrid();
         }
         #endregion
 
-        #region Events/CanExecute Buttonclicks
+        #region Events/Commands UI
 
         #region Mainmenu
         private void BtnBeenden_Click(object sender, RoutedEventArgs e)
@@ -182,7 +194,7 @@ namespace DMS_Adminitration
                     {
                         rdOben.MinHeight = 550;
                         rdUnten.MinHeight = 50;
-                        
+                        cdLinks.MinWidth = 300;
                         grdMain.Children.Add(aendernDokTyp);
                         aendernDokTyp.zeichneGrid();
                         aendernDokTyp.Visibility = Visibility.Visible;
@@ -197,6 +209,7 @@ namespace DMS_Adminitration
                 {
                     if (!grdMain.Children.Contains(uebersichtTabellen))
                     {
+                        cdLinks.MinWidth = 200;
                         rdOben.MinHeight = 300;
                         rdUnten.MinHeight = 0;
                         grdMain.Children.Add(uebersichtTabellen);
@@ -210,10 +223,10 @@ namespace DMS_Adminitration
                 {
                     //TODO Unterscheiden zwischen Ablage und Recherche
                     grdMain.Background = new SolidColorBrush(Colors.AliceBlue);
-                    cdLinks.MinWidth = 200;
+                    cdLinks.MinWidth = 300;
                     rdOben.MaxHeight = 50;
                     rdOben.MinHeight = 50;
-                    rdUnten.MinHeight = 400;
+                    rdUnten.MinHeight = 400;                   
 
                     grdMain.Children.Add(dropfeld);
                     dropfeld.Visibility = Visibility.Visible;
@@ -222,7 +235,6 @@ namespace DMS_Adminitration
                     scanOrdner.zeichneGrid(Einstellungen.Ordnerpfad);
                     grdMain.Children.Add(eingabeDokumentDaten);
                     eingabeDokumentDaten.Visibility = Visibility.Visible;
-
                 }
             }
         }
@@ -463,9 +475,10 @@ namespace DMS_Adminitration
 
         private void BtnTabelleLeeren_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
         {
-            if (uebersichtTabellen != null)
+            if (pflegeTabellendaten != null && pflegeTabellendaten.TabNameUebergabe != null)
             {
-                e.CanExecute = tabellendaten.Visibility == Visibility.Visible;
+                e.CanExecute = !((DbConnector)App.Current.Properties["Connector"]).CheckReferenzen(pflegeTabellendaten.TabNameUebergabe)
+                    && ((DbConnector)App.Current.Properties["Connector"]).CheckTableDeleteDataDokTyp(pflegeTabellendaten.TabNameUebergabe);
             }
             else
             {
@@ -482,7 +495,6 @@ namespace DMS_Adminitration
         #region Tabelle löschen
         private void BtnTabelleLoeschen_Click(object sender, RoutedEventArgs e)
         {
-
             string tabName = pflegeTabellendaten.TabNameUebergabe;
             ((DbConnector)App.Current.Properties["Connector"]).DeleteTable(tabName);
             Ausgangsstellung();
@@ -492,16 +504,10 @@ namespace DMS_Adminitration
 
         private void BtnTabelleLoeschen_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
         {
-            if (uebersichtTabellen != null)
+            if (pflegeTabellendaten != null && pflegeTabellendaten.TabNameUebergabe != null)
             {
-                bool checker = false;
-
-                checker = tabellendaten.Visibility == Visibility.Visible;
-                if (uebersichtTabellen.tvMain.SelectedItem != null) {
-                    TreeViewItem tvi = uebersichtTabellen.tvMain.ItemContainerGenerator.ContainerFromItem(uebersichtTabellen.tvMain.SelectedItem) as TreeViewItem;
-                    checker = !((DbConnector)App.Current.Properties["Connector"]).CheckReferenzen(tvi.Header.ToString());
-                }
-                e.CanExecute = checker;
+                e.CanExecute = !((DbConnector)App.Current.Properties["Connector"]).CheckReferenzen(pflegeTabellendaten.TabNameUebergabe)
+                    && ((DbConnector)App.Current.Properties["Connector"]).CheckTableDeleteDataDokTyp(pflegeTabellendaten.TabNameUebergabe);
             }
             else
             {
@@ -656,8 +662,11 @@ namespace DMS_Adminitration
             {
                 if (tabellendaten.dgTabelle.SelectedItem != null)
                 {
-                    e.CanExecute = true;
-                    return;
+                    if (((DbConnector)App.Current.Properties["Connector"]).CheckIfIdLoeschbarStammdaten(pflegeTabellendaten._tabName, pflegeTabellendaten._idAktuellerDatensatz)) {
+                        e.CanExecute = true;
+                        return;
+                    }
+                    
                 }
             }
             else if (aendernTabellen != null && aendernTabellen.Visibility == Visibility.Visible)
@@ -1120,7 +1129,7 @@ namespace DMS_Adminitration
         private void BtnTabSave_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
             eingabeTabelle.ClearGrid();
-            Ausgangsstellung();
+            //Ausgangsstellung();
         }
         #endregion
 
@@ -1192,6 +1201,8 @@ namespace DMS_Adminitration
             ((DbConnector)App.Current.Properties["Connector"]).ChangeDokTypStructure(aendernDokTyp.FelderLoeschen, aendernDokTyp.FelderHinzufuegen);
             aendernDokTyp.Clear();
             aendernDokTyp.zeichneGrid();
+            darstellungDokumente.ZeichneDatagridForm();
+            darstellungDokumente.ZeichneDatagridTab("OkoDokumentenTyp");
         }
 
         private void BtnTypSpeichern_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
@@ -1288,6 +1299,7 @@ namespace DMS_Adminitration
                     string pfad = dialog.SelectedPath;
                     Einstellungen.Ordnerpfad = pfad;
                     ordnerAnzeigen.Start(pfad);
+                    eingabeDokumentDaten.zeichneGrid();
                 }
             }
         }
@@ -1323,12 +1335,18 @@ namespace DMS_Adminitration
 
         #endregion
 
-
         #region  rgDMS
             #region Steuerung Ablage/Recherche
             private void BtnRecherche_Click(object sender, RoutedEventArgs e)
             {
                 grdMainDmsGrundstellung();
+                cdLinks.MinWidth = 500;
+                rdOben.MaxHeight = 1000;
+                rdOben.MinHeight = 500;
+                rdUnten.MinHeight = 0;
+                grdMain.Children.Add(darstellungDokumente);
+                darstellungDokumente.Visibility = Visibility.Visible;
+                darstellungDokumente.ZeichneGrid();
             }
 
             private void BtnAblage_Click(object sender, RoutedEventArgs e)
@@ -1344,77 +1362,298 @@ namespace DMS_Adminitration
 
             private void grdMainDmsGrundstellung()
             {
+                cdLinks.MinWidth = 300;
+                rdOben.MaxHeight = 50;
+                rdOben.MinHeight = 50;
+                rdUnten.MinHeight = 400;
                 grdMain.Children.Remove(dropfeld);
                 dropfeld.Visibility = Visibility.Hidden;
                 grdMain.Children.Remove(scanOrdner);
                 scanOrdner.Visibility = Visibility.Hidden;
                 grdMain.Children.Remove(eingabeDokumentDaten);
                 eingabeDokumentDaten.Visibility = Visibility.Hidden;
-            }
+                grdMain.Children.Remove(darstellungDokumente);
+                darstellungDokumente.Visibility = Visibility.Hidden;
+             }
         #endregion
 
-        #region DOkument anzeigen
+            #region DOkument anzeigen
         private void BtnDokShow_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnDokShow_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnDokShow_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
 
         }
         #endregion
 
             #region Dokument bearbeiten
-        private void BtnDokEdit_Click(object sender, RoutedEventArgs e)
-        {
+            private void BtnDokEdit_Click(object sender, RoutedEventArgs e)
+            {
 
-        }
-        #endregion
+            }
+            private void BtnDokEdit_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+
+            }
+            private void BtnDokEdit_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+            {
+
+            }
+            #endregion
 
             #region Dokument löschen
-        private void BtnDokDelete_Click(object sender, RoutedEventArgs e)
-        {
+            private void BtnDokDelete_Click(object sender, RoutedEventArgs e)
+            {
 
-        }
-        #endregion
+            }
+            private void BtnDokDelete_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+
+            }
+
+            private void BtnDokDelete_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+            {
+
+            }
+            #endregion
 
             #region Dok zu Export
-        private void BtnDokExport_Click(object sender, RoutedEventArgs e)
-        {
+            private void BtnDokExport_Click(object sender, RoutedEventArgs e)
+            {
 
-        }
-        #endregion
+            }
+            private void BtnDokExport_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+
+            }
+            private void BtnBtnDokExport_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+            {
+
+            }
+            #endregion
 
             #region Exportdialog
-        private void BtnExportDialog_Click(object sender, RoutedEventArgs e)
-        {
+            private void BtnExportDialog_Click(object sender, RoutedEventArgs e)
+                {
 
+                }
+            private void BtnExportDialog_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+
+            }
+
+            private void BtnExportDialog_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+            {
+
+            }
+            #endregion
+
+            #region Dok Speichern
+    private void BtnDokSpeichern_Click(object sender, RoutedEventArgs e)
+    {
+            #region Datensatz der bezogenen Tabelle speichern
+            //Benötigte Werte um InsertTableData aufrufen zu können
+            string _tabellenname = "OkoDokumentenTyp";
+            Dictionary<string, object> _dic = new Dictionary<string, object>();
+            StringBuilder _csv = new StringBuilder();
+
+            string keepValueForDic = "";
+            int counter = 0; //wird benötigt, um erstes Element zu kennzeichnen
+            foreach (var item in eingabeDokumentDaten.grdMain.Children)
+            {
+                //item kann Textbox oder Textblock sein
+
+                //Textblock kann 'Tabellenname' oder 'Feldname (Typ)' sein
+                if (item.GetType() == typeof(TextBlock))
+                {
+                    if (counter == 0)
+                    {
+                        //_tabellenname = ((TextBlock)item).Text;
+                    }
+                    else
+                    {
+                        //Tabellenfeldname --> Neues Element für Dictionary, aber erst den Wert merken
+                        //Wert muss gesplittet werden, davon [0] nehmen
+                        keepValueForDic = ((TextBlock)item).Text.Split(' ')[0];
+                        var str = ((TextBlock)item).Text.Split(' ')[1].Replace("(", "").Replace(")", "") + ";";
+                        if (str.Substring(0, 3).Equals("loo")) {
+                            keepValueForDic = ((TextBlock)item).Tag.ToString();
+                        }
+                        _csv.Append(str);
+                    }
+                }
+
+                //Textbox kann nur zu einem Feldnamen gehören, der bereits als Key in die Dictionary einger
+                if (item.GetType() == typeof(TextBox))
+                {
+                    //Nun neues Element für Dictionary erzeugen und Werte intragen
+                    var kvp = new KeyValuePair<string, object>(keepValueForDic, ((TextBox)item).Text);
+                    _dic.Add(kvp.Key, kvp.Value);
+                } //Das Gleiche gilt für eine Checkbox bei Boolean-Werten
+                else if (item.GetType() == typeof(CheckBox))
+                {
+                    var kvp = new KeyValuePair<string, object>(keepValueForDic, ((CheckBox)item).IsChecked);
+                    _dic.Add(kvp.Key, kvp.Value);
+                }
+                else if (item.GetType() == typeof(DatePicker))
+                {
+                    var kvp = new KeyValuePair<string, object>(keepValueForDic, ((DatePicker)item).SelectedDate);
+                    _dic.Add(kvp.Key, kvp.Value);
+                }
+                else if (item.GetType() == typeof(LookupAuswahlDMS))
+                {
+                    if ((ComboBoxItem)((LookupAuswahlDMS)item).cboAuswahl.SelectedItem != null)
+                    {
+                        var kvp = new KeyValuePair<string, object>(keepValueForDic, ((ComboBoxItem)((LookupAuswahlDMS)item).cboAuswahl.SelectedItem).Tag);
+                        _dic.Add(kvp.Key, kvp.Value);
+                    }
+                    else
+                    {
+                        var kvp = new KeyValuePair<string, object>(keepValueForDic, null);
+                        _dic.Add(kvp.Key, kvp.Value);
+                    }
+
+                }
+                counter++;
+            }
+            //DBConnector aufrufen
+            string txt = _csv.ToString().Substring(0, _csv.Length - 1);
+            //Für Aktualisierung in MainWindow merken
+            eingabeDokumentDaten.TabNameUebergabe = _tabellenname;
+
+            if (eingabeDokumentDaten._idAktuellerDatensatz == 0)//Speichern
+            {
+                eingabeDokumentDaten._idAktuellerDatensatz = ((DbConnector)App.Current.Properties["Connector"]).InsertTableData(_tabellenname, _dic, txt, true);
+                //Dokument i die Datenbank schreiben
+                if (eingabeDokumentDaten.Dropped) {
+                    eingabeDokumentDaten._idDesGeradeBearbeitetenDokuments = databaseFilePut(eingabeDokumentDaten.Dateiname);
+                } else {
+                    string path = Einstellungen.Ordnerpfad + "\\" + eingabeDokumentDaten.Dateiname;
+                    eingabeDokumentDaten._idDesGeradeBearbeitetenDokuments = databaseFilePut(path);
+                }
+
+                if (eingabeDokumentDaten.Dropped) {
+                    var tester = eingabeDokumentDaten.Dateiname.Split('\\');
+                    int laenge = tester.Count();
+                    eingabeDokumentDaten.Dateiname = tester[laenge - 1];
+                }
+                //Dokumentedaten wegschreiben
+                string dataTxt = eingabeDokumentDaten._idDesGeradeBearbeitetenDokuments + ";" + eingabeDokumentDaten._idAktuellerDatensatz
+                    + ";" + eingabeDokumentDaten.Dateiname + ";" + DateTime.Today.ToString();
+                ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
+            }
+            else //("Sichern"))
+            {
+                ((DbConnector)App.Current.Properties["Connector"]).UpdateTableData(_tabellenname, eingabeDokumentDaten._idAktuellerDatensatz, _dic, txt);
+                StringBuilder sb = new StringBuilder();
+                foreach (var value in _dic.Values)
+                {
+                    sb.Append(value + ";");
+                }
+                string txtCsv = sb.ToString();
+                eingabeDokumentDaten._csvTabFeldwerte = txtCsv.Substring(0, txtCsv.Length - 1);
+            }
+            #endregion
+            //Dokument verschieben falls aus Scanordner
+            if (eingabeDokumentDaten.Dropped == false) {
+                VerschiebeDatei();
+            }
+            //Zurück setzen
+            eingabeDokumentDaten.Dropped = false;
+            eingabeDokumentDaten.Dateiname = "";
+            eingabeDokumentDaten._idAktuellerDatensatz = 0;
+            dropfeld.Data = new string[]{ };
+            eingabeDokumentDaten.zeichneGrid();
+            eingabeDokumentDaten.Visibility = Visibility.Hidden;
+            eingabeDokumentDaten.grdMain.Children.Remove(eingabeDokumentDaten);
+            //Neu zeichnen
+            scanOrdner.zeichneGrid(Einstellungen.Ordnerpfad);
         }
+
+        private void VerschiebeDatei() {
+            List<string> dirs = new List<string>(Directory.EnumerateDirectories(Einstellungen.Ordnerpfad));
+            //Erstmal ermitteln ob der Ordner existiert
+            bool Checker = false;
+            foreach (var dir in dirs)
+            {
+                if ((dir.Substring(dir.LastIndexOf(Path.DirectorySeparatorChar) + 1).Equals("Archiviert"))){
+                    Checker = true;
+                }
+            }
+            if (!Checker) {
+                System.IO.Directory.CreateDirectory(Einstellungen.Ordnerpfad+"\\Archiviert");
+            }
+            //Dokument verschieben
+            File.Move(Einstellungen.Ordnerpfad + "\\" + eingabeDokumentDaten.Dateiname, Einstellungen.Ordnerpfad + "\\Archiviert\\" + eingabeDokumentDaten.Dateiname);
+        }
+
+        private void BtnDokSpeichern_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+
+            }
+            private void BtnDokSpeichern_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+            {
+
+            }
+
+            private int databaseFilePut(string varFilePath)
+            {
+                byte[] file;
+                using (var stream = new FileStream(varFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        file = reader.ReadBytes((int)stream.Length);
+                    }
+                }
+
+                using (var sqlWrite = new SqlCommand("INSERT INTO OkoDokumente (Dokument) Values(@File)", ((DbConnector)App.Current.Properties["Connector"])._con))
+                {
+                    sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
+                    sqlWrite.ExecuteNonQuery();
+                }
+
+                int neueId = 0;
+                using (var command = new SqlCommand("SELECT ISNULL(MAX(OkoDokumenteId), 0) FROM OkoDokumente", ((DbConnector)App.Current.Properties["Connector"])._con))
+                {
+
+                    Int32.TryParse(command.ExecuteScalar().ToString(), out neueId);
+                }
+                return neueId;
+            }
         #endregion
 
-            #region DOk Speichern
-        private void BtnDokSpeichern_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        #endregion
-
-        #region DokAbbrechen
+            #region DokAbbrechen
         private void BtnDokAbort_Click(object sender, RoutedEventArgs e)
-        {
+            {
 
-        }
+            }
+            private void BtnDokAbort_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+
+            }
+            private void BtnDokAbort_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+            {
+
+            }
+            #endregion
+
         #endregion
-        #endregion
 
-        #endregion
-
-
+        #endregion 
     }
 
     public class Einstellungen {
         public string Ordnerpfad { get; set; }
-        public string DatenbearbeitungEnAus { get; set; }
-
-        public Einstellungen() {
-
-        }
+        public string DatenbearbeitungEinAus { get; set; }
     }
 
     public static class Fehlerbehandlung

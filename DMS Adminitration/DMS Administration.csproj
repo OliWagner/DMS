@@ -64,6 +64,9 @@
     <Compile Include="Dialogs\CsvDialog.xaml.cs">
       <DependentUpon>CsvDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ExportDialog.xaml.cs">
+      <DependentUpon>ExportDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\TabNameDialog.xaml.cs">
       <DependentUpon>TabNameDialog.xaml</DependentUpon>
     </Compile>
@@ -71,6 +74,9 @@
       <DependentUpon>LookupDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
+    <Compile Include="UserControls\DarstellungDokumente.xaml.cs">
+      <DependentUpon>DarstellungDokumente.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\EingabeDokumentDaten.xaml.cs">
       <DependentUpon>EingabeDokumentDaten.xaml</DependentUpon>
     </Compile>
@@ -104,6 +110,9 @@
     <Compile Include="UserControls\PflegeTabellendaten.xaml.cs">
       <DependentUpon>PflegeTabellendaten.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Suchfelder.xaml.cs">
+      <DependentUpon>Suchfelder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\Tabellendaten.xaml.cs">
       <DependentUpon>Tabellendaten.xaml</DependentUpon>
     </Compile>
@@ -119,6 +128,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\CsvDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ExportDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -142,6 +155,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\DarstellungDokumente.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\EingabeDokumentDaten.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,6 +200,10 @@
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="UserControls\PflegeTabellendaten.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Suchfelder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -289,6 +310,9 @@
   <ItemGroup>
     <Resource Include="img\export.png" />
     <Resource Include="img\exportdialog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\import.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

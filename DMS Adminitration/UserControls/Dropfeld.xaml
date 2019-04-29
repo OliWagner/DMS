@@ -7,6 +7,8 @@
         mc:Ignorable="d">
 
     <Grid MinWidth="200" AllowDrop="True" x:Name="grdDropzone" Margin="0,0,0,0" HorizontalAlignment="Center" DragDrop.Drop="Grid_Drop" VerticalAlignment="Center">
-        <TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,0,0,0" HorizontalAlignment="Center" Text="Dropzone" VerticalAlignment="Center" />
+        <Image Source="/img/import.png" />
+        <!--<TextBlock TextWrapping="Wrap" x:Name="txtDropzone"  Margin="0,0,0,0" HorizontalAlignment="Center" Text="Dropzone" VerticalAlignment="Center" />-->
+        
     </Grid>
 </UserControl>

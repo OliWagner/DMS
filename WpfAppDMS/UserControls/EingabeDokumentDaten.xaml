@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfAppDMS"
              mc:Ignorable="d" 
-             d:DesignHeight="230" d:DesignWidth="490" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" >
+             VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" >
     <!--<UserControl.CommandBindings>
         <CommandBinding Command="Save" CanExecute="Save_CanExecute" Executed="Save_Executed" />
     </UserControl.CommandBindings>-->
@@ -15,7 +15,7 @@
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" Width="490" Height="200" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0">
-            <Grid x:Name="grdMain" MinHeight="200" Width="490"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+            <Grid x:Name="grdMain" MinHeight="200" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0"/>
         </ScrollViewer>
         <Button x:Name="btnAbbruch" Click="btnAbbruch_Click" Grid.Row="1" Margin="400,5,0,0" HorizontalAlignment="Left" Content="Abbrechen" Height="20" VerticalAlignment="Center" Width="70" />
         <Button x:Name="btnSpeichern" Click="btnSpeichern_Click" Grid.Row="1" Margin="320,5,0,0" HorizontalAlignment="Left" Content="Speichern" Height="20" VerticalAlignment="Center" Width="70" />
