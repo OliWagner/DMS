@@ -1336,9 +1336,11 @@ namespace DMS_Adminitration
         #endregion
 
         #region  rgDMS
-            #region Steuerung Ablage/Recherche
-            private void BtnRecherche_Click(object sender, RoutedEventArgs e)
+        #region Steuerung Ablage/Recherche
+        private string TxtAblageRecherche = "A";
+        private void BtnRecherche_Click(object sender, RoutedEventArgs e)
             {
+                TxtAblageRecherche = "R";
                 grdMainDmsGrundstellung();
                 cdLinks.MinWidth = 500;
                 rdOben.MaxHeight = 1000;
@@ -1351,13 +1353,14 @@ namespace DMS_Adminitration
 
             private void BtnAblage_Click(object sender, RoutedEventArgs e)
             {
+                TxtAblageRecherche = "A";
                 grdMainDmsGrundstellung();
                 grdMain.Children.Add(dropfeld);
                 dropfeld.Visibility = Visibility.Visible;
                 grdMain.Children.Add(scanOrdner);
                 scanOrdner.Visibility = Visibility.Visible;
                 grdMain.Children.Add(eingabeDokumentDaten);
-                eingabeDokumentDaten.Visibility = Visibility.Visible;
+                //eingabeDokumentDaten.Visibility = Visibility.Visible;
             }
 
             private void grdMainDmsGrundstellung()
@@ -1385,7 +1388,20 @@ namespace DMS_Adminitration
 
         private void BtnDokShow_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
         {
-
+            if (TxtAblageRecherche.Equals("A"))
+            {
+                e.CanExecute = false;
+            }
+            else
+            {
+                //Buttons für die Recherche
+                if (darstellungDokumente.dgTabelleOriginal.SelectedItem != null)
+                {
+                    e.CanExecute = true;
+                    return;
+                }
+                e.CanExecute = false;
+            }
         }
 
         private void BtnDokShow_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -1397,11 +1413,47 @@ namespace DMS_Adminitration
             #region Dokument bearbeiten
             private void BtnDokEdit_Click(object sender, RoutedEventArgs e)
             {
-
-            }
-            private void BtnDokEdit_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            //Formular für die Eingabe muss mit ausgewähltem Datensatz befüllt werden
+            DataRowView row = (DataRowView)darstellungDokumente.dgTabelleOriginal.SelectedItem;
+            int idaktuell = Int32.Parse(row.Row.ItemArray[0].ToString());
+            string dateiname = row.Row.ItemArray[row.Row.ItemArray.Length - 1].ToString();
+            //CsvFeldwerte für Formular des Datensatzes erzeugen
+            StringBuilder csv = new StringBuilder();
+            for (int i = 1; i < row.Row.ItemArray.Count()-1; i++)
             {
+                csv.Append(row.Row.ItemArray[i] + ";");
+            }
+            string csvwerte = csv.ToString().Substring(0, csv.Length - 1);
 
+            TxtAblageRecherche = "A";
+                grdMainDmsGrundstellung();
+                grdMain.Children.Add(dropfeld);
+                dropfeld.Visibility = Visibility.Visible;
+                grdMain.Children.Add(scanOrdner);
+                scanOrdner.Visibility = Visibility.Visible;
+                grdMain.Children.Add(eingabeDokumentDaten);
+                eingabeDokumentDaten.Visibility = Visibility.Visible;
+                eingabeDokumentDaten.Dateiname = dateiname;
+                eingabeDokumentDaten.TabNameUebergabe = dateiname;
+                eingabeDokumentDaten._idAktuellerDatensatz = idaktuell;
+                eingabeDokumentDaten.zeichneGrid(csvwerte);
+            }
+        private void BtnDokEdit_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+            {
+                if (TxtAblageRecherche.Equals("A"))
+                {
+                    e.CanExecute = false;
+                }
+                else
+                {
+                    //Buttons für die Recherche
+                    if (darstellungDokumente.dgTabelleOriginal.SelectedItem != null)
+                    {
+                        e.CanExecute = true;
+                        return;
+                    }
+                    e.CanExecute = false;
+                }
             }
             private void BtnDokEdit_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
             {
@@ -1416,7 +1468,20 @@ namespace DMS_Adminitration
             }
             private void BtnDokDelete_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
-
+                if (TxtAblageRecherche.Equals("A"))
+                {
+                    e.CanExecute = false;
+                }
+                else
+                {
+                    //Buttons für die Recherche
+                    if (darstellungDokumente.dgTabelleOriginal.SelectedItem != null)
+                    {
+                        e.CanExecute = true;
+                        return;
+                    }
+                    e.CanExecute = false;
+                }
             }
 
             private void BtnDokDelete_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -1432,7 +1497,19 @@ namespace DMS_Adminitration
             }
             private void BtnDokExport_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
-
+                if (TxtAblageRecherche.Equals("A"))
+                {
+                    e.CanExecute = false;
+                }
+                else
+                {
+                //Buttons für die Recherche
+                if (darstellungDokumente.dgTabelleOriginal.SelectedItem != null) {
+                        e.CanExecute = true;
+                        return;
+                    }
+                    e.CanExecute = false;
+                }
             }
             private void BtnBtnDokExport_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
             {
@@ -1447,7 +1524,16 @@ namespace DMS_Adminitration
                 }
             private void BtnExportDialog_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
-
+                if (TxtAblageRecherche.Equals("A"))
+                {
+                    //Buttons für die ABlage
+                    e.CanExecute = false;
+                }
+                else
+                {
+                    //Buttons für die Recherche
+                    e.CanExecute = false;
+                }
             }
 
             private void BtnExportDialog_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -1549,6 +1635,11 @@ namespace DMS_Adminitration
                 string dataTxt = eingabeDokumentDaten._idDesGeradeBearbeitetenDokuments + ";" + eingabeDokumentDaten._idAktuellerDatensatz
                     + ";" + eingabeDokumentDaten.Dateiname + ";" + DateTime.Today.ToString();
                 ((DbConnector)App.Current.Properties["Connector"]).InsertDocumentData(dataTxt);
+                //Dokument verschieben falls aus Scanordner
+                if (eingabeDokumentDaten.Dropped == false)
+                {
+                    VerschiebeDatei();
+                }
             }
             else //("Sichern"))
             {
@@ -1562,10 +1653,7 @@ namespace DMS_Adminitration
                 eingabeDokumentDaten._csvTabFeldwerte = txtCsv.Substring(0, txtCsv.Length - 1);
             }
             #endregion
-            //Dokument verschieben falls aus Scanordner
-            if (eingabeDokumentDaten.Dropped == false) {
-                VerschiebeDatei();
-            }
+            
             //Zurück setzen
             eingabeDokumentDaten.Dropped = false;
             eingabeDokumentDaten.Dateiname = "";
@@ -1592,12 +1680,27 @@ namespace DMS_Adminitration
                 System.IO.Directory.CreateDirectory(Einstellungen.Ordnerpfad+"\\Archiviert");
             }
             //Dokument verschieben
-            File.Move(Einstellungen.Ordnerpfad + "\\" + eingabeDokumentDaten.Dateiname, Einstellungen.Ordnerpfad + "\\Archiviert\\" + eingabeDokumentDaten.Dateiname);
+            //File.Move(Einstellungen.Ordnerpfad + "\\" + eingabeDokumentDaten.Dateiname, Einstellungen.Ordnerpfad + "\\Archiviert\\" + eingabeDokumentDaten.Dateiname);
+            File.Delete(Einstellungen.Ordnerpfad + "\\" + eingabeDokumentDaten.Dateiname);
         }
 
         private void BtnDokSpeichern_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
-
+                if (TxtAblageRecherche.Equals("A"))
+                {
+                    //Buttons für die ABlage
+                    if (eingabeDokumentDaten != null && eingabeDokumentDaten.Visibility == Visibility.Visible && eingabeDokumentDaten._tabName != null && !eingabeDokumentDaten._tabName.Equals(""))
+                    {
+                        e.CanExecute = true;
+                        return;
+                    }
+                    e.CanExecute = false;
+                }
+                else
+                {
+                    //Buttons für die Recherche
+                    e.CanExecute = false;
+                }
             }
             private void BtnDokSpeichern_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
             {
@@ -1632,13 +1735,32 @@ namespace DMS_Adminitration
         #endregion
 
             #region DokAbbrechen
-        private void BtnDokAbort_Click(object sender, RoutedEventArgs e)
+            private void BtnDokAbort_Click(object sender, RoutedEventArgs e)
             {
-
+                if (TxtAblageRecherche.Equals("A")) {
+                    //Ablage
+                    eingabeDokumentDaten.Visibility = Visibility.Hidden;
+                } else {
+                    //Recherche
+                }
             }
             private void BtnDokAbort_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
-
+                if (TxtAblageRecherche.Equals("A"))
+                {
+                    //Buttons für die ABlage
+                    if (eingabeDokumentDaten != null && eingabeDokumentDaten.Visibility == Visibility.Visible && eingabeDokumentDaten._tabName != null && !eingabeDokumentDaten._tabName.Equals(""))
+                    {
+                        e.CanExecute = true;
+                        return;
+                    }
+                    e.CanExecute = false;
+                }
+                else
+                {
+                    //Buttons für die Recherche
+                    e.CanExecute = false;
+                }
             }
             private void BtnDokAbort_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
             {

@@ -861,7 +861,7 @@ namespace DMS_Adminitration
             foreach (DataRow row in dt.Rows)
             {
                 lstInt.Add(row.Field<int>(0));
-                lstObject.Add(row.Field<object>(1));
+                lstObject.Add(row.Field<object>(1) != null ? row.Field<object>(1) : "");
             }
             }
             catch (Exception ex) {

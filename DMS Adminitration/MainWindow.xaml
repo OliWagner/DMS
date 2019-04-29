@@ -196,27 +196,34 @@
                     </RibbonButton>
                 </RibbonGroup>
                 <RibbonGroup Header="Dokument">
-                    <RibbonButton x:Name="BtnDokShow" Label="Anzeigen" 
+                    <RibbonButton x:Name="BtnDokShow" Label="Anzeigen" Command="ApplicationCommands.CancelPrint" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
                                   LargeImageSource="img/show.png" Click="BtnDokShow_Click">
                     </RibbonButton>
-                    <RibbonButton x:Name="BtnDokEdit" Label="Bearbeiten" 
+                    <RibbonButton x:Name="BtnDokEdit" Label="Bearbeiten" Command="ApplicationCommands.Close" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}" 
                                   LargeImageSource="img/edittable.png" Click="BtnDokEdit_Click">
                     </RibbonButton>
-                    <RibbonButton x:Name="BtnDokSpeichern" Label="Speichern"
-                                  LargeImageSource="img/tablesave.png" Click="BtnDokSpeichern_Click">
-                    </RibbonButton>
-                    <RibbonButton x:Name="BtnDokDelete" Label="Löschen" 
+                    <RibbonButton x:Name="BtnDokDelete" Label="Löschen" Command="ApplicationCommands.NotACommand" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}" 
                                   LargeImageSource="img/deletetable.png" Click="BtnDokDelete_Click">
                     </RibbonButton>
-                    <RibbonButton x:Name="BtnDokAbort" Label="Abbrechen" 
+                    <RibbonButton x:Name="BtnDokSpeichern" Label="Speichern" Command="ApplicationCommands.ContextMenu" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}"
+                                  LargeImageSource="img/tablesave.png" Click="BtnDokSpeichern_Click">
+                    </RibbonButton>
+                    <RibbonButton x:Name="BtnDokAbort" Label="Abbrechen" Command="ApplicationCommands.Print" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}" 
                                   LargeImageSource="img/tableabort.png" Click="BtnDokAbort_Click">
                     </RibbonButton>
                 </RibbonGroup>
                 <RibbonGroup Header="Export">
-                    <RibbonButton x:Name="BtnDokExport" Label="hinzufügen" 
+                    <RibbonButton x:Name="BtnDokExport" Label="hinzufügen" Command="ApplicationCommands.PrintPreview" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}" 
                                   LargeImageSource="img/export.png" Click="BtnDokExport_Click">
                     </RibbonButton>
-                    <RibbonButton x:Name="BtnExportDialog" Label="Exportdialog" 
+                    <RibbonButton x:Name="BtnExportDialog" Label="Exportdialog" Command="ApplicationCommands.Properties" 
+                                  CommandTarget="{Binding ElementName=MyMainWindow}" 
                                   LargeImageSource="img/exportdialog.png" Click="BtnExportDialog_Click">
                     </RibbonButton>
                 </RibbonGroup>
@@ -245,9 +252,8 @@
             
             <local:ScanOrdner x:Name="scanOrdner" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Visibility="Hidden" />
 
-           
+
             <local:EingabeDokumentDaten x:Name="eingabeDokumentDaten" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Visibility="Hidden" />
-           
             <local:DarstellungDokumente x:Name="darstellungDokumente" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Hidden" />
             </Grid>
     </DockPanel>

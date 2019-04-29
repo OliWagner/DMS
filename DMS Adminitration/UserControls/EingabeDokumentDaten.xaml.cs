@@ -232,23 +232,32 @@ namespace DMS_Adminitration
             var csvFeldtypen = csvTabFeldtypen.Split(';');
             var csvFeldwerte = csvTabFeldwerte.Split(';');
 
-            grdMain.Children.Clear();
-            grdMain.RowDefinitions.Clear();
+            this.grdMain.Children.Clear();
+            this.grdMain.RowDefinitions.Clear();
+            this.grdMain.ColumnDefinitions.Clear();
             //Überschrift generieren
             TextBlock txtBlock1 = new TextBlock();
             txtBlock1.FontSize = 14;
             txtBlock1.FontWeight = FontWeights.Bold;
-            txtBlock1.Text = tabName.Contains("xyx") ? tabName.Replace("xyx","") : tabName;
+            txtBlock1.Text = Dateiname;
             txtBlock1.Margin = new Thickness(5, 0, 0, 0);
             txtBlock1.Foreground = new SolidColorBrush(Colors.Black);
             txtBlock1.VerticalAlignment = VerticalAlignment.Top;
 
+            //Überschrift setzen
             RowDefinition gridRow = new RowDefinition();
             gridRow.Height = new GridLength(30);
             grdMain.RowDefinitions.Add(gridRow);
-
             Grid.SetRow(txtBlock1, 0);
             grdMain.Children.Add(txtBlock1);
+
+            ColumnDefinition cL1 = new ColumnDefinition();
+            cL1.Width = new GridLength(150);
+            grdMain.ColumnDefinitions.Add(cL1);
+            ColumnDefinition cR1 = new ColumnDefinition();
+            cR1.Width = new GridLength(350);
+            Grid.SetColumnSpan(txtBlock1, 2);
+            grdMain.ColumnDefinitions.Add(cR1);
 
             for (int i = 0; i < csvFeldnamen.Length; i++)
             {
@@ -292,7 +301,7 @@ namespace DMS_Adminitration
                 }
                 else if (csvFeldtypen[i].Substring(0, 3).Equals("loo"))
                 {
-                    LookupAuswahlDMS tb = new LookupAuswahlDMS(_tabName, _csvTabFeldnamen, _csvTabFeldnamen);
+                    LookupAuswahlDMS tb = new LookupAuswahlDMS(_tabName, _csvTabFeldnamen, _csvTabFeldtypen);
                     tb.Tag = csvFeldnamen.ElementAt(i).Split('_')[3];
                     tb.cboAuswahl.Tag = tb;
                     tb.cboAuswahl.Name = csvFeldnamen.ElementAt(i);
@@ -301,7 +310,10 @@ namespace DMS_Adminitration
                     Tuple<List<int>, List<object>> tuple = ((DbConnector)App.Current.Properties["Connector"]).ReadComboboxItems(csvFeldnamen.ElementAt(i).Split('_')[3], csvFeldnamen.ElementAt(i).Split('_')[4]);
                     if (!csvFeldwerte.ElementAt(i).ToString().Equals(""))
                     {
-                        int position = tuple.Item1.IndexOf(Int32.Parse(csvFeldwerte.ElementAt(i).ToString()));
+                        //Im Tuple sind die Bezeichnungen, ich brauch hier die id
+
+                        //int position = tuple.Item1.IndexOf(Int32.Parse(csvFeldwerte.ElementAt(i).ToString()));
+                        int position = tuple.Item2.IndexOf(csvFeldwerte.ElementAt(i).ToString());
                         tb.cboAuswahl.SelectedIndex = position;
                     }
 
