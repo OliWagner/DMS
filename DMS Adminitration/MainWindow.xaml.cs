@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -58,14 +59,25 @@ namespace DMS_Adminitration
 
         private void Connect(string vorherigeEingabe = "")
         {
+            string datasource = "LAPTOP-CTMG3F1D\\SQLEXPRESS";
+            string initialcatalog = "Dokumentenmanagement";
+            string dbuser = "sa";
+            string dbpasswort = "95hjh11!";
 
-            Application.Current.Properties["Connector"] = new DbConnector("Data Source='LAPTOP-CTMG3F1D\\SQLEXPRESS';Initial Catalog='Dokumentenmanagement';User ID='sa';Password='95hjh11!';");
+            Application.Current.Properties["Connector"] = new DbConnector("Data Source='"+datasource+"';Initial Catalog='"+initialcatalog+"';User ID='"+dbuser+"';Password='"+dbpasswort+"';");
             if (!((DbConnector)App.Current.Properties["Connector"]).Connect())
             {
-                Connect("LAPTOP-CTMG3F1D\\SQLEXPRESS;Dokumentenmanagement;sa;95hjh11!");
+                Connect(datasource+";"+initialcatalog+";"+dbuser+";"+dbpasswort);
             }
             Title = "Bearbeiten der Datenbank";
-            
+
+            //Application.Current.Properties["Connector"] = new DbConnector("Data Source='LAPTOP-CTMG3F1D\\SQLEXPRESS';Initial Catalog='Dokumentenmanagement';User ID='sa';Password='95hjh11!';");
+            //if (!((DbConnector)App.Current.Properties["Connector"]).Connect())
+            //{
+            //    Connect("LAPTOP-CTMG3F1D\\SQLEXPRESS;Dokumentenmanagement;sa;95hjh11!");
+            //}
+            //Title = "Bearbeiten der Datenbank";
+
         }
 
         //UserControls initialisieren
@@ -226,8 +238,8 @@ namespace DMS_Adminitration
                     cdLinks.MinWidth = 300;
                     rdOben.MaxHeight = 50;
                     rdOben.MinHeight = 50;
-                    rdUnten.MinHeight = 400;                   
-
+                    rdUnten.MinHeight = 400;
+                    eingabeDokumentDaten.grdMain.Children.Clear();
                     grdMain.Children.Add(dropfeld);
                     dropfeld.Visibility = Visibility.Visible;
                     grdMain.Children.Add(scanOrdner);
@@ -1203,6 +1215,8 @@ namespace DMS_Adminitration
             aendernDokTyp.zeichneGrid();
             darstellungDokumente.ZeichneDatagridForm();
             darstellungDokumente.ZeichneDatagridTab("OkoDokumentenTyp");
+            TxtAblageRecherche = "A";
+            eingabeDokumentDaten.zeichneGrid();
         }
 
         private void BtnTypSpeichern_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
@@ -1383,7 +1397,20 @@ namespace DMS_Adminitration
             #region DOkument anzeigen
         private void BtnDokShow_Click(object sender, RoutedEventArgs e)
         {
-
+            DataRowView drv = (DataRowView)darstellungDokumente.dgTabelleOriginal.SelectedItem;
+            int counter = 0;
+            string IdInTabelle = "";
+            string Dateiname = "";
+            foreach (DataGridColumn item in darstellungDokumente.dgTabelleOriginal.Columns)
+            {
+                if (item.Header.Equals("OkoDokumentenTypId")) {
+                    IdInTabelle = drv.Row.ItemArray[counter].ToString(); }
+                if (item.Header.Equals("Dateiname")) {
+                    Dateiname = drv.Row.ItemArray[counter].ToString(); }
+                counter++;
+            }
+            int Id = ((DbConnector)App.Current.Properties["Connector"]).ReadIdDokument(IdInTabelle);
+            databaseFileReadToMemoryStream(Id.ToString(), Dateiname);
         }
 
         private void BtnDokShow_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
@@ -1464,7 +1491,10 @@ namespace DMS_Adminitration
             #region Dokument löschen
             private void BtnDokDelete_Click(object sender, RoutedEventArgs e)
             {
-
+                DataRowView row = (DataRowView)darstellungDokumente.dgTabelleOriginal.SelectedItem;
+                int idaktuell = Int32.Parse(row.Row.ItemArray[0].ToString());
+                ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(idaktuell);
+                darstellungDokumente.ZeichneDatagridTab("OkoDokumentenTyp");
             }
             private void BtnDokDelete_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
@@ -1488,12 +1518,26 @@ namespace DMS_Adminitration
             {
 
             }
-            #endregion
+        #endregion
 
             #region Dok zu Export
+            private List<int> DoksFuerExport = new List<int>();
             private void BtnDokExport_Click(object sender, RoutedEventArgs e)
             {
+                var row = ((DataRowView)darstellungDokumente.dgTabelleOriginal.SelectedItem).Row.ItemArray;
+                int counter = 0;
+                foreach (DataGridColumn col in darstellungDokumente.dgTabelleOriginal.Columns)
+                {
+                    if (col.Header.Equals("OkoDokumentenTypId"))
+                    {
+                        if (!DoksFuerExport.Contains(Int32.Parse(row[counter].ToString())))
+                        {
+                            DoksFuerExport.Add(Int32.Parse(row[counter].ToString()));
+                        }
 
+                    }
+                    counter++;
+                }
             }
             private void BtnDokExport_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
@@ -1519,9 +1563,18 @@ namespace DMS_Adminitration
 
             #region Exportdialog
             private void BtnExportDialog_Click(object sender, RoutedEventArgs e)
+            {
+                ExportDialog dialog = new ExportDialog(DoksFuerExport);
+                dialog.btnExportieren.Click += ExportDialog_BtnExportieren_Click;
+                if (dialog.ShowDialog() == true)
                 {
-
+                    DoksFuerExport.Clear();
+                    foreach (Exportdaten item in dialog.lstExport)
+                    {
+                        DoksFuerExport.Add(item.OkoDokumenteDatenId);
+                    }
                 }
+            }
             private void BtnExportDialog_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
             {
                 if (TxtAblageRecherche.Equals("A"))
@@ -1532,18 +1585,17 @@ namespace DMS_Adminitration
                 else
                 {
                     //Buttons für die Recherche
-                    e.CanExecute = false;
+                    e.CanExecute = DoksFuerExport.Count() > 0;
                 }
             }
-
             private void BtnExportDialog_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
             {
 
             }
             #endregion
 
-            #region Dok Speichern
-    private void BtnDokSpeichern_Click(object sender, RoutedEventArgs e)
+        #region Dok Speichern
+        private void BtnDokSpeichern_Click(object sender, RoutedEventArgs e)
     {
             #region Datensatz der bezogenen Tabelle speichern
             //Benötigte Werte um InsertTableData aufrufen zu können
@@ -1689,7 +1741,7 @@ namespace DMS_Adminitration
                 if (TxtAblageRecherche.Equals("A"))
                 {
                     //Buttons für die ABlage
-                    if (eingabeDokumentDaten != null && eingabeDokumentDaten.Visibility == Visibility.Visible && eingabeDokumentDaten._tabName != null && !eingabeDokumentDaten._tabName.Equals(""))
+                    if (eingabeDokumentDaten != null && eingabeDokumentDaten.Visibility == Visibility.Visible && eingabeDokumentDaten._tabName != null && eingabeDokumentDaten._tabName != null && !eingabeDokumentDaten._tabName.Equals("") && eingabeDokumentDaten.grdMain.Children.Count > 0)
                     {
                         e.CanExecute = true;
                         return;
@@ -1749,7 +1801,7 @@ namespace DMS_Adminitration
                 if (TxtAblageRecherche.Equals("A"))
                 {
                     //Buttons für die ABlage
-                    if (eingabeDokumentDaten != null && eingabeDokumentDaten.Visibility == Visibility.Visible && eingabeDokumentDaten._tabName != null && !eingabeDokumentDaten._tabName.Equals(""))
+                    if (eingabeDokumentDaten != null && eingabeDokumentDaten.Visibility == Visibility.Visible && eingabeDokumentDaten._tabName != null && !eingabeDokumentDaten._tabName.Equals("") && eingabeDokumentDaten.grdMain.Children.Count > 0)
                     {
                         e.CanExecute = true;
                         return;
@@ -1766,11 +1818,143 @@ namespace DMS_Adminitration
             {
 
             }
-            #endregion
+        #endregion
 
         #endregion
 
-        #endregion 
+        #endregion
+
+        public void databaseFileReadToMemoryStream(string varID, string dateiname)
+        {
+            string _anwendungspath = "";
+            if (dateiname.Contains("."))
+            {
+                string _endung = "." + dateiname.Split('.')[1];
+                foreach (Tuple<int, string, string> item in darstellungDokumente.Anwendungen)
+                {
+                    if (item.Item2.Equals(_endung))
+                    {
+                        _anwendungspath = item.Item3;
+                    }
+                }
+            }
+
+            MemoryStream memoryStream = new MemoryStream();
+            using (var sqlQuery = new SqlCommand(@"SELECT [Dokument] FROM [OkoDokumente] WHERE [OkoDokumenteId] = @varID", ((DbConnector)App.Current.Properties["Connector"])._con))
+            {
+                sqlQuery.Parameters.AddWithValue("@varID", varID);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        sqlQueryResult.Read();
+                        var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
+                        sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
+                        //using (var fs = new MemoryStream(memoryStream, FileMode.Create, FileAccess.Write)) {
+                        memoryStream.Write(blob, 0, blob.Length);
+                        //}
+                    }
+            }
+            //return memoryStream;
+            using (var fileStream = File.OpenWrite(dateiname))
+            {
+                memoryStream.WriteTo(fileStream);
+            }
+            if (_anwendungspath.Equals(""))
+            {
+                Process.Start(dateiname);
+            }
+            else
+            {
+                ProcessStartInfo info = new ProcessStartInfo();
+                info.FileName = _anwendungspath;
+                info.Arguments = dateiname;
+                Process.Start(info);
+            }
+
+        }
+
+        private void ExportDialog_BtnExportieren_Click(object sender, RoutedEventArgs e)
+        {
+            //Liste aus Exportdialog aufrufen
+            Grid grid = (Grid)((Button)sender).Parent;
+            ExportDialog dialog = (ExportDialog)grid.Parent;
+
+            string pathString = dialog.PathString;
+            DirectoryInfo info = Directory.CreateDirectory(pathString);
+            //In das neue Verzeichnis exportieren
+            //TODO
+            //Es müsste reichen, sich den originalen Namen des DOkuments mit DokId und neuem Namen zu merken...
+            List<int> _gemerkteDokIds = new List<int>();
+            List<string> _gemerkteAlteDateinamen = new List<string>();
+            List<string> _gemerkteNeueDateinamen = new List<string>();
+
+            //Wenn Eintrag schon vorhanden --> einfach XML raus schreiben
+            //Wenn nicht, EIntrag hinzufügen + XML schreiben
+            foreach (Exportdaten ed in dialog.lstExport)
+            {
+                string alterName = ed.Dateiname;
+                string neuerName = "";
+                int idDesDoks = ed.DokumenteId;
+
+                if (!_gemerkteDokIds.Contains(ed.DokumenteId))
+                {
+                    //Achtung: Listeneinträge immer für ALLE Listen setzen, um den Zugriff per Index gewährleisten zu können
+                    //Die DOkId ist noch nicht exportiert
+                    //Gibt es den Dateinamen schon in den Originalnamen?  
+                    if (_gemerkteAlteDateinamen.Contains(ed.Dateiname))
+                    {
+                        //Beim Umbenennen feststellen, ob der neue Name schon existiert
+                        bool prozessBeendet = false;
+                        int counter = 0;
+                        while (!prozessBeendet)
+                        {
+                            counter++;
+                            string[] arrDateiname = ed.Dateiname.Split('.');
+                            neuerName = arrDateiname[0] + "(" + counter + ")." + arrDateiname[1];
+                            if (!_gemerkteNeueDateinamen.Contains(neuerName))
+                            {
+                                prozessBeendet = true;
+
+                            }
+                        }
+                        _gemerkteAlteDateinamen.Add(alterName);
+                        _gemerkteNeueDateinamen.Add(neuerName);
+                        _gemerkteDokIds.Add(idDesDoks);
+                    }
+                    else
+                    {
+                        //Nein --> Originalnamen in beide Listen schreiben, Id in IdListe
+                        _gemerkteAlteDateinamen.Add(alterName);
+                        _gemerkteNeueDateinamen.Add(alterName);
+                        _gemerkteDokIds.Add(idDesDoks);
+                    }
+                    //--> Datei Export
+                    string exportDateiNameFile = neuerName.Equals("") ? alterName : neuerName;
+                    ExportFileToDisk(ed.DokumenteId.ToString(), pathString, exportDateiNameFile);
+                }
+            }
+            //Nach Export Listen leeren
+            dialog.lstExport.Clear();
+            DoksFuerExport.Clear();
+        }
+
+        public void ExportFileToDisk(string varID, string path, string dateiname)
+        {
+            string _path = System.IO.Path.Combine(path, dateiname);
+            using (var sqlQuery = new SqlCommand(@"SELECT [Dokument] FROM [dbo].[OkoDokumente] WHERE [OkoDokumenteId] = @varID", ((DbConnector)App.Current.Properties["Connector"])._con))
+            {
+                sqlQuery.Parameters.AddWithValue("@varID", varID);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        sqlQueryResult.Read();
+                        var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
+                        sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
+                        using (var fs = new FileStream(_path, FileMode.Create, FileAccess.Write))
+                            fs.Write(blob, 0, blob.Length);
+                    }
+            }
+        }
     }
 
     public class Einstellungen {

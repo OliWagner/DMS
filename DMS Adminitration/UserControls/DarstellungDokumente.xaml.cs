@@ -319,18 +319,7 @@ namespace DMS_Adminitration
             }
         }
 
-        private void btnExportdialog_Click(object sender, RoutedEventArgs e)
-        {
-            ExportDialog dialog = new ExportDialog(DoksFuerExport);
-            dialog.btnExportieren.Click += ExportDialog_BtnExportieren_Click;
-            if (dialog.ShowDialog() == true) {
-                DoksFuerExport.Clear();
-                foreach (Exportdaten item in dialog.lstExport)
-                {
-                    DoksFuerExport.Add(item.OkoDokumenteDatenId);
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Dokumentenexport
@@ -451,20 +440,20 @@ namespace DMS_Adminitration
             }
     }
 
-        private void btnDokLoeschen_Click(object sender, RoutedEventArgs e)
-        {
-            int index = 0;
-            object[] itemArray = ((DataRowView)dgDokumente.SelectedItem).Row.ItemArray;
-            int counter = 0;
-            foreach (var col in dgDokumente.Columns)
-            {
-                if (col.Header.Equals("OkoDokumenteDatenId")) {
-                    index = Int32.Parse(itemArray[counter].ToString());
-                    }
-                counter++;
-            }
-            string tab = ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(index);
-            ZeichneDatagridTab(tab);
-        }
+        //private void btnDokLoeschen_Click(object sender, RoutedEventArgs e)
+        //{
+        //    int index = 0;
+        //    object[] itemArray = ((DataRowView)dgDokumente.SelectedItem).Row.ItemArray;
+        //    int counter = 0;
+        //    foreach (var col in dgDokumente.Columns)
+        //    {
+        //        if (col.Header.Equals("OkoDokumenteDatenId")) {
+        //            index = Int32.Parse(itemArray[counter].ToString());
+        //            }
+        //        counter++;
+        //    }
+        //    string tab = ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(index);
+        //    ZeichneDatagridTab(tab);
+        //}
     }
 }

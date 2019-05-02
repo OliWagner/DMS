@@ -50,37 +50,26 @@ namespace DMS_Adminitration
                 lblDateiname.Content = ed.Dateiname;
                 lblDateiname.Margin = new Thickness(0, 0, 0, 0);
 
-                Label lblTitel = new Label();
-                lblTitel.Content = ed.Titel;
-                lblTitel.Margin = new Thickness(200, 0, 0, 0);
-
+                
                 Label lblErfasstAm = new Label();
                 lblErfasstAm.Content = ed.ErfasstAm.ToShortDateString();
-                lblErfasstAm.Margin = new Thickness(400, 0, 0, 0);
-
-                Label lblDokumententyp = new Label();
-                lblDokumententyp.Content = ed.DokumentenTyp;
-                lblDokumententyp.Margin = new Thickness(500, 0, 0, 0);
+                lblErfasstAm.Margin = new Thickness(200, 0, 0, 0);
 
                 Label lblLoeschen = new Label();
                 lblLoeschen.Width = 20;
                 lblLoeschen.Tag = ed;
                 lblLoeschen.Content = "x";
-                lblLoeschen.Margin = new Thickness(750, 0, 0, 0);
+                lblLoeschen.Margin = new Thickness(280, 0, 0, 0);
                 lblLoeschen.MouseDoubleClick += LblLoeschen_MouseDoubleClick;
                 lblLoeschen.ToolTip = "Doppelklicken, um Eintrag zu entfernen";
                
 
                 Grid.SetRow(lblDateiname, (counter));
-                Grid.SetRow(lblTitel, (counter));
                 Grid.SetRow(lblErfasstAm, (counter));
-                Grid.SetRow(lblDokumententyp, (counter));
                 Grid.SetRow(lblLoeschen, (counter));
 
                 grdMain.Children.Add(lblDateiname);
-                grdMain.Children.Add(lblTitel);
                 grdMain.Children.Add(lblErfasstAm);
-                grdMain.Children.Add(lblDokumententyp);
                 grdMain.Children.Add(lblLoeschen);
 
                 counter++;
@@ -132,11 +121,8 @@ namespace DMS_Adminitration
     public class Exportdaten {
         public int DokumenteId { get; set; }
         public string Dateiname { get; set; }
-        public string Titel { get; set; }
         public DateTime ErfasstAm { get; set; }
-        public string DokumentenTyp { get; set; }
         public int IdInTabelle { get; set; }
-        public string Tabelle { get; set; }
         public int OkoDokumenteDatenId { get; set; }
     }
 }

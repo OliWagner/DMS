@@ -348,40 +348,14 @@ namespace DMS_Adminitration
             return true;
         }
 
-        public string DeleteDokumentendatensatz(int dokumenteDatenId)
+        public void DeleteDokumentendatensatz(int dokumenteDatenId)
         {
             //Aus DokumenteDaten die DOkumenteId ermitteln
             StringBuilder sb = new StringBuilder();
 
-
-            DataTable dt = new DataTable();
-            string query = "Select OkoDokumenteId, Tabelle, IdInTabelle from OkoDokumenteDaten where OkoDokumenteDatenId = " + dokumenteDatenId;
-            SqlCommand cmd = new SqlCommand(query, _con);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            // this will query your database and return the result to your datatable
-            da.Fill(dt);
-            da.Dispose();
-
-            int aktuelleDokumenteId = dt.Rows[0].Field<int>(0);
-            string aktuelleTabelle = dt.Rows[0].Field<string>(1);
-            int aktuelleIdInTabelle = dt.Rows[0].Field<int>(2);
-            //Nachschauen, ob noch weitere Referenzen auf das Dokument vorhanden sind
-
-            DataTable dt2 = new DataTable();
-            string query2 = "Select * from OkoDokumenteDaten where OkoDokumenteId = " + aktuelleDokumenteId;
-            SqlCommand cmd2 = new SqlCommand(query2, _con);
-            SqlDataAdapter da2 = new SqlDataAdapter(cmd2);
-            da2.Fill(dt2);
-            da2.Dispose();
-
-            sb.Append("Delete from OkoDokumenteDaten Where OkoDokumenteDatenId =" + dokumenteDatenId + ";");
-            sb.Append("Delete from " + aktuelleTabelle + " Where " + aktuelleTabelle + "Id =" + aktuelleIdInTabelle + ";");
-
-            if (dt2.Rows.Count == 1)
-            {
-                //Es ist kein weiterer Eintrag vorhanden, Dokument kann gelöscht werden
-                sb.Append("Delete from OkoDokumente Where OkoDokumenteId =" + aktuelleDokumenteId + ";");
-            }
+            sb.Append("Delete From OkoDokumente where OkoDokumenteId In (SELECT OkoDokumenteId FROM OkoDokumenteDaten where IdInTabelle = " + dokumenteDatenId + ");");
+            sb.Append("Delete From OkoDokumenteDaten where IdInTabelle = " + dokumenteDatenId + ";");
+            sb.Append(" Delete from OkoDokumentenTyp where OkoDokumentenTypId = " + dokumenteDatenId + ";");
 
             string sql = sb.ToString();
             SqlCommand command = _con.CreateCommand();
@@ -413,7 +387,6 @@ namespace DMS_Adminitration
                 }
                 Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0026xx");
             }
-            return aktuelleTabelle;
         }
 
         /// <summary>
@@ -919,17 +892,17 @@ namespace DMS_Adminitration
                 {
                     if (counter == 0)
                     {
-                        sb.Append("tabDaten.OkoDokumenteDatenId = " + id);
+                        sb.Append("tabDaten.IdInTabelle = " + id);
                     }
                     else
                     {
-                        sb.Append(" OR tabDaten.OkoDokumenteDatenId = " + id);
+                        sb.Append(" OR tabDaten.IdInTabelle = " + id);
                     }
 
                     counter++;
                 }
-                string query = "select tabDaten.OkoDokumenteId, tabDaten.Dateiname, tabDaten.Titel, tabDaten.ErfasstAm, tabDaten.IdInTabelle, tabDaten.Tabelle, tabTypen.Bezeichnung, tabDaten.OkoDokumenteDatenId" +
-                        " from OkoDokumenteDaten tabDaten INNER JOIN OkoDokumententyp tabTypen ON tabDaten.OkoDokumententypId = " +
+                string query = "select tabDaten.OkoDokumenteId, tabDaten.Dateiname, tabDaten.ErfasstAm, tabDaten.IdInTabelle, tabDaten.OkoDokumenteDatenId" +
+                        " from OkoDokumenteDaten tabDaten INNER JOIN OkoDokumententyp tabTypen ON tabDaten.IdInTabelle = " +
                         "tabTypen.OkoDokumententypId AND (" + sb.ToString() + ");";
                 SqlCommand cmd = new SqlCommand(query, _con);
                 // create data adapter
@@ -943,12 +916,12 @@ namespace DMS_Adminitration
                     {
                         DokumenteId = item.Field<int>(0),
                         Dateiname = item.Field<string>(1),
-                        Titel = item.Field<string>(2),
-                        ErfasstAm = item.Field<DateTime>(3),
-                        IdInTabelle = item.Field<int>(4),
-                        Tabelle = item.Field<string>(5),
-                        DokumentenTyp = item.Field<string>(6),
-                        OkoDokumenteDatenId = item.Field<int>(7)
+                        //Titel = item.Field<string>(2),
+                        ErfasstAm = item.Field<DateTime>(2),
+                        IdInTabelle = item.Field<int>(3),
+                        //Tabelle = item.Field<string>(5),
+                        //DokumentenTyp = item.Field<string>(6),
+                        OkoDokumenteDatenId = item.Field<int>(4)
                     });
                 }
             }
@@ -1430,6 +1403,28 @@ namespace DMS_Adminitration
                 Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0011xx");
             }
             return neueId;
+        }
+
+        public int ReadIdDokument(string idInTabelle)
+        {
+
+            DataTable dt = new DataTable();
+            try
+            {
+                string query = "Select OkoDokumenteId from OkoDokumenteDaten where IdInTabelle = " + idInTabelle;
+
+                SqlCommand cmd = new SqlCommand(query, _con);
+                // create data adapter
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                // this will query your database and return the result to your datatable
+                da.Fill(dt);
+                da.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0034xx");
+            }
+            return dt.Rows[0].Field<int>(0);
         }
 
         public int InsertTableData(string tabellenname, Dictionary<string, object> werte, string csvWerteTypen, bool IsDokType = false)
