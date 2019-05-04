@@ -118,8 +118,8 @@ namespace DMS_Adminitration
                 }
                 
             }
-            dgDokumente.ItemsSource = null;
-            dgDokumente.ItemsSource = dataTableForDataGrid.DefaultView;
+            dgTabelleOriginal.ItemsSource = null;
+            dgTabelleOriginal.ItemsSource = dataTableForDataGrid.DefaultView;
         }
 
 
@@ -163,8 +163,10 @@ namespace DMS_Adminitration
                 }
 
             }
-            dgDokumente.ItemsSource = null;
-            dgDokumente.ItemsSource = dataTableForDataGrid.DefaultView;
+            //dgDokumente.ItemsSource = null;
+            //dgDokumente.ItemsSource = dataTableForDataGrid.DefaultView;
+            dgTabelleOriginal.ItemsSource = null;
+            dgTabelleOriginal.ItemsSource = dataTableForDataGrid.DefaultView;
         }
 
 

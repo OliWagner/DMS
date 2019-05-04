@@ -14,9 +14,33 @@ using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
+using Vigenere;
 
 namespace DMS_Adminitration
 {
+    public class ConnectionDetails
+    {
+        public string DataSource { get; set; }
+        public string InitialCatalog { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+    public class ConnectionDirectory
+    {
+        [XmlElement("ConnectionDetails")]
+        public List<ConnectionDetails> ConnectionsList = new List<ConnectionDetails>();
+
+        public void Add(ConnectionDetails elem)
+        {
+            ConnectionsList.Add(elem);
+        }
+
+        public void Remove(ConnectionDetails elem)
+        {
+            ConnectionsList.Remove(elem);
+        }
+    }
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
@@ -57,12 +81,42 @@ namespace DMS_Adminitration
             }
         }
 
+        private ConnectionDirectory DeSerialize(string file)
+        {
+            XmlSerializer deserializer = new XmlSerializer(typeof(ConnectionDirectory));
+            TextReader reader = new StreamReader(@file);
+            object obj = deserializer.Deserialize(reader);
+            ConnectionDirectory XmlData = (ConnectionDirectory)obj;
+            reader.Close();
+            return XmlData;
+        }
+        public static ConnectionDirectory connectionDirectory = new ConnectionDirectory();
+        VigenereQuadrath q = new VigenereQuadrath("PicKerL1465JHdg");
+
         private void Connect(string vorherigeEingabe = "")
         {
-            string datasource = "LAPTOP-CTMG3F1D\\SQLEXPRESS";
-            string initialcatalog = "Dokumentenmanagement";
-            string dbuser = "sa";
-            string dbpasswort = "95hjh11!";
+            //Verzeichnis der Anwendung ermitteln
+            FileInfo fi = new FileInfo(Assembly.GetEntryAssembly().Location);
+            string _path = fi.DirectoryName + "\\Connections.xml";
+            if (File.Exists(_path))
+            {
+                ConnectionDirectory cd = DeSerialize(_path);
+                connectionDirectory.ConnectionsList = new List<ConnectionDetails>();
+                foreach (var item in cd.ConnectionsList)
+                {
+                    connectionDirectory.Add(new ConnectionDetails { InitialCatalog = q.EntschlüssleText(item.InitialCatalog).Replace(" ", "\\"), DataSource = q.EntschlüssleText(item.DataSource), Username = q.EntschlüssleText(item.Username), Password = q.EntschlüssleText(item.Password) });
+                }
+            }
+
+            string datasource = connectionDirectory.ConnectionsList.ElementAt(0).DataSource;
+            string initialcatalog = connectionDirectory.ConnectionsList.ElementAt(0).InitialCatalog;
+            string dbuser = connectionDirectory.ConnectionsList.ElementAt(0).Username;
+            string dbpasswort = connectionDirectory.ConnectionsList.ElementAt(0).Password;
+
+            //string datasource = "LAPTOP-CTMG3F1D\\SQLEXPRESS";
+            //string initialcatalog = "Dokumentenmanagement";
+            //string dbuser = "sa";
+            //string dbpasswort = "95hjh11!";
 
             Application.Current.Properties["Connector"] = new DbConnector("Data Source='"+datasource+"';Initial Catalog='"+initialcatalog+"';User ID='"+dbuser+"';Password='"+dbpasswort+"';");
             if (!((DbConnector)App.Current.Properties["Connector"]).Connect())
@@ -70,13 +124,6 @@ namespace DMS_Adminitration
                 Connect(datasource+";"+initialcatalog+";"+dbuser+";"+dbpasswort);
             }
             Title = "Bearbeiten der Datenbank";
-
-            //Application.Current.Properties["Connector"] = new DbConnector("Data Source='LAPTOP-CTMG3F1D\\SQLEXPRESS';Initial Catalog='Dokumentenmanagement';User ID='sa';Password='95hjh11!';");
-            //if (!((DbConnector)App.Current.Properties["Connector"]).Connect())
-            //{
-            //    Connect("LAPTOP-CTMG3F1D\\SQLEXPRESS;Dokumentenmanagement;sa;95hjh11!");
-            //}
-            //Title = "Bearbeiten der Datenbank";
 
         }
 
@@ -195,7 +242,7 @@ namespace DMS_Adminitration
         private void ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             grdMain.Children.Clear();
-
+            TxtAblageRecherche = "A";
             Ribbon _sender = (Ribbon)sender;
             RibbonTab sel = (RibbonTab)_sender.SelectedItem;
             if (sel != null)
