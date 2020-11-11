@@ -108,15 +108,15 @@ namespace DMS_Adminitration
                 }
             }
 
-            string datasource = connectionDirectory.ConnectionsList.ElementAt(0).DataSource;
-            string initialcatalog = connectionDirectory.ConnectionsList.ElementAt(0).InitialCatalog;
-            string dbuser = connectionDirectory.ConnectionsList.ElementAt(0).Username;
-            string dbpasswort = connectionDirectory.ConnectionsList.ElementAt(0).Password;
+            //string datasource = connectionDirectory.ConnectionsList.ElementAt(0).DataSource;
+            //string initialcatalog = connectionDirectory.ConnectionsList.ElementAt(0).InitialCatalog;
+            //string dbuser = connectionDirectory.ConnectionsList.ElementAt(0).Username;
+            //string dbpasswort = connectionDirectory.ConnectionsList.ElementAt(0).Password;
 
-            //string datasource = "LAPTOP-CTMG3F1D\\SQLEXPRESS";
-            //string initialcatalog = "Dokumentenmanagement";
-            //string dbuser = "sa";
-            //string dbpasswort = "95hjh11!";
+            string datasource = "DESKTOP-8NB5DQG\\DATENBANK";
+            string initialcatalog = "Dokumentenmanagement";
+            string dbuser = "sa";
+            string dbpasswort = "95hjh11!";
 
             Application.Current.Properties["Connector"] = new DbConnector("Data Source='"+datasource+"';Initial Catalog='"+initialcatalog+"';User ID='"+dbuser+"';Password='"+dbpasswort+"';");
             if (!((DbConnector)App.Current.Properties["Connector"]).Connect())

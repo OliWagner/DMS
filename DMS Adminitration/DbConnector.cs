@@ -703,6 +703,22 @@ namespace DMS_Adminitration
             }
         }
 
+        /// <summary>
+        /// Baut (NUR!!!) das Select für die Abfrage auf OkoDokumentenTyp
+        /// </summary>
+        /// <returns>Alles zwischen Select und From</returns>
+        public string GetSqlForDependency() {
+            StringBuilder returner = new StringBuilder();
+            returner.Append(" tab2.IdInTabelle as OkoDokumentenTypId, ");
+            string csv = ReadDokTypTypesAndFields().Item1;
+            foreach (var item in csv.Split(';'))
+            {
+                returner.Append(" tab1."+item+" as "+item+", ");
+            }
+            returner.Append(" tab2.Dateiname as Dateiname ");
+            return returner.ToString();
+        }
+
         public Tuple<string, string> ReadDokTypTypesAndFields() {
             string feldnamen = "";
             string feldtypen = "";
@@ -1872,136 +1888,6 @@ namespace DMS_Adminitration
                     }
                 }
                 Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0016xx");
-            }
-        }
-
-        public void AddDokGruppe(string bezeichnung, string beschreibung) {           
-            SqlCommand command = _con.CreateCommand();
-            SqlTransaction transaction;
-            // Start a local transaction.
-            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            // Must assign both transaction object and connection
-            // to Command object for a pending local transaction
-            command.Connection = _con;
-            command.Transaction = transaction;
-
-            try
-            {
-                command.CommandText = "Insert into OkoDokumentengruppen (Bezeichnung, Beschreibung) VALUES ('" + bezeichnung + "', '" + beschreibung + "')";
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (SqlException ex)
-                {
-                    if (transaction.Connection != null)
-                    {
-                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0017ax");
-                    }
-                }
-                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0017xx");
-            }
-
-        }
-
-        public void UpdateDokGruppe(string bezeichnung, string beschreibung, int id) {
-            SqlCommand command = _con.CreateCommand();
-            SqlTransaction transaction;
-            // Start a local transaction.
-            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            // Must assign both transaction object and connection
-            // to Command object for a pending local transaction
-            command.Connection = _con;
-            command.Transaction = transaction;
-            try
-            {
-                command.CommandText = "UPDATE OkoDokumentengruppen SET Bezeichnung = '" + bezeichnung + "', Beschreibung = '" + beschreibung + "' Where OkoDokumentengruppenId = '" + id + "';";
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (SqlException ex)
-                {
-                    if (transaction.Connection != null)
-                    {
-                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0018ax");
-                    }
-                }
-                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0018xx");
-            }
-        }
-
-        public void UpdateDokTyp(string bezeichnung, string beschreibung, int id, int dokGruppenId)
-        {
-            SqlCommand command = _con.CreateCommand();
-            SqlTransaction transaction;
-            // Start a local transaction.
-            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            command.Connection = _con;
-            command.Transaction = transaction;
-            try
-            {
-                command.CommandText = "UPDATE OkoDokumententyp SET Bezeichnung = '" + bezeichnung + "', Beschreibung = '" + beschreibung + "', OkoDokumentengruppenId = '" + dokGruppenId + "' Where OkoDokumententypId = '" + id + "';";
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (SqlException ex)
-                {
-                    if (transaction.Connection != null)
-                    {
-                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0019ax");
-                    }
-                }
-                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0019xx");
-            }
-        }
-
-        public void AddDokTyp(string bezeichnung, string beschreibung, int gruppenId) {
-            SqlCommand command = _con.CreateCommand();
-            SqlTransaction transaction;
-            // Start a local transaction.
-            transaction = _con.BeginTransaction(IsolationLevel.ReadCommitted);
-            // Must assign both transaction object and connection
-            // to Command object for a pending local transaction
-            command.Connection = _con;
-            command.Transaction = transaction;
-
-            try
-            {
-                command.CommandText = "Insert into OkoDokumententyp (Bezeichnung, Beschreibung, OkoDokumentengruppenId) VALUES ('" + bezeichnung + "', '" + beschreibung + "', "+gruppenId+")";
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (SqlException ex)
-                {
-                    if (transaction.Connection != null)
-                    {
-                        Fehlerbehandlung.Error(ex.StackTrace.ToString(), ex.Message, "xx0020ax");
-                    }
-                }
-                Fehlerbehandlung.Error(e.StackTrace.ToString(), e.Message, "xx0020xx");
             }
         }
 

@@ -73,6 +73,7 @@
     <Compile Include="Dialogs\LookupDialog.xaml.cs">
       <DependentUpon>LookupDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DispatcherSynchronizeInvoke.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="UserControls\DarstellungDokumente.xaml.cs">
       <DependentUpon>DarstellungDokumente.xaml</DependentUpon>

@@ -1,0 +1,1 @@
+C:\Repositories\DatabaseConnector\.sonarqube\out\1

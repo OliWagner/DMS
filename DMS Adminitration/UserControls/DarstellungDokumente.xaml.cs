@@ -8,7 +8,9 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +22,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml;
 
 namespace DMS_Adminitration
@@ -62,6 +65,7 @@ namespace DMS_Adminitration
             Anwendungen = ((DbConnector)App.Current.Properties["Connector"]).ReadAnwendungen();
             suchfelder.ItemAdded += AddHandlerToTextBoxSuchfeld;
             ZeichneGrid();
+            btnSyncStarten.IsEnabled = CanRequestNotifications();
         }
 
         //Ordnet Dateiendungen der richtigen ANwendung zu beim ANzeigen
@@ -261,44 +265,6 @@ namespace DMS_Adminitration
             }
         }
 
-        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Nix
-        }
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (dgDokumente != null) {
-                if (suchfelder.grdMain.Children.Count > 0 && dgDokumente.SelectedItem != null) { e.CanExecute = true; } else { e.CanExecute = false; }
-            }
-        }
-        private void Paste_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Nix
-        }
-        private void Paste_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (dgDokumente != null)
-            {
-                if (suchfelder.grdMain.Children.Count > 0 && dgDokumente.SelectedItem != null && DoksFuerExport.Count == 0) { e.CanExecute = true; } else { e.CanExecute = false; }
-            }
-        }
-        private void New_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Nix
-        }
-        private void New_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-                if (DoksFuerExport.Count > 0) { e.CanExecute = true; } else { e.CanExecute = false; }
-        }
-        private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Nix
-        }
-        private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (DoksFuerExport.Count == 0) { e.CanExecute = false; } else { e.CanExecute = true; }
-        }
-
         private void btnDokAnzeigen_Click(object sender, RoutedEventArgs e)
         {
             //Wird in MainWIndow behandelt
@@ -320,82 +286,7 @@ namespace DMS_Adminitration
                 counter++;
             }
         }
-
-        
-
-        /// <summary>
-        /// Dokumentenexport
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ExportDialog_BtnExportieren_Click(object sender, RoutedEventArgs e)
-        {
-            //Liste aus Exportdialog aufrufen
-            Grid grid = (Grid)((Button)sender).Parent;
-            ExportDialog dialog = (ExportDialog)grid.Parent;
-
-            string pathString = dialog.PathString;
-            DirectoryInfo info = Directory.CreateDirectory(pathString);
-            //In das neue Verzeichnis exportieren
-            //TODO
-            //Es müsste reichen, sich den originalen Namen des DOkuments mit DokId und neuem Namen zu merken...
-            List<int> _gemerkteDokIds = new List<int>();
-            List<string> _gemerkteAlteDateinamen = new List<string>();
-            List<string> _gemerkteNeueDateinamen = new List<string>();
-            
-            //Wenn Eintrag schon vorhanden --> einfach XML raus schreiben
-            //Wenn nicht, EIntrag hinzufügen + XML schreiben
-            foreach (Exportdaten ed in dialog.lstExport)
-            {
-                string alterName = ed.Dateiname;
-                string neuerName = "";
-                int idDesDoks = ed.DokumenteId;
-
-                if (!_gemerkteDokIds.Contains(ed.DokumenteId))
-                {
-                    //Achtung: Listeneinträge immer für ALLE Listen setzen, um den Zugriff per Index gewährleisten zu können
-                    //Die DOkId ist noch nicht exportiert
-                    //Gibt es den Dateinamen schon in den Originalnamen?  
-                    if (_gemerkteAlteDateinamen.Contains(ed.Dateiname)) {
-                        //Beim Umbenennen feststellen, ob der neue Name schon existiert
-                        bool prozessBeendet = false;
-                        int counter = 0;
-                        while (!prozessBeendet) {
-                            counter++;
-                            string[] arrDateiname = ed.Dateiname.Split('.');
-                            neuerName = arrDateiname[0] + "(" + counter + ")."+ arrDateiname[1];
-                            if (!_gemerkteNeueDateinamen.Contains(neuerName)) {
-                                prozessBeendet = true;
-
-                            } 
-                        }
-                        _gemerkteAlteDateinamen.Add(alterName);
-                        _gemerkteNeueDateinamen.Add(neuerName);
-                        _gemerkteDokIds.Add(idDesDoks);
-                    } else {
-                        //Nein --> Originalnamen in beide Listen schreiben, Id in IdListe
-                        _gemerkteAlteDateinamen.Add(alterName);
-                        _gemerkteNeueDateinamen.Add(alterName);
-                        _gemerkteDokIds.Add(idDesDoks);
-                    }
-                    //--> Datei Export
-                    string exportDateiNameFile = neuerName.Equals("") ? alterName : neuerName;
-                    ExportFileToDisk(ed.DokumenteId.ToString(), pathString, exportDateiNameFile);
-                }
-                else {
-                    //Die DOkId ist schon exportiert 
-                    //--> Nur CSV wegschreiben mit neuem Dateinamen --> Nach Index aus den Listen wählen (Alter.IndexOf ..> Neue.ElementAt
-                    int index = _gemerkteDokIds.IndexOf(ed.DokumenteId);
-                    neuerName = _gemerkteNeueDateinamen.ElementAt(index);
-                }
-            }
-
-
-            //Nach Export Listen leeren
-            dialog.lstExport.Clear();
-            DoksFuerExport.Clear();
-        }
-
+       
         public void ExportFileToDisk(string varID, string path, string dateiname)
         {
             string _path = System.IO.Path.Combine(path, dateiname); 
@@ -442,20 +333,173 @@ namespace DMS_Adminitration
             }
     }
 
-        //private void btnDokLoeschen_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int index = 0;
-        //    object[] itemArray = ((DataRowView)dgDokumente.SelectedItem).Row.ItemArray;
-        //    int counter = 0;
-        //    foreach (var col in dgDokumente.Columns)
-        //    {
-        //        if (col.Header.Equals("OkoDokumenteDatenId")) {
-        //            index = Int32.Parse(itemArray[counter].ToString());
-        //            }
-        //        counter++;
-        //    }
-        //    string tab = ((DbConnector)App.Current.Properties["Connector"]).DeleteDokumentendatensatz(index);
-        //    ZeichneDatagridTab(tab);
-        //}
+        #region SqlDependency
+        private const string tableName = "OkoDokumentenTyp";
+        private const string dataSource = @"LAPTOP-CTMG3F1D\SQLEXPRESS";
+        private const string database = "Dokumentenmanagement";
+        // The following objects are reused
+        // for the lifetime of the application.
+        private DataSet dataToWatch = null;
+        private SqlConnection connection = null;
+        private SqlCommand command = null;
+
+        private string GetConnectionString()
+        {
+            // To avoid storing the connection string in your code,
+            // you can retrive it from a configuration file.
+            return string.Format(@"Data Source={0};Integrated Security=true;Initial Catalog={1};Pooling=False;User Id=sa;Password=95hjh11!;", dataSource, database);
+        }
+
+        private string GetSQL()
+        {
+            // NOTE: IT IS VERY IMPORTANT TO USE THE 2 PART TABLE NAME 
+            // WITH DBO (databaseowner) AS PREFIX
+            // NOTE2: You must specify column names. The * wildcard does not work
+            string sql = ((DbConnector)App.Current.Properties["Connector"]).GetSqlForDependency();
+            //return "select tab1.Titel as Titel, tab1.Text as Text, tab1.Geburtstag as Geburtstag, tab2.IdInTabelle as Id, tab2.ErfasstAm as Erfasst, tab2.Dateiname as Dateiname from OkoDokumentenTyp tab1 INNER JOIN OkoDokumenteDaten as tab2 ON tab1.OkoDokumentenTypId = tab2.IdInTabelle";
+            return "select "+sql+" from OkoDokumentenTyp tab1 INNER JOIN OkoDokumenteDaten as tab2 ON tab1.OkoDokumentenTypId = tab2.IdInTabelle";
+        }
+
+        private bool CanRequestNotifications()
+        {
+            // In order to use the callback feature of the
+            // SqlDependency, the application must have
+            // the SqlClientPermission permission.
+            try
+            {
+                SqlClientPermission perm = new SqlClientPermission(PermissionState.Unrestricted);
+                perm.Demand();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public DispatcherTimer timer = new DispatcherTimer();
+        private void dependency_OnChange(object sender, SqlNotificationEventArgs e)
+        {
+            // This event will occur on a thread pool thread.
+            // Updating the UI from a worker thread is not permitted.
+            // The following code checks to see if it is safe to
+            // update the UI.
+            ISynchronizeInvoke i = new DispatcherSynchronizeInvoke(this.Dispatcher);
+
+            // If InvokeRequired returns True, the code
+            // is executing on a worker thread.
+            if (i.InvokeRequired)
+            {
+                // Create a delegate to perform the thread switch.
+                OnChangeEventHandler tempDelegate =
+                    new OnChangeEventHandler(dependency_OnChange);
+
+                object[] args = { sender, e };
+
+                // Marshal the data from the worker thread
+                // to the UI thread.
+                i.BeginInvoke(tempDelegate, args);
+
+                return;
+            }
+
+            // Remove the handler, since it is only good
+            // for a single notification.
+            SqlDependency dependency = (SqlDependency)sender;
+            dependency.OnChange -= dependency_OnChange;
+
+            // At this point, the code is executing on the
+            // UI thread, so it is safe to update the UI.
+            // Reload the dataset that is bound to the grid.
+
+            if (!timer.IsEnabled) {               
+                timer.Interval = new TimeSpan(0, 0, 5);
+                timer.Tick += Timer_Tick;
+                timer.Start();
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            GetData();
+        }
+
+        private void timerCallback(object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GetData()
+        {
+            // Empty the dataset so that there is only
+            // one batch of data displayed.
+            dataToWatch.Clear();
+
+            // Make sure the command object does not already have
+            // a notification object associated with it.
+            command.Notification = null;
+
+            // Create and bind the SqlDependency object
+            // to the command object.
+            SqlDependency dependency = new SqlDependency(command);
+            dependency.OnChange += new OnChangeEventHandler(dependency_OnChange);
+
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            {
+                adapter.Fill(dataToWatch, tableName);
+
+                //dataGridView1.DataSource = dataToWatch;
+                //dataGridView1.DataMember = tableName;
+                dgTabelleOriginal.ItemsSource = dataToWatch.Tables["OkoDokumentenTyp"].AsDataView();
+                dgTabelleOriginal.DataContext = tableName;
+            }
+        }
+
+        //private void button1_Click(object sender, EventArgs e)
+        private void SqlDependencyStart()
+        {
+            // Remove any existing dependency connection, then create a new one.
+            SqlDependency.Stop(GetConnectionString());
+            SqlDependency.Start(GetConnectionString());
+
+            if (connection == null)
+            {
+                connection = new SqlConnection(GetConnectionString());
+            }
+
+            if (command == null)
+            {
+                // GetSQL is a local procedure that returns
+                // a paramaterized SQL string. You might want
+                // to use a stored procedure in your application.
+                command = new SqlCommand(GetSQL(), connection);
+            }
+            if (dataToWatch == null)
+            {
+                dataToWatch = new DataSet();
+            }
+            GetData();
+        }
+
+        //private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        private void SqlDependencyStop()
+        {
+            SqlDependency.Stop(GetConnectionString());
+        }
+
+        private void btnSyncStarten_Click(object sender, RoutedEventArgs e)
+        {
+            SqlDependencyStart();
+        }
+
+        private void btnSyncStoppen_Click(object sender, RoutedEventArgs e)
+        {
+            timer.Stop();
+            SqlDependencyStop();
+            ZeichneDatagridForm();
+        }
+        #endregion
+
+
     }
 }
